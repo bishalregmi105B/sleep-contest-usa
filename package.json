@@ -14,8 +14,9 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:generate": "prisma generate",
-    "predev": "npm run assets:scan",
-    "prebuild": "npm run assets:scan"
+    "predev": "npm run db:generate && npm run assets:scan",
+    "prebuild": "npm run db:generate && npm run assets:scan",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

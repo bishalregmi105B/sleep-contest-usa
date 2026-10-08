@@ -32,8 +32,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# Real env files hold secrets. .env.example is the documented template and must
+# be tracked, so it is re-included explicitly below the wildcard.
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,7 +44,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Prisma local database
 # Local SQLite, wherever it lands. Never commit a database or a .env.
 dev.db
 dev.db-journal
@@ -50,7 +51,6 @@ dev.db-journal
 *.db-journal
 prisma/*.db
 public/assets/generated/
-tests/screenshots/
 test-results/
 playwright-report/
 
