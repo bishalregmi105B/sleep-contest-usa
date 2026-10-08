@@ -1,26 +1,34 @@
 import type { Metadata, Viewport } from 'next';
-import { DM_Sans, Rubik, Space_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import { SkipLink } from '@/components/layout/SkipLink';
 import { SITE } from '@/content/site';
 import './globals.css';
 
-const rubik = Rubik({
-  subsets: ['latin'],
-  weight: ['400', '500', '700', '800', '900'],
+// Self-hosted instead of next/font/google: the Google loader fetches from
+// fonts.googleapis.com during the build, and a response Turbopack cannot parse
+// fails the whole deploy. scripts/fetch-fonts.mjs downloads these files once and
+// they are committed, so the build makes no network call at all.
+const rubik = localFont({
+  src: './fonts/rubik.woff2',
+  weight: '300 900',
+  style: 'normal',
   display: 'swap',
   variable: '--font-rubik',
 });
 
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
+const dmSans = localFont({
+  src: './fonts/dm-sans.woff2',
+  weight: '100 1000',
+  style: 'normal',
   display: 'swap',
   variable: '--font-dm-sans',
 });
 
-const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  weight: ['400', '700'],
+const spaceMono = localFont({
+  src: [
+    { path: './fonts/space-mono-400.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/space-mono-700.woff2', weight: '700', style: 'normal' },
+  ],
   display: 'swap',
   variable: '--font-space-mono',
 });

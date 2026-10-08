@@ -11,6 +11,7 @@
     "assets:scan": "node scripts/scan-assets.mjs",
     "assets:fetch": "node scripts/fetch-stitch-images.mjs",
     "assets:optimize": "node scripts/optimize-images.mjs",
+    "fonts:fetch": "node scripts/fetch-fonts.mjs",
     "db:push": "node scripts/set-db-provider.mjs auto && prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:generate": "node scripts/set-db-provider.mjs auto && prisma generate",

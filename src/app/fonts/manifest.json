@@ -1,0 +1,41 @@
+{
+  "rubik": {
+    "family": "Rubik",
+    "files": [
+      {
+        "src": "./fonts/rubik.woff2",
+        "weight": "300 900",
+        "style": "normal",
+        "bytes": 35324
+      }
+    ]
+  },
+  "dm-sans": {
+    "family": "DM Sans",
+    "files": [
+      {
+        "src": "./fonts/dm-sans.woff2",
+        "weight": "100 1000",
+        "style": "normal",
+        "bytes": 36980
+      }
+    ]
+  },
+  "space-mono": {
+    "family": "Space Mono",
+    "files": [
+      {
+        "src": "./fonts/space-mono-400.woff2",
+        "weight": "400",
+        "style": "normal",
+        "bytes": 9464
+      },
+      {
+        "src": "./fonts/space-mono-700.woff2",
+        "weight": "700",
+        "style": "normal",
+        "bytes": 9552
+      }
+    ]
+  }
+}
