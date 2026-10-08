@@ -18,7 +18,8 @@
     "db:use-sqlite": "node scripts/set-db-provider.mjs sqlite",
     "db:migrate": "node scripts/set-db-provider.mjs auto && prisma migrate deploy",
     "prebuild": "npm run assets:scan",
-    "predev": "npm run assets:scan"
+    "predev": "npm run assets:scan",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
