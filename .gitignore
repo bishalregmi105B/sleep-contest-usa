@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/test-results
+/playwright-report
 
 # next.js
 /.next/
@@ -41,8 +43,11 @@ yarn-error.log*
 next-env.d.ts
 
 # Prisma local database
-prisma/dev.db
-prisma/dev.db-journal
+# Local SQLite, wherever it lands. Never commit a database or a .env.
+dev.db
+dev.db-journal
+*.db
+*.db-journal
 prisma/*.db
 public/assets/generated/
 tests/screenshots/

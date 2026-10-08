@@ -102,9 +102,13 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ message: RESERVE.errors.generic }, { status: 500 });
-  } catch {
-    // Never log the payload: it holds personal data.
-    console.error('[register] failed to create registration');
+  } catch (err) {
+    // Never log the payload: it holds personal data. Only the error itself,
+    // which carries no request data.
+    console.error(
+      '[register] failed to create registration:',
+      err instanceof Error ? err.message : 'unknown error',
+    );
     return NextResponse.json({ message: RESERVE.errors.generic }, { status: 500 });
   }
 }
