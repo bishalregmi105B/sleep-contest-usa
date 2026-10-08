@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { connection } from 'next/server';
 import { Header } from '@/components/layout/Header';
 import { Ticker } from '@/components/layout/Ticker';
 import { Footer } from '@/components/layout/Footer';
@@ -26,18 +27,7 @@ import { paidCount } from '@/lib/registrations';
  * refresh, the menu and the form). Sections sit above a single fixed canvas;
  * none of them creates a WebGL context of its own.
  */
-export default async function HomePage() {
-  // A database that is not yet migrated should not take the page down.
-  let count = 0;
-  try {
-    count = await paidCount();
-  } catch (err) {
-    console.error(
-      '[home] failed to read registration count:',
-      err instanceof Error ? err.message : 'unknown',
-    );
-  }
-
+export default function HomePage() {
   return (
     <>
       {/* One fixed canvas behind everything, loaded after first paint. */}
@@ -54,7 +44,11 @@ export default async function HomePage() {
 
       <main id="main" className="relative z-10">
         <Hero />
-        <Counter count={count} />
+        {/* Streamed, so the page still builds before the database exists and
+            the static shell carries the hero. */}
+        <Suspense fallback={<CounterFallback />}>
+          <CounterSection />
+        </Suspense>
         <CounterLive />
         <HowItWorks />
         <Squad />
@@ -73,6 +67,39 @@ export default async function HomePage() {
       <Footer />
       <MobileReserveBar />
     </>
+  );
+}
+
+/**
+ * The live counter.
+ *
+ * Split out and streamed so the build never has to reach a database: the shell
+ * prerenders, this section streams in at request time, and a site that has not
+ * run `npm run db:push` yet still builds instead of failing.
+ */
+async function CounterSection() {
+  await connection();
+
+  let count = 0;
+  try {
+    count = await paidCount();
+  } catch (err) {
+    // A database that is not yet migrated must not take the page down.
+    console.error(
+      '[home] failed to read registration count:',
+      err instanceof Error ? err.message : 'unknown',
+    );
+  }
+
+  return <Counter count={count} />;
+}
+
+/** Matches the counter's height so the streamed section does not shift layout. */
+function CounterFallback() {
+  return (
+    <section id="counter" className="section-shell">
+      <div className="content-frame" />
+    </section>
   );
 }
 
