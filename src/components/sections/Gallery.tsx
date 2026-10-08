@@ -11,15 +11,9 @@ import { SectionScrim } from './SectionScrim';
  * Tile sizes vary so the grid does not read as a template of identical cards.
  */
 export function Gallery() {
-  // Two rows of three, with the middle column deliberately taller.
-  const spans = [
-    'sm:col-span-2 sm:row-span-2',
-    '',
-    '',
-    '',
-    'sm:col-span-2',
-    '',
-  ] as const;
+  // Tiles exactly on a 3-column grid: one large tile fills a 2x2 block, the
+  // five others fill the remaining cells, giving three full rows with no gaps.
+  const spans = ['sm:col-span-2 sm:row-span-2', '', '', '', '', ''] as const;
 
   return (
     <section id="gallery" aria-labelledby="gallery-heading" className="section-shell overflow-hidden">
@@ -27,7 +21,7 @@ export function Gallery() {
       <div className="content-frame relative z-10">
         <SectionHeading title={GALLERY.heading} sub={GALLERY.sub} as="h2" />
 
-        <div className="mt-12 grid auto-rows-[180px] grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mt-12 grid auto-rows-[200px] grid-cols-1 gap-4 sm:grid-cols-3">
           {GALLERY_TILES.map((tile, index) => {
             const image = asset(tile.asset);
 

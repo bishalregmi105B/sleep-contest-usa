@@ -14,7 +14,7 @@ import {
   type Mesh,
 } from 'three';
 import { SETTINGS, type Tier } from '@/lib/quality';
-import { scrollState } from '@/lib/scroll-state';
+import { presence } from '@/lib/scroll-state';
 import { seedFrom, seededRandom } from '@/lib/random';
 
 /** Scratch objects for the coin transforms, allocated once. */
@@ -56,7 +56,7 @@ function SquadProps() {
     const group = groupRef.current;
     if (!group) return;
 
-    const active = scrollState.section.id === 'squad';
+    const active = presence('squad') > 0;
     group.visible = active;
     if (!active) return;
 
@@ -117,7 +117,7 @@ function Coins({ count }: { readonly count: number }) {
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    const active = scrollState.section.id === 'prizes';
+    const active = presence('prizes') > 0;
     mesh.visible = active;
     if (!active) return;
 
@@ -147,25 +147,34 @@ function Coins({ count }: { readonly count: number }) {
 
 /** Sunrise disc that rises behind the alarm clock in the final CTA. */
 function Sunrise() {
-  const meshRef = useRef<Mesh>(null);
+  const meshRef = useRef<Group>(null);
 
   useFrame(({ clock }) => {
-    const mesh = meshRef.current;
-    if (!mesh) return;
+    const group = meshRef.current;
+    if (!group) return;
 
-    const active = scrollState.section.id === 'cta';
-    mesh.visible = active;
+    const active = presence('cta') > 0;
+    group.visible = active;
     if (!active) return;
 
+    // Rises slowly out of the bottom edge, then holds.
     const t = clock.elapsedTime;
-    mesh.position.y = MathUtils.lerp(mesh.position.y, -1.6 + Math.sin(t * 0.4) * 0.05, 0.02);
+    group.position.y = MathUtils.lerp(group.position.y, -6.2 + Math.sin(t * 0.35) * 0.08, 0.02);
   });
 
   return (
-    <mesh ref={meshRef} position={[0, -3, -8]} visible={false}>
-      <circleGeometry args={[3.2, 48]} />
-      <meshBasicMaterial color="#FF9A3C" transparent opacity={0.9} />
-    </mesh>
+    // Two discs: a wide warm halo and a bright core, so the sun reads as a
+    // light source rather than a flat circle the same colour as the sky.
+    <group ref={meshRef} position={[0, -7, -16]} visible={false}>
+      <mesh>
+        <circleGeometry args={[7, 48]} />
+        <meshBasicMaterial color="#FF9A3C" transparent opacity={0.5} depthWrite={false} />
+      </mesh>
+      <mesh position={[0, 0, 0.2]}>
+        <circleGeometry args={[4, 48]} />
+        <meshBasicMaterial color="#FFE14A" transparent opacity={0.95} depthWrite={false} />
+      </mesh>
+    </group>
   );
 }
 
@@ -177,7 +186,7 @@ function AlarmClock() {
     const group = groupRef.current;
     if (!group) return;
 
-    const active = scrollState.section.id === 'cta' || scrollState.section.id === 'reserve';
+    const active = presence('cta') > 0;
     group.visible = active;
     if (!active) return;
 
@@ -187,7 +196,7 @@ function AlarmClock() {
   });
 
   return (
-    <group ref={groupRef} position={[2.6, -1.2, -1.5]} visible={false}>
+    <group ref={groupRef} position={[4.2, -2.4, -7]} visible={false}>
       {/* Body */}
       <mesh>
         <cylinderGeometry args={[0.6, 0.6, 0.22, 28]} />

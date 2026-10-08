@@ -8,8 +8,6 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "playwright test",
-    "test:e2e": "playwright test",
     "assets:scan": "node scripts/scan-assets.mjs",
     "assets:fetch": "node scripts/fetch-stitch-images.mjs",
     "assets:optimize": "node scripts/optimize-images.mjs",
@@ -43,8 +41,6 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
-    "@playwright/test": "^1.64.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -18,7 +18,9 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!rateLimit(`admin:${clientIp(request)}`, { perMinute: 5, burst: 5 })) {
+  // Generous enough that one operator working normally is never locked out,
+  // tight enough that a password cannot be guessed by repetition.
+  if (!rateLimit(`admin:${clientIp(request)}`, { perMinute: 10, burst: 10 })) {
     return NextResponse.json({ message: 'Too many attempts.' }, { status: 429 });
   }
 

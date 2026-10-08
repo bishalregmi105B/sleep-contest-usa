@@ -4,13 +4,13 @@ import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import {
   AdditiveBlending,
+  type Sprite,
   CanvasTexture,
-  MathUtils,
   SRGBColorSpace,
   type Group,
   type MeshStandardMaterial,
 } from 'three';
-import { scrollState } from '@/lib/scroll-state';
+import { presence, scrollState } from '@/lib/scroll-state';
 
 /**
  * Smiling moon in a striped nightcap.
@@ -22,6 +22,7 @@ import { scrollState } from '@/lib/scroll-state';
 export function Moon() {
   const groupRef = useRef<Group>(null);
   const bodyRef = useRef<MeshStandardMaterial>(null);
+  const glowRef = useRef<Sprite>(null);
 
   // Stripe texture for the nightcap, generated once.
   const capTexture = useMemo(() => {
@@ -49,11 +50,21 @@ export function Moon() {
 
     // The moon is the one object that survives the whole scroll, because it is
     // the through-line. It dims and drifts back so it never competes with copy.
+    const amount = presence('hero');
+
+    // The whole group, not just the body: the cap, pompom and face have their
+    // own materials and would otherwise keep rendering at full opacity.
+    group.visible = amount > 0;
+    if (!group.visible) return;
+
     const body = bodyRef.current;
     if (body) {
       body.transparent = true;
-      body.opacity = MathUtils.lerp(1, 0.7, sectionDepth());
+      body.opacity = amount;
     }
+
+    const glow = glowRef.current;
+    if (glow) glow.material.opacity = amount * 0.4;
 
     const lambda = 1 - Math.pow(0.02, delta);
     const parallax = scrollState.tier === 'low' ? 0.15 : 0.5;
@@ -67,9 +78,9 @@ export function Moon() {
   });
 
   return (
-    <group ref={groupRef} position={[2.6, 2.9, -2]}>
+    <group ref={groupRef} position={[4.6, 3.6, -6]}>
       {/* Glow */}
-      <sprite scale={[2.2, 2.2, 1]}>
+      <sprite ref={glowRef} scale={[1.8, 1.8, 1]}>
         <spriteMaterial
           map={glowTexture()}
           blending={AdditiveBlending}
@@ -81,7 +92,7 @@ export function Moon() {
 
       {/* Crescent body */}
       <mesh>
-        <sphereGeometry args={[0.62, 32, 24]} />
+        <sphereGeometry args={[0.5, 32, 24]} />
         <meshStandardMaterial
           ref={bodyRef}
           color="#FFF8E7"
@@ -148,19 +159,3 @@ function glowTexture(): CanvasTexture {
   return glow;
 }
 
-/** Index of the current section in page order. */
-function sectionDepth(): number {
-  const order = [
-    'hero',
-    'counter',
-    'how',
-    'squad',
-    'prizes',
-    'gallery',
-    'reserve',
-    'faq',
-    'cta',
-  ] as const;
-  const index = order.indexOf(scrollState.section.id as (typeof order)[number]);
-  return index < 0 ? 0 : index;
-}

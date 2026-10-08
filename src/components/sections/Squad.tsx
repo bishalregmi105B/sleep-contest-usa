@@ -30,7 +30,7 @@ export function Squad() {
         />
 
         <ul
-          className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3"
+          className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3"
           data-testid="squad-rounds"
         >
           {ROUNDS.map((round, index) => {
@@ -41,7 +41,7 @@ export function Squad() {
                 key={round.title}
                 className={`flex flex-col overflow-hidden rounded-lg border-[3px] border-ink bg-cream [box-shadow:10px_10px_0_var(--color-pillow)] ${tilts[index]}`}
               >
-                <div className="relative aspect-4/3 w-full overflow-hidden bg-midnight">
+                <div className="relative aspect-3/2 w-full overflow-hidden bg-midnight">
                   {image.exists ? (
                     <Image
                       src={image.src}
@@ -68,7 +68,7 @@ export function Squad() {
                   </span>
                 </div>
 
-                <div className="flex flex-1 flex-col gap-3 p-6">
+                <div className="flex flex-1 flex-col gap-2 p-5">
                   <h3 className="text-headline-sm font-display font-bold text-ink">
                     {round.title}
                   </h3>
@@ -82,7 +82,7 @@ export function Squad() {
           })}
         </ul>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-8 flex justify-center">
           <RoundsReplay />
         </div>
       </div>

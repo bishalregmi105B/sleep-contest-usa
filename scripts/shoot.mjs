@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 
-const OUT = 'tests/screenshots';
+const OUT = 'demo/screenshots';
 const BASE = process.env.BASE_URL ?? 'http://localhost:3000';
 
 const SECTIONS = [

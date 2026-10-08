@@ -3,7 +3,7 @@
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import { CanvasTexture, MathUtils, SRGBColorSpace, type Group } from 'three';
-import { scrollState } from '@/lib/scroll-state';
+import { presence, scrollState } from '@/lib/scroll-state';
 
 /**
  * The sleeper.
@@ -52,7 +52,7 @@ export function Sleeper() {
 
     const depth = sectionDepth();
     // Hero and counter are close; after that the figure recedes into the night.
-    const recede = MathUtils.clamp(depth, 0, 1);
+    const recede = 1 - presence('hero');
     const lambda = 1 - Math.pow(0.0015, delta);
 
     group.position.y = -0.05 + breath - recede * 0.4;
@@ -65,7 +65,7 @@ export function Sleeper() {
     group.scale.setScalar(MathUtils.lerp(1, 0.5, recede));
 
     // Fade out once we are well past the counter.
-    const fade = 1 - recede;
+    const fade = presence('hero');
     for (const material of materials.current) {
       if (material) {
         material.transparent = true;

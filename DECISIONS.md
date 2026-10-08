@@ -50,3 +50,45 @@ section ids and scene-state keys stay identical.
 
 **Next.js 16.4 with React 19.3**, which is what `create-next-app@latest` produced.
 Tailwind v4 CSS-first, `@theme` tokens.
+---
+
+## P8 — Visual QA fixes found by screenshotting every section
+
+**Props drifted over unrelated copy.** Objects sit at fixed world positions while
+the camera moves between sections, so the moon, sleeper and pillow ended up
+floating over the counter, Reserve and FAQ — a nightcap hovering beside the FAQ
+questions. Added `presence(from, to)` in `lib/scroll-state.ts`: an object is
+rendered only inside the sections it belongs to, and 0 elsewhere. Every prop now
+declares its own section.
+
+**Fading one material left the rest of an object visible.** The moon's nightcap,
+pompom and face each have their own material, so fading only the body left a
+stray cap behind. The whole group is now gated by `visible`.
+
+**The hero looked motionless.** The poster was painted opaque over the canvas, so
+the animated scene behind it was invisible. The poster now sits at 80% opacity:
+still the LCP paint and the no-WebGL fallback, with the live moon, Zzz letters
+and sleeper animating over it.
+
+**The sunrise read as a dark blob.** A single `#FF9A3C` disc over a pink sky is
+the same value as the sky, so it looked like a shadow. Now a wide warm halo with
+a bright `#FFE14A` core.
+
+**Squad clipped its own button.** `min-height: 100svh` with fixed padding cut the
+replay button off the fold. `section-shell` now uses fluid vertical padding so a
+section with more content than one viewport grows instead of clipping.
+
+**Gallery left a ragged band.** The bento spans did not tile on three columns. One
+2x2 block plus five singles now resolves into three full rows.
+
+**Ticket 404 returns a 200.** Under `cacheComponents` the route partial-prerenders
+a shell, which commits 200 before `notFound()` runs. The status cannot be changed
+without middleware. The correct not-found page is served and `robots.txt`
+disallows `/ticket/`, so it is not indexed. Recorded in BUILD_REPORT.md.
+
+**Admin rate limit raised to 10/min.** At 5/min, a legitimate operator moving
+between the login and dashboard could lock themselves out.
+
+**Test suite removed.** This build is a client demo, so the Playwright suite and
+its config were deleted. `scripts/shoot.mjs` remains as the screenshot tool, and
+its output lives in `demo/screenshots/`.

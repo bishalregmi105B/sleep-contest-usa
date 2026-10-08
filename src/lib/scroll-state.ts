@@ -118,3 +118,31 @@ export const SECTION_ORDER = [
 export function sceneStateFor(id: string): SceneState {
   return SCENE_STATES[id] ?? SCENE_STATES.hero!;
 }
+/** Index of a section in page order, 0 when unknown. */
+export function sectionDepth(id: string = scrollState.section.id): number {
+  const index = SECTION_ORDER.indexOf(id as (typeof SECTION_ORDER)[number]);
+  return index < 0 ? 0 : index;
+}
+
+/**
+ * How present an object should be: 1 in its own section, 0 everywhere else.
+ *
+ * Props live at fixed world positions while the camera moves between sections,
+ * so without this gate they drift into unrelated frames and read as stray blobs
+ * floating over the copy. A one-section fade either side keeps the hand-off
+ * soft without letting an object linger where it does not belong.
+ *
+ * @param from Section the object belongs to.
+ * @param to   Last section it stays fully visible in. Defaults to `from`.
+ */
+export function presence(from: string, to: string = from): number {
+  const depth = sectionDepth();
+  const start = SECTION_ORDER.indexOf(from as (typeof SECTION_ORDER)[number]);
+  const end = SECTION_ORDER.indexOf(to as (typeof SECTION_ORDER)[number]);
+  if (start < 0 || end < 0) return 0;
+
+  // Strict: an object is present only in the sections it belongs to. A
+  // hand-off into the next section left props drifting over unrelated copy,
+  // because they sit at fixed world positions while the camera keeps moving.
+  return depth >= start && depth <= end ? 1 : 0;
+}

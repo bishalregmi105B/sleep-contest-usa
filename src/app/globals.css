@@ -163,11 +163,14 @@
 
 @utility section-shell {
   position: relative;
-  min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-block: 6rem;
+  /* Tall enough to feel full-screen, but flexible so a section with more
+     content than one viewport (the squad's three cards and its replay button)
+     grows instead of clipping the last element off the fold. */
+  min-height: 100svh;
+  padding-block: clamp(7rem, 14vh, 10rem);
 }
 
 /* The sticky header floats over a transparent page, so header text needs a

@@ -3,7 +3,7 @@
 import { useFrame } from '@react-three/fiber';
 import { useMemo, useRef } from 'react';
 import { ExtrudeGeometry, Shape, type Group, type Mesh } from 'three';
-import { scrollState } from '@/lib/scroll-state';
+import { presence } from '@/lib/scroll-state';
 
 /**
  * Inflatable Zzz letters.
@@ -55,10 +55,10 @@ export function ZzzLetters() {
     const group = groupRef.current;
     if (!group) return;
 
-    // Hidden until the hero, since this is a hero beat.
-    const visible = scrollState.section.id === 'hero';
-    group.visible = visible;
-    if (!visible) return;
+    // A hero beat: the letters rise over the poster, then are gone.
+    const amount = presence('hero');
+    group.visible = amount > 0;
+    if (!group.visible) return;
 
     for (let i = 0; i < COUNT; i += 1) {
       const mesh = meshes.current[i];
@@ -78,7 +78,7 @@ export function ZzzLetters() {
       // Fade in at the bottom, out at the top.
       const material = mesh.material as { opacity: number; transparent: boolean };
       material.transparent = true;
-      material.opacity = Math.sin(rise * Math.PI) * 0.95;
+      material.opacity = Math.sin(rise * Math.PI) * 0.95 * amount;
     }
   });
 

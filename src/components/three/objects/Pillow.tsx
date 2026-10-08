@@ -4,7 +4,7 @@ import { RoundedBox } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import { MathUtils, type Group, type MeshPhysicalMaterial } from 'three';
-import { scrollState } from '@/lib/scroll-state';
+import { presence } from '@/lib/scroll-state';
 
 /**
  * The giant pillow.
@@ -25,9 +25,8 @@ export function Pillow() {
     // Breathing, 4 second cycle.
     const breath = 1 + Math.sin((clock.elapsedTime * Math.PI * 2) / 4) * 0.03;
 
-    const depth = sectionDepth();
     // Hero and counter stay close; past that the pillow recedes with the sleeper.
-    const recede = MathUtils.clamp(depth, 0, 1);
+    const recede = 1 - presence('hero');
     const targetScale = MathUtils.lerp(1, 0.5, recede);
 
     const lambda = 1 - Math.pow(0.0015, delta);
@@ -43,7 +42,7 @@ export function Pillow() {
     const material = materialRef.current;
     if (material) {
       material.transparent = true;
-      material.opacity = 1 - recede;
+      material.opacity = presence('hero');
     }
   });
 
@@ -62,21 +61,4 @@ export function Pillow() {
       </RoundedBox>
     </group>
   );
-}
-
-/** Index of the current section in page order. */
-function sectionDepth(): number {
-  const order = [
-    'hero',
-    'counter',
-    'how',
-    'squad',
-    'prizes',
-    'gallery',
-    'reserve',
-    'faq',
-    'cta',
-  ] as const;
-  const index = order.indexOf(scrollState.section.id as (typeof order)[number]);
-  return index < 0 ? 0 : index;
 }
