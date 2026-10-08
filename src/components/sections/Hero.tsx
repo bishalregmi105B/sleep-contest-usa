@@ -21,7 +21,7 @@ export function Hero() {
         alt="A sleeper in striped pajamas on a cloud mattress under a starry sky, with a smiling crescent moon in a nightcap and glowing Zzz balloons."
         priority
         overlay="none"
-        className="opacity-80"
+        data-hero-poster
       />
 
       {/* Darken the lower-left so the headline always clears the art. */}

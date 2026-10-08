@@ -294,3 +294,47 @@
     }
   }
 }
+/*
+ * Hero poster hand-off.
+ *
+ * The poster is server-rendered and priority-loaded so it is the LCP element and
+ * the fallback when WebGL is unavailable. Once the canvas is live it steps back
+ * to a wash, because it would otherwise sit opaque in front of the scene. Under
+ * reduced motion it stays opaque: there is no animation to reveal, and the
+ * static night behind it would only reduce contrast.
+ */
+[data-hero-poster] {
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+ * With a live scene the poster becomes the illustrated foreground and the sky
+ * above it becomes real. A mask rather than a flat opacity, so the sleeper and
+ * clouds stay solid at the bottom while the moon and Zzz have clear sky to move
+ * through at the top.
+ */
+html[data-scene='webgl'] [data-hero-poster] {
+  opacity: 0.92;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 22%,
+    rgb(0 0 0 / 0.55) 40%,
+    rgb(0 0 0 / 0.9) 54%,
+    #000 66%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 22%,
+    rgb(0 0 0 / 0.55) 40%,
+    rgb(0 0 0 / 0.9) 54%,
+    #000 66%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-scene='webgl'] [data-hero-poster] {
+    opacity: 0.85;
+  }
+}

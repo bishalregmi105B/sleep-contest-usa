@@ -9,10 +9,11 @@ import { presence } from '@/lib/scroll-state';
 /**
  * The giant pillow.
  *
- * A rounded box with a soft physical material (sheen for the fabric, low
- * clearcoat), breathing on a 4 second loop. It slides left and shrinks as the
- * counter section takes over, then recedes with the sleeper so the sections
- * below carry only copy.
+ * The bevel radius is the whole trick: at roughly a third of its height it
+ * reads as a soft, inflatable cushion, where a tight radius reads as a box.
+ * A fabric sheen on top of a matte base gives it cloth rather than plastic.
+ *
+ * It breathes on a 4 second cycle, then leaves the frame after the hero.
  */
 export function Pillow() {
   const groupRef = useRef<Group>(null);
@@ -22,41 +23,40 @@ export function Pillow() {
     const group = groupRef.current;
     if (!group) return;
 
-    // Breathing, 4 second cycle.
-    const breath = 1 + Math.sin((clock.elapsedTime * Math.PI * 2) / 4) * 0.03;
+    const amount = presence('hero');
+    group.visible = amount > 0;
+    if (!group.visible) return;
 
-    // Hero and counter stay close; past that the pillow recedes with the sleeper.
-    const recede = 1 - presence('hero');
-    const targetScale = MathUtils.lerp(1, 0.5, recede);
-
+    const breath = 1 + Math.sin((clock.elapsedTime * Math.PI * 2) / 4) * 0.035;
+    const recede = 1 - amount;
     const lambda = 1 - Math.pow(0.0015, delta);
-    const next = MathUtils.lerp(group.scale.x, breath * targetScale, lambda);
 
-    group.scale.setScalar(next);
-    // Settle into the resting pose without snapping.
-    group.position.x = MathUtils.lerp(group.position.x, -1.6 - recede * 1.5, lambda);
-    group.position.y = MathUtils.lerp(group.position.y, -0.15 - recede * 0.4, lambda);
-    group.position.z = MathUtils.lerp(group.position.z, -recede * 14, lambda);
-    group.rotation.z = MathUtils.lerp(group.rotation.z, -0.06, lambda);
+    group.scale.setScalar(MathUtils.lerp(group.scale.x, breath * MathUtils.lerp(1, 0.6, recede), lambda));
+    group.position.x = MathUtils.lerp(group.position.x, -1.9 - recede * 2.2, lambda);
+    group.position.y = MathUtils.lerp(group.position.y, -0.34 - recede * 0.3, lambda);
+    group.position.z = MathUtils.lerp(group.position.z, -recede * 10, lambda);
+    group.rotation.z = MathUtils.lerp(group.rotation.z, -0.09, lambda);
 
     const material = materialRef.current;
     if (material) {
       material.transparent = true;
-      material.opacity = presence('hero');
+      material.opacity = amount;
     }
   });
 
   return (
-    <group ref={groupRef} position={[-1.6, -0.15, 0.2]} rotation={[0, 0, -0.06]}>
-      <RoundedBox args={[2.6, 0.85, 1.5]} radius={0.32} smoothness={6}>
+    <group ref={groupRef} position={[-1.9, -0.34, 0.3]} rotation={[0, 0, -0.09]}>
+      <RoundedBox args={[2.9, 0.95, 1.7]} radius={0.32} smoothness={5} castShadow receiveShadow>
         <meshPhysicalMaterial
           ref={materialRef}
           color="#FFF8E7"
-          roughness={0.6}
+          roughness={0.9}
+          metalness={0}
+          specularIntensity={0.18}
+          // Sheen is for cloth, so the pillow gets it and the moon does not.
           sheen={0.8}
+          sheenRoughness={0.7}
           sheenColor="#D9D2FF"
-          sheenRoughness={0.5}
-          clearcoat={0.15}
         />
       </RoundedBox>
     </group>

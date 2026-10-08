@@ -52,6 +52,10 @@ export function SceneSlot() {
     const schedule = () => {
       setTier(detected);
       setReady(true);
+      // The poster is painted first so it is the LCP element, then steps back
+      // once the canvas is live: an opaque poster would otherwise hide the
+      // scene sitting behind it.
+      document.documentElement.dataset.scene = 'webgl';
     };
 
     if ('requestIdleCallback' in window) {

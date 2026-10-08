@@ -2,17 +2,16 @@
 
 import { Canvas } from '@react-three/fiber';
 import { PerformanceMonitor } from '@react-three/drei';
-import { NoToneMapping, SRGBColorSpace } from 'three';
+import { NoToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
 import { Suspense, useCallback, useState } from 'react';
 import { SETTINGS, downgrade, type Tier } from '@/lib/quality';
 import { scrollState } from '@/lib/scroll-state';
 import { CameraRig } from './rig/CameraRig';
 import { SceneLights } from './rig/SceneLights';
+import { Clouds } from './objects/Clouds';
 import { SkyDome } from './rig/SkyDome';
 import { Stars } from './objects/Stars';
 import { Moon } from './objects/Moon';
-import { Pillow } from './objects/Pillow';
-import { Sleeper } from './objects/Sleeper';
 import { ZzzLetters } from './objects/ZzzLetters';
 import { SceneObjects } from './objects/SceneObjects';
 
@@ -79,6 +78,9 @@ export function SceneRoot({ tier: initialTier }: { readonly tier: Tier }) {
           // PNGs, so output is left untransformed.
           gl.toneMapping = NoToneMapping;
           gl.outputColorSpace = SRGBColorSpace;
+          // Soft shadows: hard edges make rounded clay geometry look faceted.
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = PCFSoftShadowMap;
         }}
         onError={() => setContextLost(true)}
         style={{ position: 'fixed', inset: 0 }}
@@ -91,11 +93,10 @@ export function SceneRoot({ tier: initialTier }: { readonly tier: Tier }) {
           <Suspense fallback={null}>
             <SceneLights />
             <SkyDome />
+            <Clouds tier={tier} />
             <Stars count={settings.stars} />
             <CameraRig />
             <Moon />
-            <Pillow />
-            <Sleeper />
             <ZzzLetters />
             <SceneObjects tier={tier} />
           </Suspense>

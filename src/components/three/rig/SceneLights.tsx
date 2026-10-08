@@ -67,8 +67,26 @@ export function SceneLights() {
       {/* Ambient bounce: sky above, warm ground below. */}
       <hemisphereLight ref={hemiRef} args={['#8A7BD4', '#FFB87A', 2.2]} />
 
-      {/* Key light, standing in for the moon at upper right. */}
-      <directionalLight ref={keyRef} position={[4, 5, 3]} intensity={2.6} />
+      {/* Key light, standing in for the moon at upper right. It casts, so
+          objects have a shadow to sit on and read as solid. */}
+      <directionalLight
+        ref={keyRef}
+        position={[4, 5, 3]}
+        intensity={2.6}
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-near={1}
+        shadow-camera-far={30}
+        // A tight frustum: widen it only if shadows clip, never raise the map
+        // size first, or the texels go soft.
+        shadow-camera-left={-12}
+        shadow-camera-right={12}
+        shadow-camera-top={12}
+        shadow-camera-bottom={-12}
+        shadow-bias={-0.001}
+        shadow-normalBias={0.02}
+      />
 
       {/* Warm fill from below front, stronger at dawn. */}
       <directionalLight ref={fillRef} position={[-2, -3, 4]} intensity={0.45} />

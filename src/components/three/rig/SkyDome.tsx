@@ -30,10 +30,14 @@ const fragmentShader = /* glsl */ `
   varying vec3 vWorldPosition;
 
   void main() {
-    // Map height to a 0..1 gradient parameter.
+    // Map height to a 0..1 gradient parameter. The exponent matters: the dome
+    // is far larger than the visible slice, so a linear mapping compresses the
+    // whole gradient into a sliver and the sky reads as one flat colour.
     float h = normalize(vWorldPosition).y * 0.5 + 0.5;
-    vec3 color = mix(uBottom, uMid, smoothstep(0.0, 0.5, h));
-    color = mix(color, uTop, smoothstep(0.5, 1.0, h));
+    h = pow(clamp(h, 0.0, 1.0), 0.32);
+
+    vec3 color = mix(uBottom, uMid, smoothstep(0.0, 0.52, h));
+    color = mix(color, uTop, smoothstep(0.48, 1.0, h));
     gl_FragColor = vec4(color, 1.0);
   }
 `;

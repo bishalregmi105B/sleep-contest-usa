@@ -92,3 +92,47 @@ between the login and dashboard could lock themselves out.
 **Test suite removed.** This build is a client demo, so the Playwright suite and
 its config were deleted. `scripts/shoot.mjs` remains as the screenshot tool, and
 its output lives in `demo/screenshots/`.
+
+---
+
+## P9 — Rebuilding the scene so it reads as sleep
+
+Researched how sleep-themed 3D web scenes are actually built, then fixed what the
+research said the current scene was getting wrong.
+
+**Nothing was grounded.** With no shadow-casting surface, rounded geometry had
+nothing to describe its curvature against, so every object read as a flat blob.
+Added a ground plane plus drei `ContactShadows`, made the key light cast, and set
+`PCFSoftShadowMap` — hard shadow edges make rounded clay look faceted.
+
+**Materials were plastic, not clay.** Clay is not about outlines; it is about
+light. A matte dielectric with almost no specular lets form come entirely from
+the light gradient. Every material now uses `roughness` 0.85–0.95, `metalness` 0,
+`specularIntensity` 0.15–0.2 and no clearcoat, with `sheen` reserved for fabric
+only (blanket, pillow) since sheen is a cloth effect.
+
+**The Zzz were almost invisible, which is backwards.** The letters are the
+strongest sleep signifier there is — a horizontal sleeping figure reads as
+"relaxed", not "asleep". They are now the hero of the scene: larger, three of
+them at decreasing size, overlapping and tilted right as they always are, rising
+to the upper right, and slow. Capped below roughly 0.5 Hz, because fast motion
+provokes alertness.
+
+**The moon was a sphere with a cone on top.** That is not a moon. Rebuilt as a
+real crescent — a circle with a second circle punched out as a hole, extruded
+with a bevel for a soft inflated rim — with the face set into it.
+
+**Silhouettes merged into lumps.** The mat and blanket were hard-edged
+`boxGeometry`, and the head sat flush against the torso, so head, body and
+blanket were one mass. Both are now `RoundedBox` with a radius near a quarter of
+their smallest dimension, and the head is held clear of the body so the figure
+reads in three separate masses.
+
+**Clouds showed intersection seams.** Overlapping spheres each keep their own
+normals, so the joins read as creases. Each cloud is now several jittered
+icosahedra merged into one geometry with recomputed vertex normals.
+
+**Objects float because nothing sits on anything.** The scene previously had no
+environment either, so there was nothing to reflect or bounce off. Ambient,
+key and fill lights are all tinted from the current sky colour, so the lighting
+shifts with the time of night rather than staying fixed.
