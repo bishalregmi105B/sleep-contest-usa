@@ -4,6 +4,7 @@ import { Ticker } from '@/components/layout/Ticker';
 import { Footer } from '@/components/layout/Footer';
 import { MobileReserveBar } from '@/components/layout/MobileReserveBar';
 import { SceneSlot } from '@/components/three/SceneSlot';
+import { JsonLd } from '@/components/layout/JsonLd';
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { ScrollBinder } from '@/components/motion/ScrollBinder';
 import { Hero } from '@/components/sections/Hero';
@@ -44,6 +45,7 @@ export default async function HomePage() {
       <SmoothScroll />
       <ScrollBinder />
 
+      <JsonLd />
       <Header />
       <Ticker />
 

@@ -4,7 +4,6 @@ import { createSession, passwordMatches } from '@/lib/auth';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
 import { adminLoginSchema } from '@/lib/validators';
 
-export const revalidate = 0;
 
 /**
  * POST /api/admin/login

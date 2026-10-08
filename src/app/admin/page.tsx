@@ -13,7 +13,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export const revalidate = 0;
+/**
+ * Dynamic by nature: it reads the session cookie and the live registration
+ * table. `instant = false` lets Next render it at request time rather than
+ * blocking a prerender pass it can never satisfy.
+ */
+export const instant = false;
+
 
 const PAGE_SIZE = 25;
 

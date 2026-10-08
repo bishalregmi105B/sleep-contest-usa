@@ -13,6 +13,12 @@ export const metadata: Metadata = {
 };
 
 /**
+ * Every ticket is a different registration, so the page reads the database on
+ * each request: `instant = false` renders it at request time.
+ */
+export const instant = false;
+
+/**
  * Ticket page, addressed by unguessable publicId rather than the sequential
  * database id.
  */

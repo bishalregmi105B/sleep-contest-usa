@@ -12,6 +12,12 @@ export const metadata: Metadata = {
 };
 
 /**
+ * The leaderboard is live, so the page cannot be prerendered: `instant = false`
+ * renders it at request time.
+ */
+export const instant = false;
+
+/**
  * Referral page.
  *
  * Top recruiters are shown by mat number and referral count only. Publishing
