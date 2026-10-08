@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_THREEJS_START:ANIMATION_7 class="fixed inset-0 w-full h-full bg-transparent" -->
+<div class="fixed inset-0 w-full h-full bg-transparent" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_7" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_7');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  // Interactive 3D Slumber Dreamscape Scene
+const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+camera.position.set(0, 0, 18);
+
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+renderer.setSize(width, height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+container.appendChild(renderer.domElement);
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xffe3f0, 1.2);
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xfff59d, 2.2);
+dirLight.position.set(12, 18, 15);
+scene.add(dirLight);
+
+const pointLightPink = new THREE.PointLight(0xff4f8b, 3.5, 40);
+pointLightPink.position.set(-10, -5, 8);
+scene.add(pointLightPink);
+
+const pointLightMint = new THREE.PointLight(0x35f2b0, 2.5, 30);
+pointLightMint.position.set(10, -8, 6);
+scene.add(pointLightMint);
+
+// Materials
+const yellowToyMaterial = new THREE.MeshPhongMaterial({
+  color: 0xffe14a,
+  specular: 0xffffff,
+  shininess: 90,
+  emissive: 0x3a2e00,
+  flatShading: false
+});
+
+const cloudMaterial = new THREE.MeshPhongMaterial({
+  color: 0xf2ebff,
+  specular: 0xffd1eb,
+  shininess: 40,
+  transparent: true,
+  opacity: 0.88
+});
+
+const starMaterial = new THREE.MeshPhongMaterial({
+  color: 0xfff8e7,
+  emissive: 0xffe14a,
+  specular: 0xffffff,
+  shininess: 100
+});
+
+// Helper to create an Inflatable 3D 'Z' character from smooth rounded boxes
+function create3DZ(scale = 1.0) {
+  const zGroup = new THREE.Group();
+  
+  // Top bar
+  const topGeo = new THREE.CylinderGeometry(0.55 * scale, 0.55 * scale, 3.2 * scale, 24);
+  topGeo.rotateZ(Math.PI / 2);
+  const topMesh = new THREE.Mesh(topGeo, yellowToyMaterial);
+  topMesh.position.set(0, 1.4 * scale, 0);
+  zGroup.add(topMesh);
+
+  // Bottom bar
+  const botGeo = new THREE.CylinderGeometry(0.55 * scale, 0.55 * scale, 3.2 * scale, 24);
+  botGeo.rotateZ(Math.PI / 2);
+  const botMesh = new THREE.Mesh(botGeo, yellowToyMaterial);
+  botMesh.position.set(0, -1.4 * scale, 0);
+  zGroup.add(botMesh);
+
+  // Diagonal bar
+  const diagGeo = new THREE.CylinderGeometry(0.52 * scale, 0.52 * scale, 3.8 * scale, 24);
+  diagGeo.rotateZ(Math.PI / 4.2);
+  const diagMesh = new THREE.Mesh(diagGeo, yellowToyMaterial);
+  diagMesh.position.set(0, 0, 0.1 * scale);
+  zGroup.add(diagMesh);
+
+  // Corner caps for inflatable balloon pill look
+  const sphereGeo = new THREE.SphereGeometry(0.55 * scale, 24, 24);
+  const cap1 = new THREE.Mesh(sphereGeo, yellowToyMaterial);
+  cap1.position.set(-1.6 * scale, 1.4 * scale, 0);
+  const cap2 = new THREE.Mesh(sphereGeo, yellowToyMaterial);
+  cap2.position.set(1.6 * scale, 1.4 * scale, 0);
+  const cap3 = new THREE.Mesh(sphereGeo, yellowToyMaterial);
+  cap3.position.set(-1.6 * scale, -1.4 * scale, 0);
+  const cap4 = new THREE.Mesh(sphereGeo, yellowToyMaterial);
+  cap4.position.set(1.6 * scale, -1.4 * scale, 0);
+  zGroup.add(cap1, cap2, cap3, cap4);
+
+  return zGroup;
+}
+
+// Create 3 floating 'Zzz' letters with varying scales & positions
+const zGroup = new THREE.Group();
+const z1 = create3DZ(1.2);
+z1.position.set(3.5, 2.5, 2);
+z1.rotation.set(0.1, -0.2, 0.15);
+
+const z2 = create3DZ(0.85);
+z2.position.set(5.8, 5.0, 0.5);
+z2.rotation.set(-0.15, 0.3, -0.1);
+
+const z3 = create3DZ(0.55);
+z3.position.set(7.6, 7.2, -1.5);
+z3.rotation.set(0.2, -0.15, 0.25);
+
+zGroup.add(z1, z2, z3);
+scene.add(zGroup);
+
+// Create Floating Dream Clouds (assembled puffy spheres)
+function createPuffyCloud(scale = 1.0) {
+  const cloud = new THREE.Group();
+  const sphereGeo = new THREE.SphereGeometry(1.6 * scale, 20, 20);
+  const count = 6;
+  for (let i = 0; i < count; i++) {
+    const part = new THREE.Mesh(sphereGeo, cloudMaterial);
+    const ang = (i / count) * Math.PI * 2;
+    part.position.set(
+      Math.cos(ang) * 1.5 * scale,
+      Math.sin(ang) * 0.7 * scale,
+      (Math.random() - 0.5) * 0.8 * scale
+    );
+    part.scale.set(
+      1 + Math.random() * 0.4,
+      0.9 + Math.random() * 0.3,
+      1 + Math.random() * 0.4
+    );
+    cloud.add(part);
+  }
+  const center = new THREE.Mesh(new THREE.SphereGeometry(2.1 * scale, 20, 20), cloudMaterial);
+  center.scale.set(1.4, 0.8, 1);
+  cloud.add(center);
+  return cloud;
+}
+
+const cloud1 = createPuffyCloud(1.3);
+cloud1.position.set(0, -6.5, 0);
+scene.add(cloud1);
+
+const cloud2 = createPuffyCloud(0.7);
+cloud2.position.set(-8, 3, -4);
+scene.add(cloud2);
+
+const cloud3 = createPuffyCloud(0.6);
+cloud3.position.set(9, -2, -3);
+scene.add(cloud3);
+
+// Twinkling Star Sparkles (Octahedrons / Stars)
+const stars = [];
+const starGeo = new THREE.OctahedronGeometry(0.35, 0);
+for (let i = 0; i < 45; i++) {
+  const star = new THREE.Mesh(starGeo, starMaterial);
+  star.position.set(
+    (Math.random() - 0.5) * 36,
+    (Math.random() - 0.5) * 24,
+    (Math.random() - 0.5) * 15 - 4
+  );
+  star.scale.setScalar(0.5 + Math.random() * 1.2);
+  star.userData = {
+    rotSpeedX: (Math.random() - 0.5) * 0.03,
+    rotSpeedY: (Math.random() - 0.5) * 0.03,
+    pulseSpeed: 1 + Math.random() * 2,
+    baseScale: star.scale.x,
+    seed: Math.random() * Math.PI * 2
+  };
+  scene.add(star);
+  stars.push(star);
+}
+
+// Golden Ring Sleep Pod / Halo Indicator
+const haloGeo = new THREE.TorusGeometry(7.2, 0.12, 16, 100);
+const haloMat = new THREE.MeshPhongMaterial({
+  color: 0x35f2b0,
+  emissive: 0x16654b,
+  transparent: true,
+  opacity: 0.65
+});
+const halo = new THREE.Mesh(haloGeo, haloMat);
+halo.position.set(0, -4.8, 1);
+halo.rotation.x = Math.PI / 2.3;
+scene.add(halo);
+
+// Mouse interactive tracking
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
+
+function onMouseMove(event) {
+  const rect = container.getBoundingClientRect();
+  const x = (event.clientX - rect.left) / (rect.width || 1);
+  const y = (event.clientY - rect.top) / (rect.height || 1);
+  targetX = (x - 0.5) * 2;
+  targetY = (y - 0.5) * 2;
+}
+window.addEventListener('mousemove', onMouseMove, { passive: true });
+
+// Window resize
+function onResize() {
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+window.addEventListener('resize', onResize);
+
+// Clock & Render loop
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  // Smooth lerp for mouse parallax
+  mouseX += (targetX - mouseX) * 0.05;
+  mouseY += (targetY - mouseY) * 0.05;
+
+  camera.position.x = mouseX * 2.5;
+  camera.position.y = -mouseY * 1.8;
+  camera.lookAt(0, 0, 0);
+
+  // Floating breathing Zzz letters
+  z1.position.y = 2.5 + Math.sin(t * 1.6) * 0.45;
+  z1.position.x = 3.5 + Math.cos(t * 1.1) * 0.25;
+  z1.rotation.z = 0.15 + Math.sin(t * 1.2) * 0.08;
+  z1.rotation.y = -0.2 + mouseX * 0.3;
+
+  z2.position.y = 5.0 + Math.sin(t * 1.6 + 1.2) * 0.55;
+  z2.position.x = 5.8 + Math.cos(t * 1.3 + 0.8) * 0.3;
+  z2.rotation.z = -0.1 + Math.sin(t * 1.4) * 0.1;
+  z2.rotation.y = 0.3 + mouseX * 0.25;
+
+  z3.position.y = 7.2 + Math.sin(t * 1.6 + 2.4) * 0.65;
+  z3.position.x = 7.6 + Math.cos(t * 1.5 + 1.5) * 0.35;
+  z3.rotation.z = 0.25 + Math.sin(t * 1.5) * 0.12;
+
+  // Cloud gentle drifting and breathing
+  cloud1.position.y = -6.5 + Math.sin(t * 0.9) * 0.35;
+  cloud1.rotation.y = Math.sin(t * 0.3) * 0.05;
+
+  cloud2.position.y = 3.0 + Math.sin(t * 0.7 + 1.0) * 0.4;
+  cloud2.position.x = -8.0 + Math.cos(t * 0.5) * 0.4;
+
+  cloud3.position.y = -2.0 + Math.cos(t * 0.8 + 2.0) * 0.35;
+  cloud3.position.x = 9.0 + Math.sin(t * 0.6) * 0.45;
+
+  // Halo pulse & rotation
+  halo.rotation.z = t * 0.18;
+  haloMat.opacity = 0.45 + Math.sin(t * 2.2) * 0.25;
+
+  // Stars twinkling and gentle rotation
+  for (let i = 0; i < stars.length; i++) {
+    const star = stars[i];
+    star.rotation.x += star.userData.rotSpeedX;
+    star.rotation.y += star.userData.rotSpeedY;
+    const pulse = Math.sin(t * star.userData.pulseSpeed + star.userData.seed);
+    const s = star.userData.baseScale * (0.8 + pulse * 0.35);
+    star.scale.set(s, s, s);
+  }
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_7 -->
+</body>
+</html>

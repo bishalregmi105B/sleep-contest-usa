@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&amp;family=Rubik:ital,wght@0,300..900;1,300..900&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}@keyframes marquee{0%{transform:translateX(0%);}100%{transform:translateX(-50%);}}.animate-ticker{display:inline-flex;white-space:nowrap;animation:marquee 24s linear infinite;}.shadow-arcade-button{box-shadow:4px 4px 0px #0B0620;}.shadow-arcade-button:hover{box-shadow:2px 2px 0px #0B0620;transform:translate(2px,2px);}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-surface-variant":"#e0bec4","dawn-orange":"#FF9A3C","surface":"#140f2a","on-error":"#690005","inverse-on-surface":"#322d48","surface-container-highest":"#36314d","on-secondary":"#393000","on-primary-fixed":"#3f0019","on-surface":"#e6deff","background":"#140f2a","on-primary":"#66002d","outline":"#a8898f","on-background":"#e6deff","on-primary-container":"#5c0027","tertiary-fixed":"#49ffbc","on-tertiary-fixed":"#002114","inverse-primary":"#b80f58","tertiary":"#07e1a1","tertiary-fixed-dim":"#07e1a1","surface-container":"#211c37","error":"#ffb4ab","secondary-fixed":"#ffe253","on-tertiary-fixed-variant":"#005138","surface-indigo":"#1B1450","error-container":"#93000a","on-tertiary":"#003825","text-moon-cream":"#FFF8E7","inverse-surface":"#e6deff","secondary":"#e2c62f","surface-variant":"#36314d","secondary-fixed-dim":"#e2c62f","primary-fixed-dim":"#ffb1c3","surface-container-high":"#2b2642","surface-dim":"#140f2a","surface-container-lowest":"#0f0a24","on-secondary-container":"#483d00","text-lavender-mist":"#D9D2FF","primary":"#ffb1c3","surface-bright":"#3b3552","border-dusk":"#3A2C78","on-primary-fixed-variant":"#8f0042","surface-tint":"#ffb1c3","primary-container":"#ff4f8b","surface-container-low":"#1d1832","primary-fixed":"#ffd9e0","on-error-container":"#ffdad6","outline-variant":"#594045","tertiary-container":"#00a675","secondary-container":"#c2a801","on-secondary-fixed":"#211b00","on-secondary-fixed-variant":"#534600","on-tertiary-container":"#003221"},borderRadius:{DEFAULT:"1rem",lg:"2rem",xl:"3rem",full:"9999px"},spacing:{"space-md":"1rem","space-lg":"1.5rem",gutter:"1.5rem","space-xl":"2.5rem",margin:"3rem","space-sm":"0.5rem","margin-mobile":"1.25rem","gutter-mobile":"1rem","space-xs":"0.25rem"},fontFamily:{"headline-md":["Rubik"],"body-md":["DM Sans"],"headline-lg":["Rubik"],"label-mono-lg":["Space Mono"],"display-hero":["Rubik"],"body-lg":["DM Sans"],"title-md":["DM Sans"],"headline-sm":["Rubik"],"body-sm":["DM Sans"],"label-mono-sm":["Space Mono"],"display-hero-mobile":["Rubik"],"headline-lg-mobile":["Rubik"],"label-mono-md":["Space Mono"]},fontSize:{"headline-md":["28px",{lineHeight:"34px",fontWeight:"700"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"headline-lg":["40px",{lineHeight:"46px",letterSpacing:"-0.01em",fontWeight:"800"}],"label-mono-lg":["18px",{lineHeight:"24px",fontWeight:"700"}],"display-hero":["72px",{lineHeight:"76px",letterSpacing:"-0.02em",fontWeight:"900"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"400"}],"title-md":["18px",{lineHeight:"24px",fontWeight:"700"}],"headline-sm":["22px",{lineHeight:"28px",fontWeight:"700"}],"body-sm":["14px",{lineHeight:"20px",fontWeight:"500"}],"label-mono-sm":["12px",{lineHeight:"16px",fontWeight:"400"}],"display-hero-mobile":["44px",{lineHeight:"48px",letterSpacing:"-0.01em",fontWeight:"900"}],"headline-lg-mobile":["30px",{lineHeight:"36px",fontWeight:"800"}],"label-mono-md":["14px",{lineHeight:"18px",fontWeight:"700"}]}}}};</script></head><body class="bg-surface-dim font-body-md text-on-surface min-h-screen flex flex-col selection:bg-primary-container selection:text-text-moon-cream antialiased"><header class="fixed top-0 inset-x-0 z-50 flex flex-col pointer-events-none"><div class="pointer-events-auto w-full bg-secondary-fixed text-on-secondary-fixed py-2 overflow-hidden shadow-md select-none border-b-2 border-[#0B0620]"><div class="flex whitespace-nowrap overflow-hidden"><div class="animate-ticker items-center font-label-mono-md text-label-mono-md uppercase tracking-wider"><span class="px-6 font-bold">😴 200,000 SLEEPERS · 90 MINUTES · $100,000 GRAND PRIZE · CAN YOU SLEEP THROUGH ANYTHING? · AIR HORNS, FEATHERS &amp; BACON · REGISTRATION OPEN NOW</span><span class="px-6 font-bold">😴 200,000 SLEEPERS · 90 MINUTES · $100,000 GRAND PRIZE · CAN YOU SLEEP THROUGH ANYTHING? · AIR HORNS, FEATHERS &amp; BACON · REGISTRATION OPEN NOW</span></div></div></div><div class="h-20 w-full px-gutter-mobile lg:px-margin flex items-center justify-center pt-2"><div class="pointer-events-auto w-full max-w-[1200px] h-16 bg-surface-indigo/90 backdrop-blur-xl rounded-full border-2 border-border-dusk px- space-md lg:px-space-lg flex items-center justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.45)]"><div class="flex items-center gap-space-sm"><img alt="Sleepy Moon Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClw-Kgxi7zE13Yu6PaL09SBHq4Nj_7sDfcCwQDVo3jl1CCsF94L46KHhKlRnPP0dOfMC88K2mG1K3LFvRRdLXi3XHXBAxgcZPnuuCVflZjKgbfqWZspAF08RqnziVwFqoclcU3JJMf9pNEFDXPOBD2n_3K6Ic4Ti-STFmcHLXTIFkav_wOJFnfp_DzDwSqFDt1ifqI59-70l6ez0X8uS02UOSCCe3ALMZvGexgzaA"/><a class="font-headline-sm text-headline-sm text-text-moon-cream hover:text-primary transition-colors tracking-tight hidden sm:inline-block" data-path="how-it-works" href="#">The Great America's Sleep Contest</a></div><nav class="hidden xl:flex items-center gap-space-md" data-active-classes="bg-surface-container-highest text-text-moon-cream font-bold rounded-full py-1.5 px-3.5"><a aria-current="page" class="transition-colors bg-surface-container-highest text-text-moon-cream font-bold rounded-full py-1.5 px-3.5" data-path="how-it-works" href="#">How It Works</a><a class="text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="wake-up-squad" href="#">Wake-Up Squad</a><a class="text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="prize-podium" href="#">Prize Podium</a><a class="text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="live-counter" href="#">Live Counter</a><a class="text-on-surface-variant hover:text-on-surface text-body-sm font-body-sm transition-colors" data-path="rules-and-faq" href="#">Rules &amp; FAQ</a></nav><div class="flex items-center gap-space-sm"><a class="shadow-arcade-button h-11 px- space-md bg-primary-container text-text-moon-cream font-headline-sm text-body-md rounded-full border-[3px] border-[#0B0620] flex items-center justify-center transition-transform cursor-pointer font-bold select-none" data-path="register" href="#">Reserve for $10</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-28 bg-surface-dim flex-1"><div class="flex flex-col w-full selection:bg-primary-container selection:text-text-moon-cream">
+<!-- HERO SECTION -->
+<section class="relative w-full overflow-hidden pb-space-xl lg:pb-32 bg-gradient-to-b from-dawn-orange/20 via-primary-container/10 to-surface-dim">
+<!-- Starfield particles effect (SVG ambient) -->
+<div class="absolute inset-0 pointer-events-none opacity-40">
+<svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+<circle class="animate-ping" cx="8%" cy="14%" fill="#FFE253" r="2" style="animation-duration: 3s;"></circle>
+<circle class="animate-pulse" cx="92%" cy="22%" fill="#FFE253" r="2.5"></circle>
+<circle cx="22%" cy="45%" fill="#D9D2FF" r="1.5"></circle>
+<circle cx="85%" cy="60%" fill="#FFE253" r="3"></circle>
+<circle cx="14%" cy="80%" fill="#35F2B0" r="2"></circle>
+<circle cx="70%" cy="15%" fill="#FFE253" r="1.5"></circle>
+<polygon fill="#FFE253" opacity="0.6" points="120,40 123,48 132,49 125,55 127,64 120,59 113,64 115,55 108,49 117,48"></polygon>
+<polygon fill="#FFE253" opacity="0.75" points="1060,120 1062,126 1069,127 1064,132 1065,139 1060,135 1055,139 1056,132 1051,127 1058,126"></polygon>
+</svg>
+</div>
+<div class="max-w-[1200px] mx-auto px-gutter-mobile lg:px-margin pt-8 relative z-10">
+<!-- Top Micro Pill + Tilted Prize Tag -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+<div class="inline-flex items-center gap-2 bg-surface-indigo/90 px-4 py-2 rounded-full border-2 border-border-dusk shadow-md">
+<span class="w-3 h-3 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-label-mono-sm text-label-mono-sm text-tertiary-fixed tracking-wide uppercase">National In-Person Championship</span>
+<span class="text-on-surface-variant text-label-mono-sm">· 200,000 Mats</span>
+</div>
+<div class="rotate-3 transform hover:rotate-0 transition-transform">
+<div class="bg-secondary-fixed text-on-secondary-fixed px-5 py-2.5 rounded-full border-[3px] border-[#0B0620] shadow-arcade-button font-headline-sm text-body-lg flex items-center gap-2 select-none">
+<span class="material-symbols-outlined text-on-secondary-fixed text-2xl" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+<span>WIN $100,000 CASH</span>
+</div>
+</div>
+</div>
+<!-- Main Hero 2-Column Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+<!-- Left: Copy & Actions -->
+<div class="lg:col-span-7 flex flex-col items-start">
+<h1 class="font-display-hero text-display-hero-mobile lg:text-display-hero text-text-moon-cream tracking-tight mb-4 drop-shadow-md">
+            Can you sleep through <span class="text-secondary-fixed underline decoration-primary-container decoration-wavy decoration-4">anything?</span>
+</h1>
+<p class="font-body-lg text-body-lg text-text-lavender-mist mb-8 max-w-xl">
+            Air horns. Tickle feathers. Sizzling bacon. 90 unbroken minutes. The deepest sleeper in America takes home the <strong class="text-secondary-fixed font-bold">$100,000 Grand Prize</strong>.
+          </p>
+<div class="flex flex-wrap items-center gap-4 mb-4">
+<a class="shadow-arcade-button h-14 px-8 bg-primary-container text-text-moon-cream font-headline-sm text-title-md rounded-full border-[3px] border-[#0B0620] flex items-center gap-3 transition-transform hover:-translate-y-0.5 cursor-pointer select-none" href="#register">
+<span class="material-symbols-outlined text-2xl">hotel</span>
+<span>Reserve My Spot · $10</span>
+</a>
+<button class="h-14 px-7 bg-surface-indigo/80 hover:bg-surface-indigo text-text-moon-cream font-title-md text-title-md rounded-full border-2 border-border-dusk flex items-center gap-3 transition-colors cursor-pointer" onclick="document.getElementById('teaser-modal').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-secondary-fixed text-2xl" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+<span>Watch Teaser</span>
+</button>
+</div>
+<!-- Refund Guarantee Note -->
+<div class="flex items-center gap-2 text-on-surface-variant font-label-mono-sm text-label-mono-sm bg-surface-container-high/60 px-4 py-2 rounded-xl border border-border-dusk/60">
+<span class="material-symbols-outlined text-tertiary text-base">verified</span>
+<span>$39.99 total ($10 today, $29.99 when date drops). 100% full refund if the date doesn't work.</span>
+</div>
+<!-- Quick stat bar -->
+<div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-border-dusk/60 w-full max-w-lg">
+<div>
+<div class="font-headline-sm text-headline-sm text-secondary-fixed">90 MIN</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">Continuous Slumber</div>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-tertiary">0.00 BPM</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">Spike Tolerance</div>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-primary">200K</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">Live Competitors</div>
+</div>
+</div>
+</div>
+<!-- Right: 3D Visual Centerpiece -->
+<div class="lg:col-span-5 relative flex items-center justify-center">
+<div class="relative w-full aspect-square max-w-[480px]">
+<!-- Soft luminous glow backing -->
+<div class="absolute -inset-4 bg-gradient-to-tr from-primary-container/30 to-secondary/30 rounded-full blur-3xl opacity-70"></div>
+<!-- Illustrated Hero Placeholder -->
+<div class="relative w-full h-full rounded-3xl overflow-hidden border-[3px] border-border-dusk bg-surface-indigo shadow-[0px_20px_50px_rgba(27,20,80,0.8)] -rotate-1 hover:rotate-0 transition-transform duration-500">
+<img class="w-full h-full object-cover" data-alt="A 3D whimsical cartoon character in colorful striped pajamas sleeping soundly atop a puffy white cloud mattress under a midnight star sky. Puffy glowing yellow Zzz balloons float upward into the air. A friendly smiling crescent moon wearing a striped sleeping nightcap gently hovers above with warm ambient magenta and indigo lighting, arcade toy aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABSpxA8PVCMDdu59jGb1A42kOW7SBbioZv5RtUp2KL1L7wgTtofQe21D1t_9piVKOSZTAGRH4xfb5MD3bYtm0fHj01ZWG_nbmktFOPtgV_AV2c91vvlb-YymIb3UYn_TdkLrJnPppjS6rUogcn8yFzTLRZRrbISNNASnt3B8Cfq6O5kxJy4GKhAyJybapL8KhAlNOzHWHY6cuy1D6ug5LyTjbwVbJgvu4kd6_7BsM"/>
+<!-- Floating Pill on top of image -->
+<div class="absolute bottom-4 left-4 right-4 bg-surface-container-highest/90 backdrop-blur-md p-3.5 rounded-2xl border-2 border-border-dusk flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary">
+<span class="material-symbols-outlined text-2xl">ecg_heart</span>
+</div>
+<div>
+<p class="font-label-mono-sm text-label-mono-sm text-tertiary">LIVE TELEMETRY</p>
+<p class="font-title-md text-body-sm text-text-moon-cream font-bold">Deep Delta Slumber (Stage 4)</p>
+</div>
+</div>
+<span class="font-label-mono-md text-label-mono-md text-secondary-fixed bg-surface-indigo px-3 py-1 rounded-full border border-border-dusk">48 BPM</span>
+</div>
+</div>
+<!-- Floater Badge Overlap -->
+<div class="absolute -top-4 -left-4 bg-dawn-orange text-surface-dim font-headline-sm text-body-sm px-4 py-2 rounded-full border-[3px] border-[#0B0620] shadow-arcade-button -rotate-6 select-none">
+              😴 NO ALARM CLOCKS ALLOWED
+            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TEASER MODAL -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-container-lowest/80 backdrop-blur-md" id="teaser-modal">
+<div class="bg-surface-indigo max-w-2xl w-full rounded-2xl border-2 border-border-dusk p-6 shadow-2xl relative">
+<div class="flex items-center justify-between pb-4 border-b border-border-dusk">
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream">Contest Teaser Trailer</h3>
+<button class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center hover:bg-primary hover:text-on-primary" onclick="document.getElementById('teaser-modal').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<div class="mt-4 aspect-video rounded-xl overflow-hidden bg-surface-container-lowest flex flex-col items-center justify-center border border-border-dusk/50 relative">
+<img class="w-full h-full object-cover" data-alt="Cinematic arena trailer shot of stadium floor lined with thousands of colorful illuminated inflatable sleeping mats, fog machines rolling low, stadium spotlights scanning overhead." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy80dmjOWVl2TaJvMKoSTWtaWvVBCiDHZ6DZQ5d0Bd8coV31oJsm1ZtWhu1ppuYqfLZ-xJNdeLlyt-QCSesMZKBsrMrkRlDzr-iys33bXt5xFCZfMNJIQn0nhHnoXRyiCOU0wgjlmTMN7zEpYcupGxN893Rfw1SXXJdKMuKw6y3vSfZOD6tEoPFbq0Um_BnuQTq3x52qdaDTTeRJqif73i6SJvLcCz0MeY33nBXF4"/>
+<div class="absolute inset-0 bg-surface-container-lowest/50 flex flex-col items-center justify-center gap-3">
+<div class="w-16 h-16 rounded-full bg-primary-container text-text-moon-cream flex items-center justify-center shadow-arcade-button cursor-pointer">
+<span class="material-symbols-outlined text-4xl">play_arrow</span>
+</div>
+<span class="font-label-mono-md text-label-mono-md text-text-moon-cream uppercase tracking-wider">Preview Arena Gameplay</span>
+</div>
+</div>
+</div>
+</div>
+<!-- LIVE COUNTER SECTION -->
+<section class="w-full py-space-xl bg-surface-container-low border-y-2 border-border-dusk relative" id="counter">
+<div class="max-w-[1200px] mx-auto px-gutter-mobile lg:px-margin">
+<div class="bg-surface-indigo rounded-3xl border-2 border-border-dusk p-6 lg:p-10 shadow-[0px_16px_40px_rgba(58,44,120,0.35)] relative overflow-hidden">
+<!-- Background decorative pulse wave -->
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
+<div>
+<div class="inline-flex items-center gap-2 bg-secondary-fixed/20 text-secondary-fixed font-label-mono-md text-label-mono-sm uppercase px-3 py-1 rounded-full mb-2">
+<span class="material-symbols-outlined text-sm">sensors</span>
+<span>Live Mat Registration Meter</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-text-moon-cream">Sleepers Registered So Far</h2>
+<p class="font-body-md text-body-md text-text-lavender-mist">The exact second we hit 200,000 sleepers, the nationwide contest date locks into place.</p>
+</div>
+<!-- Big Counter Digits -->
+<div class="flex items-baseline gap-2 bg-surface-container-lowest px-6 py-4 rounded-2xl border-2 border-border-dusk shadow-inner">
+<span class="font-label-mono-lg text-4xl lg:text-5xl font-extrabold text-secondary-fixed tracking-tight" id="live-count">142,850</span>
+<span class="font-label-mono-md text-xl lg:text-2xl text-outline-variant font-bold">/ 200,000</span>
+</div>
+</div>
+<!-- Heartbeat Progress ECG Interactive Track -->
+<div class="relative w-full pt-6 pb-4">
+<!-- ECG Line Graph representation -->
+<div class="relative h-16 w-full flex items-center">
+<svg class="w-full h-16 overflow-visible" fill="none" preserveaspectratio="none" viewbox="0 0 1000 64" xmlns="http://www.w3.org/2000/svg">
+<!-- Background grid lines -->
+<line stroke="#3A2C78" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="1000" y1="32" y2="32"></line>
+<!-- ECG Path: Chaotic spiked pulse on left, flattening smoothly toward 71% and completely flat by end -->
+<path class="drop-shadow-[0_0_12px_#35F2B0]" d="M 0 32 L 60 32 L 75 10 L 90 54 L 105 16 L 120 44 L 140 32 L 210 32 L 225 6 L 240 58 L 255 18 L 270 42 L 290 32 L 380 32 L 395 14 L 410 50 L 425 22 L 440 38 L 460 32 L 560 32 L 575 22 L 590 42 L 605 28 L 620 34 L 640 32 L 714 32 L 1000 32" stroke="#35F2B0" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+<!-- Marker Pin at 71.4% -->
+<div class="absolute left-[71.4%] -top-3 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+<div class="bg-secondary-fixed text-on-secondary-fixed font-label-mono-sm text-label-mono-sm px-2.5 py-0.5 rounded-full border-2 border-[#0B0620] shadow-arcade-button mb-1 flex items-center gap-1">
+<span>71.4%</span>
+<span class="material-symbols-outlined text-xs">bedtime</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-tertiary border-2 border-surface-indigo flex items-center justify-center animate-ping"></div>
+<div class="w-3.5 h-3.5 rounded-full bg-secondary-fixed border-2 border-[#0B0620] -mt-4"></div>
+</div>
+</div>
+<!-- Legend Bar Below -->
+<div class="flex justify-between items-center text-label-mono-sm font-label-mono-sm text-on-surface-variant pt-2 border-t border-border-dusk/50">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary-container"></span>0 Confirmed (Initial Phase)</span>
+<span class="text-secondary-fixed font-bold">57,150 Mats Remaining</span>
+<span class="flex items-center gap-1.5">200,000 (Date Locked &amp; Arena Gates Open)<span class="w-2 h-2 rounded-full bg-tertiary"></span></span>
+</div>
+</div>
+<!-- Action Row -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-border-dusk">
+<p class="font-body-sm text-body-sm text-text-lavender-mist">
+            🔥 Over <strong class="text-text-moon-cream font-bold">1,400 sleepers joined today</strong>. Don't risk waiting for the $39.99 late window.
+          </p>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<a class="shadow-arcade-button flex-1 sm:flex-initial h-12 px-6 bg-primary-container text-text-moon-cream font-headline-sm text-body-md rounded-full border-[3px] border-[#0B0620] flex items-center justify-center gap-2 select-none cursor-pointer" href="#register">
+<span>Reserve My Spot · $10</span>
+</a>
+<button class="h-12 px-5 bg-surface-container-high hover:bg-surface-bright text-text-moon-cream font-headline-sm text-body-md rounded-full border-2 border-border-dusk flex items-center gap-2 select-none transition-colors" onclick="navigator.clipboard ? navigator.clipboard.writeText(window.location.href).then(() =&gt; alert('Contest link copied to clipboard!')) : alert('Link copied!')" type="button">
+<span class="material-symbols-outlined text-lg">share</span>
+<span class="hidden md:inline">Bring a Friend</span>
+<span class="bg-tertiary text-on-tertiary text-[11px] font-bold px-2 py-0.5 rounded-full uppercase">+$5 Bonus</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- HOW IT WORKS SECTION -->
+<section class="w-full py-space-xl lg:py-28 bg-surface-dim" id="how-it-works">
+<div class="max-w-[1200px] mx-auto px-gutter-mobile lg:px-margin">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<span class="font-label-mono-sm text-label-mono-sm uppercase text-secondary-fixed bg-surface-indigo border border-border-dusk px-3.5 py-1.5 rounded-full">Rules of Engagement</span>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-text-moon-cream mt-3 mb-4">How America's Deepest Sleeper Wins</h2>
+<p class="font-body-lg text-body-lg text-text-lavender-mist">Four simple steps from $10 down to walking away with six figures in cold hard slumber money.</p>
+</div>
+<!-- 4 Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Step 1 -->
+<div class="bg-surface-indigo rounded-[28px] border-2 border-border-dusk p-6 flex flex-col justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.3)] hover:-translate-y-1 transition-transform relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary-container/10 rounded-full blur-xl group-hover:bg-primary-container/20 transition-all"></div>
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="font-label-mono-lg text-2xl text-secondary-fixed bg-surface-container-lowest px-3 py-1 rounded-xl border border-border-dusk">01</span>
+<div class="w-12 h-12 rounded-full bg-primary-container/20 text-primary-container border border-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">confirmation_number</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-2">Reserve for $10</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Lock your mat in the official national arena today. Balance of $29.99 is only payable once the confirmed date and stadium are announced.</p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-dusk/60 font-label-mono-sm text-label-mono-sm text-tertiary">
+            ✓ 100% Refundable Guarantee
+          </div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-indigo rounded-[28px] border-2 border-border-dusk p-6 flex flex-col justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.3)] hover:-translate-y-1 transition-transform relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-secondary/10 rounded-full blur-xl group-hover:bg-secondary/20 transition-all"></div>
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="font-label-mono-lg text-2xl text-secondary-fixed bg-surface-container-lowest px-3 py-1 rounded-xl border border-border-dusk">02</span>
+<div class="w-12 h-12 rounded-full bg-secondary-fixed/20 text-secondary-fixed border border-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">checkroom</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-2">Show Up in Pajamas</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Fluffy dinosaur onesies, silky Victorian nightgowns, or classic flannel. Pajamas are strictly mandatory. We provide the mattress and hypoallergenic pillow.</p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-dusk/60 font-label-mono-sm text-label-mono-sm text-secondary-fixed">
+            ✓ Best Pajama $2,500 Side Prize
+          </div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-indigo rounded-[28px] border-2 border-border-dusk p-6 flex flex-col justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.3)] hover:-translate-y-1 transition-transform relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-tertiary/10 rounded-full blur-xl group-hover:bg-tertiary/20 transition-all"></div>
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="font-label-mono-lg text-2xl text-secondary-fixed bg-surface-container-lowest px-3 py-1 rounded-xl border border-border-dusk">03</span>
+<div class="w-12 h-12 rounded-full bg-tertiary-container/30 text-tertiary border border-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">monitor_heart</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-2">Sleep for 90 Minutes</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Lie flat on your designated mat. A gentle non-invasive telemetry patch clips to your wrist and chest to track your sleep depth and heart rate variability.</p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-dusk/60 font-label-mono-sm text-label-mono-sm text-tertiary">
+            ✓ Clinical Medical Board Supervised
+          </div>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface-indigo rounded-[28px] border-2 border-border-dusk p-6 flex flex-col justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.3)] hover:-translate-y-1 transition-transform relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-dawn-orange/10 rounded-full blur-xl group-hover:bg-dawn-orange/20 transition-all"></div>
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="font-label-mono-lg text-2xl text-secondary-fixed bg-surface-container-lowest px-3 py-1 rounded-xl border border-border-dusk">04</span>
+<div class="w-12 h-12 rounded-full bg-dawn-orange/20 text-dawn-orange border border-dawn-orange flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">emoji_events</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-2">Survive the Squad</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">If your pulse stays low and you ignore the sound, feather, and culinary gauntlet, your REM score stays intact. The deepest sleeper wins $100,000 cash.</p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-dusk/60 font-label-mono-sm text-label-mono-sm text-secondary-fixed">
+            ✓ Instant Wire Transfer On Stage
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- MEET THE WAKE-UP SQUAD SECTION -->
+<section class="w-full py-space-xl bg-surface-container-low border-t-2 border-border-dusk relative" id="wake-up-squad">
+<div class="max-w-[1200px] mx-auto px-gutter-mobile lg:px-margin">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<span class="font-label-mono-sm text-label-mono-sm uppercase text-dawn-orange bg-surface-indigo border border-border-dusk px-3 py-1 rounded-full">The Obstacles</span>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-text-moon-cream mt-2">Meet the Wake-Up Squad</h2>
+<p class="font-body-lg text-body-lg text-text-lavender-mist">Three escalating trials designed by sound engineers, pastry chefs, and tickle masters.</p>
+</div>
+<div class="bg-surface-indigo px-4 py-2.5 rounded-2xl border-2 border-border-dusk text-label-mono-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-error">warning</span>
+<span>Zero physical pain. 100% sensory temptation.</span>
+</div>
+</div>
+<!-- 3 Character Cards (Tilted Neo-Brutalist Cards) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Squad Card 1: Noise Round -->
+<div class="relative bg-gradient-to-b from-surface-indigo to-surface-container-high rounded-[28px] border-[3px] border-border-dusk p-6 flex flex-col justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.45)] -rotate-1 hover:rotate-0 transition-transform">
+<div class="absolute -top-3.5 right-6 bg-dawn-orange text-surface-dim font-headline-sm text-xs px-3 py-1 rounded-full border-2 border-[#0B0620] shadow-arcade-button">
+            ROUND 01 · DECIBEL HELL
+          </div>
+<div>
+<div class="h-44 w-full rounded-2xl overflow-hidden bg-surface-container-lowest border border-border-dusk mb-5 relative">
+<img class="w-full h-full object-cover" data-alt="Comic theatrical referees in referee stripes and nightcaps holding comically oversized train horn megaphones sneaking between rows of sleeping competitors with exaggerated tiptoe expressions." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCu3tXXTacOAZsGm_iVQxLXnBq50j53GQLr42Qv2uax94sFZU65k44IGA8jPEAq2RqPrUiMb29ivjGuQc_IzQlcnAI4UYznuUg9aUxuniDZ79dSQOHEnFmtHN7kaUrsWjryXEV61sw3SsG8ckzy4BcIoe55bQVQHEiu6Q9mN18daMlcmVIB-Ef2qKQnXTnzXUU8xeMSdQz4w_MOgdQJIX1zYQKzcOAwneYznL47_AQ"/>
+<div class="absolute top-2 left-2 bg-surface-indigo/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-[11px] font-label-mono-sm text-secondary-fixed border border-border-dusk">
+                110 dB Sound Waves
+              </div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-1">The Noise Round</h3>
+<p class="font-body-sm text-body-sm text-text-lavender-mist mb-4">
+              Stadium sound trucks rolling by with amplified rooster crows, fingernails on chalkboards, screaming baby soundtracks, and unexpected air-horn bursts.
+            </p>
+</div>
+<!-- Mini Heartbeat ECG widget -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-border-dusk">
+<div class="flex justify-between items-center text-label-mono-sm font-label-mono-sm mb-1.5">
+<span class="text-on-surface-variant">Sleeper Heart Rate React</span>
+<span class="text-error font-bold">+18 BPM Spike</span>
+</div>
+<div class="h-8 w-full flex items-center">
+<svg class="w-full h-8" fill="none" preserveaspectratio="none" viewbox="0 0 200 32">
+<path d="M 0 16 L 40 16 L 45 4 L 50 28 L 55 8 L 60 22 L 70 16 L 120 16 L 140 16 L 200 16" stroke="#FF4F8B" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<div class="text-[11px] font-label-mono-sm text-outline-variant text-right">Earplugs strictly prohibited</div>
+</div>
+</div>
+<!-- Squad Card 2: Tickle Round -->
+<div class="relative bg-gradient-to-b from-surface-indigo to-surface-container-high rounded-[28px] border-[3px] border-border-dusk p-6 flex flex-col justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.45)] rotate-1 hover:rotate-0 transition-transform">
+<div class="absolute -top-3.5 right-6 bg-primary-container text-text-moon-cream font-headline-sm text-xs px-3 py-1 rounded-full border-2 border-[#0B0620] shadow-arcade-button">
+            ROUND 02 · TACTILE COMBAT
+          </div>
+<div>
+<div class="h-44 w-full rounded-2xl overflow-hidden bg-surface-container-lowest border border-border-dusk mb-5 relative">
+<img class="w-full h-full object-cover" data-alt="A smiling referee in soft velvet gloves delicately hovering a 3-foot long fluffy pastel pink ostrich feather near the twitching nose of a sleeping contestant wrapped in a blanket." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoH231jti0KIQ0NM3aqQPuFhYbhCWuC3BdzJ_n80gfQcJIFkdEpS3QXCws2IQk9V574aPbSo18JBQBhfZgI_tEGuNfKa3OucP5Vb5mK_tZMRcOC-DBbEGWQ6bYIWUoZoU86rWubjKKxhr4iznSnzYagPfGvOycqrrcVRR0OeippVYlHl_puZr_h4oigsWzPS78OQ8r1OA4hKhz_aNEkMSJmwhTYN8JOIdFK28CuZc"/>
+<div class="absolute top-2 left-2 bg-surface-indigo/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-[11px] font-label-mono-sm text-primary border border-border-dusk">
+                Feather Whispers
+              </div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-1">The Tickle Round</h3>
+<p class="font-body-sm text-body-sm text-text-lavender-mist mb-4">
+              Specially trained feather ninjas using authentic fluffy ostrich plumes brushing eyelashes, noses, and sock seams. Sneeze or scratch and your heart rate surges.
+            </p>
+</div>
+<!-- Mini Heartbeat ECG widget -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-border-dusk">
+<div class="flex justify-between items-center text-label-mono-sm font-label-mono-sm mb-1.5">
+<span class="text-on-surface-variant">Sleeper Heart Rate React</span>
+<span class="text-secondary-fixed font-bold">Micro-Flutter Stabilized</span>
+</div>
+<div class="h-8 w-full flex items-center">
+<svg class="w-full h-8" fill="none" preserveaspectratio="none" viewbox="0 0 200 32">
+<path d="M 0 16 L 60 16 L 65 10 L 70 20 L 75 12 L 80 18 L 90 16 L 200 16" stroke="#FFE253" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<div class="text-[11px] font-label-mono-sm text-outline-variant text-right">No flinching allowed</div>
+</div>
+</div>
+<!-- Squad Card 3: Smell Round -->
+<div class="relative bg-gradient-to-b from-surface-indigo to-surface-container-high rounded-[28px] border-[3px] border-border-dusk p-6 flex flex-col justify-between shadow-[0px_16px_40px_rgba(58,44,120,0.45)] -rotate-1 hover:rotate-0 transition-transform">
+<div class="absolute -top-3.5 right-6 bg-secondary-fixed text-on-secondary-fixed font-headline-sm text-xs px-3 py-1 rounded-full border-2 border-[#0B0620] shadow-arcade-button">
+            ROUND 03 · THE AROMA TRAP
+          </div>
+<div>
+<div class="h-44 w-full rounded-2xl overflow-hidden bg-surface-container-lowest border border-border-dusk mb-5 relative">
+<img class="w-full h-full object-cover" data-alt="Chef in whimsical midnight pajama hat wafting a hot cast-iron skillet of smoking maple bacon strips, warm buttery Belgian waffles, and dark roasted espresso directly across sleepy contestant faces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-116V1cM5nmbVpF4WKulKZEjz0-FRlDpGIBbF1cc6akkKbg50t_WUQ_WSuAifkldF97ykuTSOx8heWNg42EadJfyTFUDu2kQ59keW2djpnj1p1m63wSwTXFvmlUt2N9_BQUBldT8Xt8PiEv5w7ei0y90zBmEgFe-5RW5rrM0YuiOP1M1TaaPJhKDeD87Ohvfa7w-2hBmquET7hipQcBgUX87TkuFjTqaXyMWpI0w"/>
+<div class="absolute top-2 left-2 bg-surface-indigo/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-[11px] font-label-mono-sm text-secondary-fixed border border-border-dusk">
+                Hickory Maple Vapor
+              </div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-1">The Smell Round</h3>
+<p class="font-body-sm text-body-sm text-text-lavender-mist mb-4">
+              Mobile stadium griddles cooking thick-cut hickory smoked bacon, piping-hot cinnamon rolls, and fresh drip coffee fans directed right across the sleep floor.
+            </p>
+</div>
+<!-- Mini Heartbeat ECG widget -->
+<div class="bg-surface-container-lowest p-3.5 rounded-xl border border-border-dusk">
+<div class="flex justify-between items-center text-label-mono-sm font-label-mono-sm mb-1.5">
+<span class="text-on-surface-variant">Sleeper Heart Rate React</span>
+<span class="text-tertiary font-bold">Deep Slumber Locked</span>
+</div>
+<div class="h-8 w-full flex items-center">
+<svg class="w-full h-8" fill="none" preserveaspectratio="none" viewbox="0 0 200 32">
+<path d="M 0 16 L 90 16 L 95 14 L 100 18 L 105 16 L 200 16" stroke="#35F2B0" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<div class="text-[11px] font-label-mono-sm text-outline-variant text-right">Salivation telemetry tracked</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- PRIZE PODIUM & GUARANTEE SECTION -->
+<section class="w-full py-space-xl lg:py-28 bg-surface-dim relative overflow-hidden" id="prize-podium">
+<!-- Spotlights from top -->
+<div class="absolute top-0 left-1/4 w-96 h-96 bg-secondary-fixed/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute top-0 right-1/4 w-96 h-96 bg-primary-container/10 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="max-w-[1200px] mx-auto px-gutter-mobile lg:px-margin relative z-10">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<span class="font-label-mono-sm text-label-mono-sm uppercase text-secondary-fixed bg-surface-indigo border border-border-dusk px-3.5 py-1.5 rounded-full">Official Prize Distribution</span>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-text-moon-cream mt-3 mb-4">The $167,500 Cash Purse</h2>
+<p class="font-body-lg text-body-lg text-text-lavender-mist">Top 5 deepest, most unbothered sleepers get paid. Plus guaranteed consolation swag for every competitor.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-16">
+<!-- Podium Visual: 2nd, 1st, 3rd Stair-step -->
+<div class="lg:col-span-8 flex flex-col items-center">
+<div class="w-full grid grid-cols-3 gap-3 sm:gap-4 items-end pt-12">
+<!-- 2nd Place Block -->
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-surface-indigo border-4 border-slate-300 flex items-center justify-center shadow-lg -mb-6 z-10">
+<span class="material-symbols-outlined text-3xl sm:text-4xl text-slate-200">workspace_premium</span>
+</div>
+<div class="w-full bg-gradient-to-b from-surface-container-high to-surface-indigo rounded-t-3xl border-2 border-slate-400/40 p-4 pt-10 text-center h-64 sm:h-72 flex flex-col justify-between shadow-2xl">
+<div>
+<span class="font-label-mono-lg text-2xl text-slate-300 font-extrabold">2ND</span>
+<div class="font-headline-md text-headline-sm sm:text-headline-md text-text-moon-cream mt-1">$50,000</div>
+<p class="font-label-mono-sm text-label-mono-sm text-text-lavender-mist mt-1">Silver Pillow Trophy</p>
+</div>
+<div class="bg-surface-container-lowest/80 py-1.5 rounded-xl text-label-mono-sm text-on-surface-variant font-bold border border-border-dusk">
+                  + Luxury Mattress Kit
+                </div>
+</div>
+</div>
+<!-- 1st Place Block (Center, Tallest, Gold Glow) -->
+<div class="flex flex-col items-center">
+<div class="relative -mb-8 z-10 flex flex-col items-center">
+<span class="material-symbols-outlined text-4xl text-secondary-fixed animate-bounce">crown</span>
+<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-secondary-fixed border-4 border-[#0B0620] shadow-arcade-button flex items-center justify-center -mt-2">
+<span class="material-symbols-outlined text-4xl sm:text-5xl text-on-secondary-fixed">emoji_events</span>
+</div>
+</div>
+<div class="w-full bg-gradient-to-b from-secondary-fixed/20 via-surface-indigo to-surface-container-lowest rounded-t-3xl border-4 border-secondary-fixed p-4 pt-14 text-center h-84 sm:h-96 flex flex-col justify-between shadow-[0px_0px_50px_rgba(255,226,83,0.3)]">
+<div>
+<span class="font-label-mono-lg text-3xl text-secondary-fixed font-black">1ST PLACE</span>
+<div class="font-display-hero text-headline-lg sm:text-5xl text-secondary-fixed font-black mt-1 tracking-tight">$100,000</div>
+<p class="font-label-mono-md text-label-mono-md text-text-moon-cream font-bold mt-1">The Gold Slumber Crown</p>
+<p class="font-body-sm text-body-sm text-tertiary mt-1">National Sleep Title 2025</p>
+</div>
+<div class="bg-secondary-fixed text-on-secondary-fixed py-2 rounded-xl text-label-mono-sm font-bold border-2 border-[#0B0620] shadow-arcade-button">
+                  👑 Lifetime Sleep Champion
+                </div>
+</div>
+</div>
+<!-- 3rd Place Block -->
+<div class="flex flex-col items-center">
+<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-surface-indigo border-4 border-dawn-orange flex items-center justify-center shadow-lg -mb-6 z-10">
+<span class="material-symbols-outlined text-3xl sm:text-4xl text-dawn-orange">military_tech</span>
+</div>
+<div class="w-full bg-gradient-to-b from-surface-container-high to-surface-indigo rounded-t-3xl border-2 border-dawn-orange/40 p-4 pt-10 text-center h-52 sm:h-60 flex flex-col justify-between shadow-xl">
+<div>
+<span class="font-label-mono-lg text-2xl text-dawn-orange font-extrabold">3RD</span>
+<div class="font-headline-md text-headline-sm sm:text-headline-md text-text-moon-cream mt-1">$10,000</div>
+<p class="font-label-mono-sm text-label-mono-sm text-text-lavender-mist mt-1">Bronze Dream Trophy</p>
+</div>
+<div class="bg-surface-container-lowest/80 py-1.5 rounded-xl text-label-mono-sm text-on-surface-variant font-bold border border-border-dusk">
+                  + 1 Year Coffee Pass
+                </div>
+</div>
+</div>
+</div>
+<!-- 4th and 5th Place Runner-up Strip -->
+<div class="w-full grid grid-cols-2 gap-4 mt-4">
+<div class="bg-surface-container-high p-3.5 rounded-2xl border border-border-dusk flex items-center justify-between">
+<div>
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">4th Place</span>
+<p class="font-headline-sm text-body-lg text-text-moon-cream">$5,000 Cash</p>
+</div>
+<span class="material-symbols-outlined text-tertiary">check_circle</span>
+</div>
+<div class="bg-surface-container-high p-3.5 rounded-2xl border border-border-dusk flex items-center justify-between">
+<div>
+<span class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">5th Place</span>
+<p class="font-headline-sm text-body-lg text-text-moon-cream">$2,500 Cash</p>
+</div>
+<span class="material-symbols-outlined text-tertiary">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Right Side: The Pricing Guarantee Sticker Card -->
+<div class="lg:col-span-4">
+<div class="bg-secondary-fixed text-on-secondary-fixed rounded-3xl border-[3px] border-[#0B0620] p-6 sm:p-8 shadow-arcade-button rotate-1 hover:rotate-0 transition-transform">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-2xl">verified_user</span>
+<span class="font-headline-sm text-headline-sm uppercase tracking-tight">The 100% Refund Pact</span>
+</div>
+<div class="space-y-4 font-body-md text-body-md">
+<div class="bg-surface-indigo text-text-moon-cream p-4 rounded-2xl border-2 border-[#0B0620]">
+<div class="font-label-mono-sm text-label-mono-sm text-tertiary uppercase">Cost Breakdown</div>
+<div class="font-headline-md text-headline-md mt-1">$39.99 Total Mat Pass</div>
+<div class="text-body-sm text-text-lavender-mist mt-1">Only $10 today to secure your number. The rest is due after dates are declared.</div>
+</div>
+<ul class="space-y-3 font-body-sm text-on-secondary-fixed font-semibold">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-lg">check</span>
+<span>Full 100% instant refund if the arena date does not match your schedule.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-lg">check</span>
+<span>Every sleeper receives an official commemorative contest sleeping mask and patch.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-lg">check</span>
+<span>No hidden fees, no subscriptions, no recurring charges.</span>
+</li>
+</ul>
+<a class="mt-4 w-full h-12 bg-primary-container text-text-moon-cream rounded-full border-[3px] border-[#0B0620] shadow-arcade-button flex items-center justify-center font-headline-sm text-body-md cursor-pointer" href="#register">
+                Lock In for $10 Today
+              </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- BENTO GALLERY GRID: WHAT IT LOOKS LIKE -->
+<section class="w-full py-space-xl bg-surface-container-low border-y-2 border-border-dusk" id="gallery">
+<div class="max-w-[1200px] mx-auto px-gutter-mobile lg:px-margin">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div>
+<span class="font-label-mono-sm text-label-mono-sm uppercase text-tertiary bg-surface-indigo border border-border-dusk px-3 py-1 rounded-full">Arena Sneak Peek</span>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-text-moon-cream mt-2">What It Actually Looks Like</h2>
+<p class="font-body-lg text-body-lg text-text-lavender-mist">A high-voltage midnight festival where the quietest sleeper takes all.</p>
+</div>
+<div class="font-label-mono-sm text-label-mono-sm text-on-surface-variant">
+          📍 Official Domed Stadium Arenas Nationwide
+        </div>
+</div>
+<!-- Bento Grid (6 Rich Tiles) -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[240px]">
+<!-- Tile 1: 2-column wide arena view -->
+<div class="md:col-span-2 lg:col-span-2 row-span-2 rounded-3xl overflow-hidden border-2 border-border-dusk relative group shadow-xl">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Massive indoor domed stadium arena packed with thousands of glowing pastel sleeping mats arranged in precise geometric patterns under deep purple concert mood lighting and soft mist." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhsu2MUz-bw_MVR4xe7ODVfaLhQT-XSMsuFQO8-YnVD7Eigh8hLyUB9Px8tzLCYhvdgDqIyXb1tBH6eVP_A3V47F-6ECn4uIzHkwNVeN1jRYug_upgqdMhnKq8jyf9H1p9hiceG3O36OKk166vTnSKQs60C150xM_wvtH2F4MvPBxSeSir7Q4WnNLdR6wL9ntwACbuBXpD7SgzpWYlGpxjOT7NccfaYv_tvdr1dUg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/30 to-transparent"></div>
+<div class="absolute top-4 left-4 bg-surface-indigo/90 backdrop-blur-md px-3 py-1.5 rounded-full text-label-mono-sm font-label-mono-sm text-secondary-fixed border border-border-dusk flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span>200,000 SLEEPER ARENA FLOOR</span>
+</div>
+<div class="absolute bottom-6 left-6 right-6">
+<h3 class="font-headline-sm text-headline-sm text-text-moon-cream mb-1">The Sleeping Floor</h3>
+<p class="font-body-sm text-body-sm text-text-lavender-mist">Specially dampened acoustic arenas fitted with medical biotelemetry receivers above every single mat.</p>
+</div>
+</div>
+<!-- Tile 2: Feather Referee -->
+<div class="md:col-span-1 lg:col-span-1 row-span-1 rounded-3xl overflow-hidden border-2 border-border-dusk relative group shadow-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close-up of a whimsical referee in black and white stripes delicately testing a contestant's eyelash with a bright yellow giant feather with dramatic spotlighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbGXZQNe48ARU2gzSeWgV2rLIbK-I18O-uAgE5zKxpe34K2tJ0PT8lzMEYNIPQsseAkQ27qiCqCNOtvUI0QAHuI43rX0CpZprP5kAn95zeBrWXmCp57-RbaKq8VEOs4r-W0S-X3dlVFzAIAgWr6iaBttooxofDaKIBte9rZfDh2C_LEJ4-JK83ZAQvnzPgKgy0EpGm2dNC_gUUVjZXhQzW3hN7tXDWii2jp1ZT13c"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="font-label-mono-sm text-label-mono-sm text-dawn-orange uppercase font-bold">Wake-Up Referee</span>
+<p class="font-title-md text-body-sm text-text-moon-cream font-bold">The Eyelash Feather Test</p>
+</div>
+<div class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-indigo/80 border border-border-dusk flex items-center justify-center text-secondary-fixed">
+<span class="material-symbols-outlined text-sm">play_arrow</span>
+</div>
+</div>
+<!-- Tile 3: Jumbotron ECG Board -->
+<div class="md:col-span-1 lg:col-span-1 row-span-1 rounded-3xl overflow-hidden border-2 border-border-dusk relative group shadow-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Gigantic arena Jumbotron center-hung screen glowing with real-time biometric sleep telemetry charts, heart rate graphs, and contestant rankings in cyan and pink." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcechftKoJUzhZsr-RWF1PISfboHesVVAkHCmskAHxuWRlZGaFfRxEinYW5IbfYVE3iBM2Qwg8IRexE6Q0EgJmLRA2XkDPs1qCKDkqheHGDqwgivvc1lJWY4M1vFNKLpuKjiIxcd2uFe6Cif1IBfAACRehz12i1hF7WFyUUWthOOZtz4jn5d5k0_cQrcfUAMQ_C3CT5bI8mOaBFiNoXlhLGtnQKjHX3vx55hp3t1s"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="font-label-mono-sm text-label-mono-sm text-tertiary uppercase font-bold">Center-Hung Display</span>
+<p class="font-title-md text-body-sm text-text-moon-cream font-bold">Live Heartbeat Jumbotron</p>
+</div>
+</div>
+<!-- Tile 4: Best Pajamas -->
+<div class="md:col-span-1 lg:col-span-1 row-span-1 rounded-3xl overflow-hidden border-2 border-border-dusk relative group shadow-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Contestant dressed in an outrageous inflatable marshmallow monster pajama onesie waving happily on stage while holding a giant golden plush pillow." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5I-KI1wolGeagttXkxXJkRp2fsWxjWP0PrVeSYvbpI2nk8y5ycFd8z39No0mu2zOuwE2BH5e4jcYVAFVdlQJzbbRGk2tOHWKZ_wcopnoGf8pkL82KUXxxoMGUHD8Pd1GSvlYOe0yKxg9O30yszEjADn5v0F221yBI_zJo_dCZx6Zks-tMrjuLptqS9XpP4RdSd9YGQ3BesNCQpnqIUxyvnbxx1YZHxcBJ6zZP_J4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="font-label-mono-sm text-label-mono-sm text-primary uppercase font-bold">Fan Favorite</span>
+<p class="font-title-md text-body-sm text-text-moon-cream font-bold">Pajama Runway Competition</p>
+</div>
+</div>
+<!-- Tile 5: Megaphone horn sneaky round -->
+<div class="md:col-span-1 lg:col-span-1 row-span-1 rounded-3xl overflow-hidden border-2 border-border-dusk relative group shadow-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Wake-up squad members with giant yellow brass horns tiptoeing past sleeping contestants in dim violet atmospheric lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAug3ZZ4m9ko8ziiogMIqks2N7Qkm1uVXcIcsmwiICGpRR82s50A5x1oqHqyUX6o7OqKg44D08mDuHaoAQ16SnIB5eS5pE_iyMVln5meYZC3Q276BaqJRGWb0m8amdcBZgcoVr3nDnY4pCFKMzep0lKXmc0XdDDHdFxTiHH6pfVYIjZ89RwGpfYjP8WXECFciAa8EoBCSPHIecWG0ijw1ZyL_nzfkolqWfC-W_GefI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/90 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="font-label-mono-sm text-label-mono-sm text-dawn-orange uppercase font-bold">Decibel Challenge</span>
+<p class="font-title-md text-body-sm text-text-moon-cream font-bold">The Train Horn Patrol</p>
+</div>
+</div>
+<!-- Tile 6: Grand Prize Celebration Check -->
+<div class="md:col-span-2 lg:col-span-2 row-span-1 rounded-3xl overflow-hidden border-2 border-border-dusk relative group shadow-lg">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="Confetti storm explosion over the winner's podium with a sleeper in blue silk pajamas smiling while holding a giant five-foot oversized check for one hundred thousand dollars under golden spotlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6FjHXT1wJU_h7UH7i9dOBavo93UnEFswVTREQSJJpWdPPeXg3gl1pOF3ugg16eS8NobOh8DQLI5e4ghSuPp6EAeRdyOdAxQ6Qb4eCKAVRXPNnOs_ZxQCoE12ZExX2WYwRd2daJZ85s974g2qnJqddQ9G_zr0iXE9oiUpji66yI6KJcUbVW3sEFPj4Omle_6OKwsvXtDaJIapEBSin52FJArS20x2GI4ht_-tuNB4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/40 to-transparent"></div>
+<div class="absolute bottom-4 left-6 right-6 flex items-center justify-between">
+<div>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary-fixed uppercase font-bold">$100,000 Check Presentation</span>
+<p class="font-headline-sm text-headline-sm text-text-moon-cream">The Final Awakening Ceremony</p>
+</div>
+<div class="bg-secondary-fixed text-on-secondary-fixed px-3 py-1 rounded-full font-headline-sm text-body-sm font-bold border-2 border-[#0B0620]">
+              $100,000
+            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CLAIM YOUR MAT: REGISTRATION TICKET CARD -->
+<section class="w-full py-space-xl lg:py-28 bg-surface-dim relative" id="register">
+<div class="max-w-[1000px] mx-auto px-gutter-mobile lg:px-margin">
+<!-- Scalloped Ticket Styling with Neo-brutalist Offsets -->
+<div class="relative bg-text-moon-cream text-surface-dim rounded-[32px] border-[3px] border-[#0B0620] shadow-[8px_8px_0px_#FF4F8B] p-6 sm:p-10 lg:p-12 overflow-hidden">
+<!-- Ticket Stub Notches on sides -->
+<div class="hidden sm:block absolute -left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-surface-dim rounded-full border-r-[3px] border-[#0B0620]"></div>
+<div class="hidden sm:block absolute -right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-surface-dim rounded-full border-l-[3px] border-[#0B0620]"></div>
+<!-- Ticket Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b-2 border-dashed border-[#0B0620]/30 mb-8">
+<div>
+<div class="inline-flex items-center gap-2 bg-[#0B0620] text-secondary-fixed px-3.5 py-1 rounded-full font-label-mono-sm text-label-mono-sm uppercase mb-2">
+<span class="material-symbols-outlined text-sm">alarm</span>
+<span>Official Mat Registry Form</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-[#0B0620] tracking-tight">Claim Your Sleeping Mat</h2>
+<p class="font-body-md text-body-md text-[#0B0620]/75">Lock in mat reservation #142,851 of 200,000 with a $10 deposit.</p>
+</div>
+<div class="bg-primary-container text-text-moon-cream p-4 rounded-2xl border-2 border-[#0B0620] shadow-arcade-button flex sm:flex-col items-center justify-center text-center">
+<span class="font-label-mono-sm text-xs uppercase tracking-wider">Deposit Today</span>
+<span class="font-headline-lg text-3xl font-black">$10.00</span>
+<span class="text-[11px] opacity-90">$29.99 later</span>
+</div>
+</div>
+<!-- Registration Form -->
+<form class="space-y-6" onsubmit="event.preventDefault(); alert('Reservation confirmed! Redirecting to secure deposit processor...');">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Full Name -->
+<div>
+<label class="block font-title-md text-body-sm font-bold text-[#0B0620] mb-2" for="reg-name">
+                Full Legal Name <span class="text-primary-container">*</span>
+</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-text-moon-cream placeholder:text-outline-variant font-body-md border-2 border-border-dusk focus:border-secondary-fixed focus:outline-none transition-colors" id="reg-name" placeholder="e.g. Jordan Miller" required="" type="text"/>
+</div>
+<!-- Email Address -->
+<div>
+<label class="block font-title-md text-body-sm font-bold text-[#0B0620] mb-2" for="reg-email">
+                Email Address <span class="text-primary-container">*</span>
+</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-text-moon-cream placeholder:text-outline-variant font-body-md border-2 border-border-dusk focus:border-secondary-fixed focus:outline-none transition-colors" id="reg-email" placeholder="jordan@example.com" required="" type="email"/>
+</div>
+<!-- Mobile Phone -->
+<div>
+<label class="block font-title-md text-body-sm font-bold text-[#0B0620] mb-2" for="reg-phone">
+                Mobile Phone (SMS Date Alert) <span class="text-primary-container">*</span>
+</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-text-moon-cream placeholder:text-outline-variant font-body-md border-2 border-border-dusk focus:border-secondary-fixed focus:outline-none transition-colors" id="reg-phone" placeholder="(555) 019-2834" required="" type="tel"/>
+</div>
+<!-- City & State -->
+<div>
+<label class="block font-title-md text-body-sm font-bold text-[#0B0620] mb-2" for="reg-city">
+                City &amp; State <span class="text-primary-container">*</span>
+</label>
+<input class="w-full h-12 px-4 rounded-xl bg-surface-container-lowest text-text-moon-cream placeholder:text-outline-variant font-body-md border-2 border-border-dusk focus:border-secondary-fixed focus:outline-none transition-colors" id="reg-city" placeholder="Austin, TX" required="" type="text"/>
+</div>
+</div>
+<!-- Radio: Pajama Style Preference -->
+<div>
+<span class="block font-title-md text-body-sm font-bold text-[#0B0620] mb-2">Pajama Division Preference</span>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<label class="flex items-center gap-3 p-3 rounded-xl border-2 border-[#0B0620]/20 hover:border-[#0B0620] cursor-pointer bg-white transition-colors">
+<input checked="" class="w-5 h-5 accent-primary-container" name="pajama-type" type="radio"/>
+<span class="font-body-sm text-body-sm font-bold text-[#0B0620]">Classic Flannel / Cotton</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-xl border-2 border-[#0B0620]/20 hover:border-[#0B0620] cursor-pointer bg-white transition-colors">
+<input class="w-5 h-5 accent-primary-container" name="pajama-type" type="radio"/>
+<span class="font-body-sm text-body-sm font-bold text-[#0B0620]">Silk Robe &amp; Eye Mask</span>
+</label>
+<label class="flex items-center gap-3 p-3 rounded-xl border-2 border-[#0B0620]/20 hover:border-[#0B0620] cursor-pointer bg-white transition-colors">
+<input class="w-5 h-5 accent-primary-container" name="pajama-type" type="radio"/>
+<span class="font-body-sm text-body-sm font-bold text-[#0B0620]">Full Plush Costume / Onesie</span>
+</label>
+</div>
+</div>
+<!-- Age & Filming Agreement Checkbox -->
+<div class="bg-secondary-fixed/30 p-4 rounded-2xl border-2 border-[#0B0620]/20 space-y-2">
+<label class="flex items-start gap-3 cursor-pointer">
+<input class="mt-1 w-5 h-5 accent-primary-container rounded" required="" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-[#0B0620]">
+                I certify that I am at least 18 years of age and agree to the official contest rules, medical telemetry monitoring, and being filmed while sleeping for national broadcast.
+              </span>
+</label>
+</div>
+<!-- Submit CTA Button -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
+<div class="flex items-center gap-2 text-label-mono-sm text-label-mono-sm text-[#0B0620]/80">
+<span class="material-symbols-outlined text-tertiary-container">lock</span>
+<span>256-Bit Encrypted Checkout · 100% Refundable</span>
+</div>
+<button class="shadow-arcade-button w-full sm:w-auto h-14 px-10 bg-primary-container text-text-moon-cream font-headline-sm text-title-md rounded-full border-[3px] border-[#0B0620] flex items-center justify-center gap-3 hover:-translate-y-0.5 transition-transform cursor-pointer" type="submit">
+<span>Pay $10 and I’m In</span>
+<span class="material-symbols-outlined text-2xl">arrow_forward</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</section>
+<!-- RULES & FAQ ACCORDION -->
+<section class="w-full py-space-xl bg-surface-container-low border-t-2 border-border-dusk" id="rules-and-faq">
+<div class="max-w-[900px] mx-auto px-gutter-mobile lg:px-margin">
+<div class="text-center max-w-xl mx-auto mb-12">
+<span class="font-label-mono-sm text-label-mono-sm uppercase text-secondary-fixed bg-surface-indigo border border-border-dusk px-3 py-1 rounded-full">Got Questions?</span>
+<h2 class="font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-text-moon-cream mt-2">Frequently Asked Questions</h2>
+<p class="font-body-md text-body-md text-text-lavender-mist">Everything you need to know about America's quietest competition.</p>
+</div>
+<!-- Accordion List -->
+<div class="space-y-4">
+<!-- FAQ 1 -->
+<details class="group bg-surface-indigo rounded-2xl border-2 border-border-dusk p-5 [&amp;_summary::-webkit-details-marker]:hidden open:border-secondary-fixed transition-all">
+<summary class="flex items-center justify-between cursor-pointer font-headline-sm text-body-lg text-text-moon-cream select-none">
+<span>What happens if I wake up during the 90 minutes?</span>
+<span class="material-symbols-outlined text-secondary-fixed transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 pt-4 border-t border-border-dusk/60 font-body-md text-body-md text-text-lavender-mist">
+            If your heart rate exceeds baseline threshold for more than 10 seconds or you open your eyes and sit up, your biometric status flips from "Deep Slumber" to "Awake." You may quietly step into the Sleep Lounge to enjoy breakfast waffles and watch the rest of the arena compete on the big screens.
+          </div>
+</details>
+<!-- FAQ 2 -->
+<details class="group bg-surface-indigo rounded-2xl border-2 border-border-dusk p-5 [&amp;_summary::-webkit-details-marker]:hidden open:border-secondary-fixed transition-all">
+<summary class="flex items-center justify-between cursor-pointer font-headline-sm text-body-lg text-text-moon-cream select-none">
+<span>How is the $100,000 winner judged?</span>
+<span class="material-symbols-outlined text-secondary-fixed transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 pt-4 border-t border-border-dusk/60 font-body-md text-body-md text-text-lavender-mist">
+            All 200,000 contestants wear non-invasive biometric telemetry patches that monitor heart rate variability (HRV), pulse steadiness, and delta-wave sleep scores. The contestant with the lowest, most undisturbed cardiac and motion profile through all three wake-up squad rounds takes 1st place.
+          </div>
+</details>
+<!-- FAQ 3 -->
+<details class="group bg-surface-indigo rounded-2xl border-2 border-border-dusk p-5 [&amp;_summary::-webkit-details-marker]:hidden open:border-secondary-fixed transition-all">
+<summary class="flex items-center justify-between cursor-pointer font-headline-sm text-body-lg text-text-moon-cream select-none">
+<span>Can I bring my own pillow and blanket?</span>
+<span class="material-symbols-outlined text-secondary-fixed transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 pt-4 border-t border-border-dusk/60 font-body-md text-body-md text-text-lavender-mist">
+            Yes! You are welcome to bring one personal standard-size pillow and one blanket. We also supply a standardized premium cloud-foam sleep mat and contest-issued eye masks. However, noise-canceling earplugs and sleeping pills are strictly forbidden.
+          </div>
+</details>
+<!-- FAQ 4 -->
+<details class="group bg-surface-indigo rounded-2xl border-2 border-border-dusk p-5 [&amp;_summary::-webkit-details-marker]:hidden open:border-secondary-fixed transition-all">
+<summary class="flex items-center justify-between cursor-pointer font-headline-sm text-body-lg text-text-moon-cream select-none">
+<span>Where and when will the contest take place?</span>
+<span class="material-symbols-outlined text-secondary-fixed transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 pt-4 border-t border-border-dusk/60 font-body-md text-body-md text-text-lavender-mist">
+            The national event will be hosted at a major enclosed NFL domed stadium once 200,000 registrations are met. The final stadium location and exact date will be locked in with 90 days notice, allowing all participants ample travel booking time. If you cannot attend, your $10 deposit is 100% refundable upon request.
+          </div>
+</details>
+<!-- FAQ 5 -->
+<details class="group bg-surface-indigo rounded-2xl border-2 border-border-dusk p-5 [&amp;_summary::-webkit-details-marker]:hidden open:border-secondary-fixed transition-all">
+<summary class="flex items-center justify-between cursor-pointer font-headline-sm text-body-lg text-text-moon-cream select-none">
+<span>What if I need to use the restroom during the 90 minutes?</span>
+<span class="material-symbols-outlined text-secondary-fixed transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 pt-4 border-t border-border-dusk/60 font-body-md text-body-md text-text-lavender-mist">
+            A 45-minute staging and preparation window occurs directly before the official countdown starts. Once the 90-minute sleep clock initiates, leaving your mat constitutes voluntary forfeit from the grand prize competition. Plan your hydration accordingly!
+          </div>
+</details>
+</div>
+</div>
+</section>
+<!-- DAWN FINISH CALL TO ACTION SECTION -->
+<section class="w-full py-space-xl lg:py-32 bg-gradient-to-t from-dawn-orange/25 via-primary-container/20 to-surface-dim relative overflow-hidden text-center">
+<!-- Ambient sunrise glow orb -->
+<div class="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-secondary-fixed/30 rounded-t-full blur-3xl pointer-events-none"></div>
+<div class="max-w-[800px] mx-auto px-gutter-mobile lg:px-margin relative z-10 flex flex-col items-center">
+<!-- Ringing Alarm Clock Badge -->
+<div class="w-16 h-16 rounded-full bg-secondary-fixed text-on-secondary-fixed border-[3px] border-[#0B0620] shadow-arcade-button flex items-center justify-center mb-6 animate-bounce">
+<span class="material-symbols-outlined text-3xl">alarm_on</span>
+</div>
+<h2 class="font-display-hero text-display-hero-mobile lg:text-display-hero text-text-moon-cream tracking-tight mb-6">
+        Think you can out-sleep America?
+      </h2>
+<p class="font-body-lg text-body-lg text-text-lavender-mist max-w-xl mb-8">
+        Join 142,850 contenders already registered. Lock your mat for just $10 and claim your shot at the $100,000 podium check.
+      </p>
+<div class="flex flex-col sm:flex-row items-center gap-4">
+<a class="shadow-arcade-button h-16 px-10 bg-primary-container text-text-moon-cream font-headline-sm text-headline-sm rounded-full border-[3px] border-[#0B0620] flex items-center gap-3 transition-transform hover:-translate-y-1 cursor-pointer select-none" href="#register">
+<span class="material-symbols-outlined text-3xl">bed</span>
+<span>Claim Your Mat · $10</span>
+</a>
+</div>
+<div class="mt-8 flex flex-wrap items-center justify-center gap-6 font-label-mono-sm text-label-mono-sm text-on-surface-variant">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-tertiary text-sm">check_circle</span> 100% Refundable Deposit</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-tertiary text-sm">check_circle</span> Official Sleep USA Sanctioned</span>
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-tertiary text-sm">check_circle</span> No Prescription Aids Allowed</span>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Simple micro-interaction for the live participant count
+  (function() {
+    const counterEl = document.getElementById('live-count');
+    if (!counterEl) return;
+    let count = 142850;
+    setInterval(() => {
+      if (Math.random() > 0.4) {
+        count += Math.floor(Math.random() * 3) + 1;
+        counterEl.textContent = count.toLocaleString();
+      }
+    }, 4500);
+  })();
+</script></main><footer class="w-full bg-surface-container-lowest border-t-2 border-border-dusk text-on-surface-variant mt-auto"><div class="max-w-[1200px] mx-auto px-gutter-mobile lg:px-margin py-space-xl flex flex-col gap-space-lg"><div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-space-md pb-space-lg border-b border-border-dusk/50"><div class="flex items-center gap-space-sm"><img alt="Sleepy Moon Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClw-Kgxi7zE13Yu6PaL09SBHq4Nj_7sDfcCwQDVo3jl1CCsF94L46KHhKlRnPP0dOfMC88K2mG1K3LFvRRdLXi3XHXBAxgcZPnuuCVflZjKgbfqWZspAF08RqnziVwFqoclcU3JJMf9pNEFDXPOBD2n_3K6Ic4Ti-STFmcHLXTIFkav_wOJFnfp_DzDwSqFDt1ifqI59-70l6ez0X8uS02UOSCCe3ALMZvGexgzaA"/><span class="font-headline-sm text-headline-sm text-text-moon-cream">The Great America's Sleep Contest</span></div><p class="font-label-mono-sm text-label-mono-sm text-secondary-fixed bg-surface-indigo border border-border-dusk px-3 py-1.5 rounded-full rotate-[-1deg]">sleepcontestusa.com · Live National Challenge</p></div><div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg text-body-sm font-body-sm"><div class="flex flex-col gap-space-xs"><span class="font-headline-sm text-body-lg text-text-moon-cream">The Challenge</span><p class="text-on-surface-variant">90 consecutive minutes of unbroken slumber under high-intensity sensory disruptions. Monitored via heart-rate telemetric biosensors.</p></div><div class="flex flex-col gap-space-xs"><span class="font-headline-sm text-body-lg text-text-moon-cream">Contest Rules &amp; Integrity</span><p class="text-on-surface-variant">No sleeping pills, zero sedative stimulants, sleep masks permitted, earplugs prohibited. Full telemetry reviewed by the National Wake-Up Board.</p></div><div class="flex flex-col gap-space-xs"><span class="font-headline-sm text-body-lg text-text-moon-cream">Refund Policy &amp; Tickets</span><p class="text-on-surface-variant">The $10 reserve deposit is fully refundable up to 48 hours before official sleep arena roll call. Operated securely by Sparsha LLC.</p></div></div><div class="flex flex-col sm:flex-row items-center justify-between gap-space-md pt-space-md text-label-mono-sm font-label-mono-sm text-outline border-t border-border-dusk/30"><p>© 2025 The Great America's Sleep Contest. Produced &amp; Operated by Sparsha LLC. All rights reserved.</p><div class="flex gap-space-md"><a class="hover:text-primary transition-colors" data-path="rules-and-faq" href="#">Official Rules</a><a class="hover:text-primary transition-colors" data-path="rules-and-faq" href="#">Privacy Policy</a><a class="hover:text-primary transition-colors" data-path="rules-and-faq" href="#">Terms of Service</a></div></div></div></footer></body></html>

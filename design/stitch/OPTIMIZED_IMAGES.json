@@ -1,0 +1,101 @@
+{
+  "gallery-judge": {
+    "webp": "/assets/images/gallery-judge.webp",
+    "avif": null,
+    "width": 430,
+    "height": 196,
+    "bytes": 24688,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAAAQAgCdASoQAAcAA4BaJQBdgCIMj47Z6bQAAP721G+4xZLWzDCy9PGG9+z/oNleKkR92w92FfQzCyRAkAA="
+  },
+  "gallery-sleeping-floor": {
+    "webp": "/assets/images/gallery-sleeping-floor.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 64392,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAwAgCdASoQAAkAA4BaJbACdAEWx7mOTPgtEAD+0pWrtP8jnSYh+RGHslNWVpdhdOQF72IvOZy2Rvk3QnvMZaCjbdgJ3PzE/Cqlvl5zDw7p90e5Y0mDWiJzt5BX7AAA"
+  },
+  "gallery-squad-closeup": {
+    "webp": "/assets/images/gallery-squad-closeup.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 56562,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAACwAQCdASoQAAkAA4BaJYwAAqzXmy4AAP73kQ4XBkfLnxwNIDHMd68XY867Yy7qnFA5Z/4jyMbgngAA"
+  },
+  "hero-poster": {
+    "webp": "/assets/images/hero-poster.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 334,
+    "bytes": 30692,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADQAQCdASoQAAUAA4BaJYgCdADdI3//AAD+95fol1DgRujxyGSL0y6tmg8teS8RS3YnSb6IM8RwAAAA"
+  },
+  "how-1-register": {
+    "webp": "/assets/images/how-1-register.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 520,
+    "bytes": 79472,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoQAAgAA4BaJQBOgCBrLzS0+YAA/vbZPqFBeRTa6DY8umdbkjV/AWnf9HARSN8LhqBzK5+hNNv+3dai33sMAAAA"
+  },
+  "how-2-pajamas": {
+    "webp": "/assets/images/how-2-pajamas.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 99764,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAACwAQCdASoQAAkAA4BaJYgCdAEKZGuAAP713MdVWDoX9kLFGqcOBwa4JjHHyo+PXFud3+rE/NL61ZVpOVk49cjIAAA="
+  },
+  "how-3-leaderboard": {
+    "webp": "/assets/images/how-3-leaderboard.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 49682,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAACwAQCdASoQAAkAA4BaJZwAApw2FNxAAP722zeXKBa9KVAKwdMOW5poWpA+eBp659a64ZFUlWDGNna8UfXM+wHZsj4VRFyW8oAAAA=="
+  },
+  "how-4-feather": {
+    "webp": "/assets/images/how-4-feather.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 61692,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoQAAkAA4BaJZwAAu19tesThSAA/vWco+cEIikkW0yqQTf9byfH3+aX79rJ3+MtpLUHyl9G9NOelkcGgAA="
+  },
+  "squad-noise": {
+    "webp": "/assets/images/squad-noise.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 84576,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAADQAQCdASoQAAkAA4BaJYgAAqHvyB9LwAD+976Jt69ASQEn4ci47P14BWz+gndhVIpbKwRnlvfIfMTXwBYP+3hSSYAAAA=="
+  },
+  "squad-smell": {
+    "webp": "/assets/images/squad-smell.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 71722,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAACwAQCdASoQAAkAA4BaJYwCdADuJGsAAP75GAyb4NhppEESh7txb8cDHXFaMVM9igNBKcFFNtKt8AAA"
+  },
+  "squad-tickle": {
+    "webp": "/assets/images/squad-tickle.webp",
+    "avif": null,
+    "width": 1024,
+    "height": 559,
+    "bytes": 61166,
+    "cropped": true,
+    "blurDataURL": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADQAQCdASoQAAkAA4BaJZQCdAED7VBAgAD+9dYhnlvtJ95pZzyH/jGDnhfv5/Pbf/kPIGCvt7BXoGKqW0n/VXp3lgs6whnGjzgD2v7WqLlBNa8baKAAAA=="
+  }
+}
