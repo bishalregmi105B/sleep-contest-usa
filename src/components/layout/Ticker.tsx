@@ -5,13 +5,14 @@ import { TICKER } from '@/content/site';
  *
  * The track is duplicated for a seamless loop; the duplicate is hidden from
  * assistive tech so the message is not announced twice. Pure CSS, no JS.
+ *
+ * Sits directly below the fixed header, so it carries the header's height and
+ * the page reserves that space: without it the first section's copy slides
+ * under the floating nav.
  */
 export function Ticker() {
   return (
-    <div
-      className="relative overflow-hidden border-y-2 border-dusk bg-indigo/90 py-2 text-ink"
-      aria-hidden="true"
-    >
+    <div className="relative overflow-hidden border-y-2 border-dusk bg-indigo/90 py-2">
       <div className="ticker-track gap-8">
         {[0, 1].map((copy) => (
           <span

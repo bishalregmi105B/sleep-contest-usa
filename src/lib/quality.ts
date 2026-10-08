@@ -49,9 +49,10 @@ export function prefersReducedMotion(): boolean {
 }
 
 /**
- * Chooses a tier. Deliberately conservative: a device that cannot be
- * identified gets `med`, and anything on a phone or with Save-Data on gets no
- * higher than `low` for its class.
+ * Chooses a tier. Deliberately conservative about expensive effects but never
+ * about the scene itself: a phone should still get the dusk-to-dawn world,
+ * just with fewer stars and no postprocessing. Only a device with no WebGL2 at
+ * all, or a visitor who asked for reduced motion, gets the static night.
  */
 export function detectTier(): Tier {
   if (typeof window === 'undefined') return 'none';
@@ -70,18 +71,26 @@ export function detectTier(): Tier {
   if (prefersReducedMotion()) return 'none';
 
   const width = window.innerWidth;
-  const isMobile = width < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const cores = navigator.hardwareConcurrency ?? 4;
-  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || width < 820;
 
-  // Mobile never goes above med, however fast the chip.
+  // hardwareConcurrency and deviceMemory are unavailable on some browsers and
+  // on iOS Safari entirely. Treating "unknown" as the low end punished every
+  // iPhone, so an unknown device is treated as capable and the PerformanceMonitor
+  // steps it down if it turns out not to be.
+  const cores = navigator.hardwareConcurrency ?? 0;
+  const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 0;
+  const unknown = cores === 0 && memory === 0;
+
   if (isMobile) {
-    if (cores <= 4 || memory <= 3) return 'low';
+    if (unknown) return 'med';
+    if (cores >= 6 && memory >= 4) return 'med';
+    if (cores <= 2 || (memory > 0 && memory <= 2)) return 'low';
     return 'med';
   }
 
-  if (cores <= 4 || memory <= 4) return 'med';
+  if (unknown) return 'med';
   if (cores >= 8 && memory >= 8 && width >= 1280) return 'high';
+  if (cores <= 2 || (memory > 0 && memory <= 2)) return 'low';
   return 'med';
 }
 

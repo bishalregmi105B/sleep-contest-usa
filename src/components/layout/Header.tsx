@@ -42,7 +42,9 @@ export function Header() {
       <div className="content-frame pt-4">
         <nav
           aria-label="Main"
-          className="flex items-center justify-between gap-4 rounded-pill border-2 border-dusk bg-midnight/85 px-4 py-2 [box-shadow:0_10px_30px_-12px_rgb(11_6_32_/_0.9)] backdrop-blur-md"
+          // Opaque, not translucent: at 85% the sky behind showed through and
+          // the nav looked like it was colliding with the ticker.
+          className="flex items-center justify-between gap-4 rounded-pill border-2 border-dusk bg-midnight px-4 py-2 [box-shadow:0_10px_30px_-12px_rgb(11_6_32_/_0.9)]"
         >
           <a
             href="#hero"

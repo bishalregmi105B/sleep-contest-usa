@@ -47,6 +47,9 @@ export default async function HomePage() {
 
       <JsonLd />
       <Header />
+      {/* Reserves the floating header's height so the ticker and the first
+          section's copy never slide underneath it. */}
+      <div aria-hidden="true" className="h-20 shrink-0" />
       <Ticker />
 
       <main id="main" className="relative z-10">

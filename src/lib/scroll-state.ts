@@ -86,6 +86,13 @@ export const SCENE_STATES: Record<string, SceneState> = {
     lookAt: [0, 0, 0],
     sky: ['#3A2C78', '#8A5A8C', '#FF9A3C'],
   },
+  faq: {
+    id: 'faq',
+    camera: [0, 0.4, 7],
+    lookAt: [0, 0.2, 0],
+    // Pre-dawn hold: the sky is still lifting while the questions are answered.
+    sky: ['#4A2470', '#7A3F7E', '#B4528C'],
+  },
   cta: {
     id: 'cta',
     camera: [0, 0.8, 6.8],
