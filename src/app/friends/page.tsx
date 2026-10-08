@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
+import { getStore } from '@/lib/store';
 import { env } from '@/lib/env';
 import { FRIENDS, SITE } from '@/content/site';
 import { ReferralShare } from '@/components/sections/ReferralShare';
@@ -37,32 +37,7 @@ export default async function FriendsPage({
   let recruiters: { refCode: string; matNumber: number | null; count: number }[] = [];
 
   try {
-    const grouped = await db.registration.groupBy({
-      by: ['referredBy'],
-      _count: { referredBy: true },
-      where: { referredBy: { not: null } },
-      orderBy: { _count: { referredBy: 'desc' } },
-      take: 5,
-    });
-
-    const codes = grouped
-      .map((row) => row.referredBy)
-      .filter((value): value is string => typeof value === 'string');
-
-    const owners = codes.length
-      ? await db.registration.findMany({
-          where: { refCode: { in: codes } },
-          select: { refCode: true, matNumber: true },
-        })
-      : [];
-
-    const byCode = new Map(owners.map((row) => [row.refCode, row.matNumber]));
-
-    recruiters = grouped.map((row) => ({
-      refCode: row.referredBy ?? '',
-      matNumber: byCode.get(row.referredBy ?? '') ?? null,
-      count: row._count.referredBy,
-    }));
+    recruiters = await getStore().topRecruiters(5);
   } catch (err) {
     console.error(
       '[friends] failed to read recruiters:',

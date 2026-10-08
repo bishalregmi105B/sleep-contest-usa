@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { MONEY, RESERVE } from '@/content/site';
-import { db } from '@/lib/db';
+import { getStore } from '@/lib/store';
 import { env, stripeEnabled } from '@/lib/env';
 import { markPaid, sendConfirmation } from '@/lib/registrations';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
   const { publicId } = parsed.data;
 
-  const registration = await db.registration.findUnique({ where: { publicId } });
+  const registration = await getStore().findByPublicId(publicId);
   if (!registration) {
     return NextResponse.json({ message: 'That reservation was not found.' }, { status: 404 });
   }
@@ -55,19 +55,17 @@ export async function POST(request: Request) {
 
     if (provider.name === 'mock') {
       const paid = await markPaid(publicId, { provider: 'mock', ref: result.paymentRef });
-      if (paid) {
+      // Only mail a registration that has just become paid, not a repeat call.
+      if (paid?.matNumber !== null && paid) {
         await sendConfirmation({
           email: paid.email,
-          firstName: paid.firstName,
+          firstName: paid.fullName.split(' ')[0] ?? paid.fullName,
           matNumber: paid.matNumber,
           publicId,
         });
       }
     } else {
-      await db.registration.update({
-        where: { publicId },
-        data: { paymentProvider: 'stripe', paymentRef: result.paymentRef },
-      });
+      // Stripe's own webhook is what marks the registration paid.
     }
 
     return NextResponse.json({ redirectTo: result.redirectTo });

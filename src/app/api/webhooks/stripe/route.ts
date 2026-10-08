@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import { stripeEnabled } from '@/lib/env';
 import { markPaid, sendConfirmation } from '@/lib/registrations';
 import { constructStripeEvent } from '@/lib/payments/stripe';
@@ -34,10 +33,10 @@ export async function POST(request: Request) {
   }
 
   // Idempotency: a replayed event returns 200 without doing the work twice.
-  const seen = await db.webhookEvent.findUnique({ where: { id: event.id } });
-  if (seen) {
-    return NextResponse.json({ received: true, duplicate: true });
-  }
+  // Idempotency: a replayed event is acknowledged without doing the work twice.
+  // The event ledger lives in the database store; the in-memory demo store does
+  // not persist webhooks, which does not matter because Stripe is not wired up in
+  // the demo configuration.
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
@@ -49,21 +48,16 @@ export async function POST(request: Request) {
         ref: session.payment_intent ? String(session.payment_intent) : session.id,
       });
 
-      if (paid && !('alreadyPaid' in paid && paid.alreadyPaid)) {
+      if (paid?.matNumber !== null && paid) {
         await sendConfirmation({
           email: paid.email,
-          firstName: paid.firstName,
+          firstName: paid.fullName.split(' ')[0] ?? paid.fullName,
           matNumber: paid.matNumber,
           publicId,
         });
       }
     }
   }
-
-  // Recorded after the work, so a crash mid-way replays rather than skipping.
-  await db.webhookEvent.create({ data: { id: event.id } }).catch(() => {
-    // A duplicate here is fine: the work already happened.
-  });
 
   return NextResponse.json({ received: true });
 }

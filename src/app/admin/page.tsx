@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
+import { getStore } from '@/lib/store';
 import { adminEnabled } from '@/lib/env';
 import { destroySession, isAuthenticated } from '@/lib/auth';
 import { ADMIN } from '@/content/site';
@@ -63,30 +63,15 @@ export default async function AdminPage({
   const query = (q ?? '').trim();
   const current = Math.max(1, Number(page) || 1);
 
-  const where = query
-    ? {
-        OR: [
-          { fullName: { contains: query } },
-          { email: { contains: query } },
-        ],
-      }
-    : {};
+
+  const store = getStore();
 
   const [registrations, total, paid, referred, maxMat] = await Promise.all([
-    db.registration.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      skip: (current - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-    }),
-    db.registration.count(),
-    db.registration.count({ where: { status: 'paid' } }),
-    db.registration.count({ where: { referredBy: { not: null } } }),
-    db.registration.findFirst({
-      where: { matNumber: { not: null } },
-      orderBy: { matNumber: 'desc' },
-      select: { matNumber: true },
-    }),
+    store.list({ query: query || undefined, skip: (current - 1) * PAGE_SIZE, take: PAGE_SIZE }),
+    store.countAll(),
+    store.countPaid(),
+    store.countReferred(),
+    store.highestMat(),
   ]);
 
   const signOut = async () => {
@@ -119,10 +104,7 @@ export default async function AdminPage({
             { label: ADMIN.total, value: paid },
             { label: 'All registrations', value: total },
             { label: ADMIN.referrals, value: referred },
-            {
-              label: ADMIN.matRange,
-              value: maxMat?.matNumber ?? 0,
-            },
+            { label: ADMIN.matRange, value: maxMat },
           ].map((stat) => (
             <div
               key={stat.label}

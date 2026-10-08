@@ -11,14 +11,14 @@
     "assets:scan": "node scripts/scan-assets.mjs",
     "assets:fetch": "node scripts/fetch-stitch-images.mjs",
     "assets:optimize": "node scripts/optimize-images.mjs",
-    "db:push": "prisma db push",
+    "db:push": "node scripts/set-db-provider.mjs auto && prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:generate": "prisma generate",
-    "predev": "npm run db:generate && npm run assets:scan",
-    "prebuild": "npm run db:generate && npm run assets:scan",
-    "postinstall": "prisma generate",
+    "db:generate": "node scripts/set-db-provider.mjs auto && prisma generate",
     "db:use-postgres": "node scripts/set-db-provider.mjs postgresql",
-    "db:use-sqlite": "node scripts/set-db-provider.mjs sqlite"
+    "db:use-sqlite": "node scripts/set-db-provider.mjs sqlite",
+    "db:migrate": "node scripts/set-db-provider.mjs auto && prisma migrate deploy",
+    "prebuild": "npm run assets:scan",
+    "predev": "npm run assets:scan"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getStore } from '@/lib/store';
 import { isAuthenticated } from '@/lib/auth';
 
 /**
@@ -21,22 +21,7 @@ export async function GET() {
     return NextResponse.json({ message: 'Not authorised.' }, { status: 401 });
   }
 
-  const rows = await db.registration.findMany({
-    orderBy: { createdAt: 'desc' },
-    select: {
-      matNumber: true,
-      fullName: true,
-      email: true,
-      mobile: true,
-      cityState: true,
-      status: true,
-      refCode: true,
-      referredBy: true,
-      paymentProvider: true,
-      createdAt: true,
-      paidAt: true,
-    },
-  });
+  const rows = await getStore().all();
 
   const header = [
     'Mat',

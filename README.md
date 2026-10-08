@@ -13,19 +13,19 @@ prints to the console, and the database is a local SQLite file.
 
 ```bash
 npm install
-cp .env.example .env
-npm run db:push      # create the SQLite schema
-npm run db:seed      # optional: 24 demo registrations
 npm run dev
 ```
+
+That is the whole setup. **No database, no environment file, no configuration.**
+Registrations are held in memory for the life of the process, which is enough to
+demonstrate the whole flow: register, pay, ticket, referral, admin.
 
 Open <http://localhost:3000>. The full flow works end to end: register → pay
 $10 (instantly, mock provider) → boarding-pass ticket.
 
-`npm install` runs `prisma generate` automatically, which is what creates the
-database client types. `npm run build` does not need a database: the landing
-page prerenders its shell and streams the live counter in at request time, so a
-fresh clone builds before `db:push` has ever been run.
+To persist registrations, set `DATABASE_URL` to a PostgreSQL connection string —
+the app then uses the Prisma store instead, and `npm run db:push` creates the
+tables. See `DEPLOY.md`.
 
 To try the admin area, set `ADMIN_PASSWORD` and `SESSION_SECRET` in `.env`, then
 visit `/admin`.
@@ -37,7 +37,7 @@ visit `/admin`.
 | `npm run dev` | Development server |
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run lint` / `npm run typecheck` | ESLint and `tsc --noEmit` |
-| `npm run db:push` | Sync the Prisma schema to the database |
+| `npm run db:push` | Create the tables in the configured database |
 | `npm run db:seed` | Demo data (only when `SEED_DEMO=true`, never in production) |
 | `npm run assets:scan` | Rebuild `src/lib/assets.generated.json` |
 | `npm run assets:fetch` | Re-download the Stitch images |
@@ -98,8 +98,9 @@ the palette being darkened and the idea lost.
 ## What is real and what is stubbed
 
 Working with no configuration: registration and validation, the mock payment
-provider, mat number assignment inside a transaction, the ticket, the referral
-leaderboard, the admin gate and CSV export, the console email provider.
+provider, mat number assignment, the ticket, the referral leaderboard, the admin
+gate and CSV export, and the console email provider. All of this runs against an
+in-memory store, so it works on any host with no database.
 
 Switches to a real provider the moment its keys exist: `STRIPE_SECRET_KEY` and
 `STRIPE_WEBHOOK_SECRET` move checkout to Stripe Checkout with a signature-verified

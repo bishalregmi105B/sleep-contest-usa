@@ -1,40 +1,52 @@
 #!/usr/bin/env node
 /**
- * Switches the Prisma datasource provider.
+ * Aligns the Prisma datasource provider with the database actually in use.
  *
- * The schema has to name the provider that matches the database actually being
- * talked to, and Prisma does not allow one schema to serve both. SQLite is the
- * default because it needs no setup at all; a hosted platform such as Vercel
- * has an ephemeral filesystem, so it needs PostgreSQL and a managed database URL.
+ * Prisma requires the schema to name the provider of the database being talked
+ * to, and it does not allow one schema to serve both. Getting this wrong is a
+ * hard failure rather than a warning: pointing a sqlite schema at a Postgres
+ * DATABASE_URL throws PrismaClientInitializationError, which took the whole
+ * Vercel build down.
  *
- * Usage: node scripts/set-db-provider.mjs postgresql|sqlite
+ * Rather than making it a manual step that gets forgotten, `auto` reads
+ * DATABASE_URL and picks the provider to match. Run automatically from
+ * predev, prebuild and postinstall.
+ *
+ * Usage:
+ *   node scripts/set-db-provider.mjs auto
+ *   node scripts/set-db-provider.mjs postgresql   # force
+ *   node scripts/set-db-provider.mjs sqlite        # force
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-const ROOT = path.resolve(import.meta.dirname, '..');
-const SCHEMA = path.join(ROOT, 'prisma/schema.prisma');
+const SCHEMA = path.join(path.resolve(import.meta.dirname, '..'), 'prisma/schema.prisma');
 
-const target = process.argv[2];
+const arg = process.argv[2] ?? 'auto';
 
-if (target !== 'sqlite' && target !== 'postgresql') {
-  console.error('Usage: node scripts/set-db-provider.mjs postgresql|sqlite');
-  process.exit(1);
+function resolveTarget() {
+  if (arg === 'postgresql' || arg === 'sqlite') return arg;
+
+  if (arg !== 'auto') {
+    console.error('Usage: node scripts/set-db-provider.mjs auto|postgresql|sqlite');
+    process.exit(1);
+  }
+
+  const url = process.env.DATABASE_URL ?? '';
+  return url.startsWith('postgres://') || url.startsWith('postgresql://')
+    ? 'postgresql'
+    : 'sqlite';
 }
 
+const target = resolveTarget();
 const source = await readFile(SCHEMA, 'utf8');
 const updated = source.replace(
-  /(datasource db \{\s*provider = ")(sqlite|postgresql)(")/,
-  `$1${target}$3`,
+  /(datasource db \{\s*provider = ")(?:sqlite|postgresql)(")/,
+  `$1${target}$2`,
 );
 
-if (source === updated) {
-  console.log(`Provider is already ${target}.`);
-} else {
+if (source !== updated) {
   await writeFile(SCHEMA, updated);
-  console.log(`Provider set to ${target}.`);
-  console.log('Run: npx prisma generate');
+  console.log(`[db] provider set to ${target}`);
 }
-
-void ROOT;

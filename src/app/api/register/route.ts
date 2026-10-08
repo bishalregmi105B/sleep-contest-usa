@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+import { getStore } from '@/lib/store';
 import { newPublicId, newRefCode } from '@/lib/ids';
 import { clientIp, rateLimit } from '@/lib/rate-limit';
 import { RESERVE } from '@/content/site';
@@ -48,10 +48,8 @@ export async function POST(request: Request) {
 
   try {
     // An entrant with the same address should never end up with two mats.
-    const existing = await db.registration.findFirst({
-      where: { email: normalizedEmail },
-      orderBy: { createdAt: 'desc' },
-    });
+    const store = getStore();
+    const existing = await store.findByEmail(normalizedEmail);
 
     if (existing?.status === 'paid') {
       return NextResponse.json({ message: RESERVE.errors.duplicate }, { status: 409 });
@@ -59,17 +57,19 @@ export async function POST(request: Request) {
 
     // Reuse a pending registration so a double submit is idempotent.
     if (existing) {
-      const updated = await db.registration.update({
-        where: { id: existing.id },
-        data: { fullName, mobile, cityState, dateOfBirth: new Date(dateOfBirth) },
+      const updated = await store.updatePending(existing.publicId, {
+        fullName,
+        mobile,
+        cityState,
+        dateOfBirth: new Date(dateOfBirth),
       });
-      return NextResponse.json({ publicId: updated.publicId });
+      return NextResponse.json({ publicId: updated?.publicId ?? existing.publicId });
     }
 
     // Credit the referrer only when the code exists.
     let referredBy: string | null = null;
     if (ref) {
-      const referrer = await db.registration.findUnique({ where: { refCode: ref } });
+      const referrer = await store.findByRefCode(ref);
       referredBy = referrer?.refCode ?? null;
     }
 
@@ -77,20 +77,16 @@ export async function POST(request: Request) {
     // collision rather than failing the registration.
     for (let attempt = 0; attempt < 3; attempt += 1) {
       try {
-        const created = await db.registration.create({
-          data: {
-            publicId: newPublicId(),
-            fullName,
-            email: normalizedEmail,
-            mobile,
-            dateOfBirth: new Date(dateOfBirth),
-            cityState,
-            consentAt: new Date(),
-            refCode: newRefCode(),
-            referredBy,
-            status: 'pending',
-            paymentProvider: 'mock',
-          },
+        const created = await store.create({
+          publicId: newPublicId(),
+          fullName,
+          email: normalizedEmail,
+          mobile,
+          dateOfBirth: new Date(dateOfBirth),
+          cityState,
+          consentAt: new Date(),
+          refCode: newRefCode(),
+          referredBy,
         });
         return NextResponse.json({ publicId: created.publicId }, { status: 201 });
       } catch (err) {

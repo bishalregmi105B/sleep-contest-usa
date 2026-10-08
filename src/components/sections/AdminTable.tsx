@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { ADMIN } from '@/content/site';
 
 export type AdminRow = {
-  readonly id: number;
+  readonly publicId: string;
   readonly matNumber: number | null;
   readonly fullName: string;
   readonly email: string;
@@ -92,7 +92,7 @@ export function AdminTable({
               </tr>
             ) : (
               registrations.map((row) => (
-                <tr key={row.id} className="border-t border-dusk/60">
+                <tr key={row.publicId} className="border-t border-dusk/60">
                   <td className="px-4 py-3 font-mono text-zzz">
                     {row.matNumber === null
                       ? '—'
