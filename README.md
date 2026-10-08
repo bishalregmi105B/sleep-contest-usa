@@ -22,6 +22,11 @@ npm run dev
 Open <http://localhost:3000>. The full flow works end to end: register → pay
 $10 (instantly, mock provider) → boarding-pass ticket.
 
+`npm install` runs `prisma generate` automatically, which is what creates the
+database client types. `npm run build` does not need a database: the landing
+page prerenders its shell and streams the live counter in at request time, so a
+fresh clone builds before `db:push` has ever been run.
+
 To try the admin area, set `ADMIN_PASSWORD` and `SESSION_SECRET` in `.env`, then
 visit `/admin`.
 
