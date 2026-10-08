@@ -1,0 +1,55 @@
+// Data model for the contest.
+//
+// Status is a string rather than an enum so the same schema runs on SQLite and
+// PostgreSQL: only the datasource in prisma.config.ts changes.
+//
+// Prisma 7 reads the connection URL from prisma.config.ts, not from here, and
+// PrismaClient is constructed with a driver adapter (see src/lib/db.ts).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Registration {
+  id Int @id @default(autoincrement())
+
+  /// Unguessable id used in ticket URLs, never the sequential id.
+  publicId String @unique
+
+  fullName    String
+  email       String
+  mobile      String
+  dateOfBirth DateTime
+  cityState   String
+
+  /// pending | paid | refunded
+  status String @default("pending")
+
+  /// Assigned when the registration becomes paid, inside a transaction.
+  matNumber Int? @unique
+
+  refCode    String  @unique
+  referredBy String?
+
+  paymentProvider String  @default("mock")
+  paymentRef      String?
+
+  consentAt DateTime
+  createdAt DateTime @default(now())
+  paidAt    DateTime?
+
+  @@index([email])
+  @@index([status])
+  @@index([refCode])
+}
+
+/// Idempotency ledger for payment webhooks, so a replayed event never
+/// double-pays or double-assigns a mat number.
+model WebhookEvent {
+  id        String   @id
+  createdAt DateTime @default(now())
+}

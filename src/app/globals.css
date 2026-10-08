@@ -1,26 +1,293 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens.
+ *
+ * Values come from design/DESIGN_PLAN.md, which reconciles the client brief
+ * (Section 1 and 4) with the Stitch export's inline tailwind.config. Stitch
+ * wins for spacing and radius; the brief wins for palette and content.
+ */
+
+@theme {
+  /* Surfaces and sky */
+  --color-midnight: #0b0620;
+  --color-indigo: #1b1450;
+  --color-dusk: #3a2c78;
+  --color-cream: #fff8e7;
+  --color-lavender: #d9d2ff;
+  --color-zzz: #ffe14a;
+  --color-pillow: #ff4f8b;
+  --color-dawn: #ff9a3c;
+  --color-mint: #35f2b0;
+  --color-ink: #1a0b12;
+
+  /* Stitch surface ramp, kept so exported classes and tokens agree */
+  --color-surface: #140f2a;
+  --color-surface-lowest: #0f0a24;
+  --color-surface-low: #1d1832;
+  --color-surface-high: #2b2642;
+  --color-surface-highest: #36314d;
+
+  /* Type */
+  --font-display: var(--font-rubik), system-ui, sans-serif;
+  --font-body: var(--font-dm-sans), system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+
+  /* Stitch type scale */
+  --text-display-hero: 72px;
+  --text-display-hero--line-height: 76px;
+  --text-display-hero-mobile: 44px;
+  --text-display-hero-mobile--line-height: 48px;
+  --text-headline-lg: 40px;
+  --text-headline-lg--line-height: 46px;
+  --text-headline-lg-mobile: 30px;
+  --text-headline-lg-mobile--line-height: 36px;
+  --text-headline-md: 28px;
+  --text-headline-md--line-height: 34px;
+  --text-headline-sm: 22px;
+  --text-headline-sm--line-height: 28px;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+
+  /* Radius, straight from the Stitch config */
+  --radius-sm: 0.5rem;
+  --radius-DEFAULT: 1rem;
+  --radius-md: 1.5rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-card: 28px;
+  --radius-pill: 9999px;
+
+  /* Stitch spacing */
+  --spacing-gutter: 1.5rem;
+  --spacing-margin: 3rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2.5rem;
+
+  /* Elevation: hard offset shadows, sticker language */
+  --shadow-sticker: 6px 6px 0 var(--color-zzz);
+  --shadow-sticker-ink: 4px 4px 0 var(--color-midnight);
+  --shadow-sticker-pink: 10px 10px 0 var(--color-pillow);
+  --shadow-card: 0 18px 40px -18px rgb(11 6 32 / 0.9);
+  --shadow-glow-pink: 0 0 0 1px var(--color-pillow), 0 12px 40px -12px rgb(255 79 139 / 0.55);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/*
+ * Sky variables. The 3D scene writes these as the page scrolls so the
+ * CSS-only fallback (no WebGL) shows exactly the same colours.
+ * Defaults are the dusk hero state.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --sky-top: #3a2c78;
+  --sky-mid: #ff4f8b;
+  --sky-bottom: #ff9a3c;
+
+  --header-h: 72px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Base ------------------------------------------------------------------ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    min-width: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Anchor targets clear the floating header. */
+    scroll-padding-top: calc(var(--header-h) + 16px);
+  }
+
+  body {
+    background-color: var(--color-midnight);
+    color: var(--color-cream);
+    font-family: var(--font-body);
+    font-size: var(--text-body-md);
+    line-height: var(--text-body-md--line-height);
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-wrap: balance;
+  }
+
+  /* Never wider than a comfortable measure. */
+  p {
+    max-width: 80ch;
+  }
+
+  /* Focus is always visible and always the same. */
+  :focus-visible {
+    outline: 3px solid var(--color-zzz);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-pillow);
+    color: var(--color-ink);
+  }
+
+  /* Respect the notch and the home indicator. */
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Utilities ------------------------------------------------------------- */
+
+@utility content-frame {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 1.5rem;
+  }
+}
+
+@utility section-shell {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 6rem;
+}
+
+/* The sticky header floats over a transparent page, so header text needs a
+   scrim to clear the sky at every point in the scroll. */
+@utility glass {
+  background-color: color-mix(in oklab, var(--color-indigo) 62%, transparent);
+  border: 1px solid var(--color-dusk);
+  border-radius: var(--radius-card);
+}
+
+@utility tilt-l {
+  transform: rotate(-3deg);
+}
+
+@utility tilt-r {
+  transform: rotate(3deg);
+}
+
+@utility text-ink-on-pink {
+  color: var(--color-ink);
+}
+
+/* Components ------------------------------------------------------------ */
+
+/* Pill sticker button with a hard offset shadow that compresses on press. */
+@utility sticker-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  border: 3px solid var(--color-ink);
+  background-color: var(--color-pillow);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--text-body-md);
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sticker-pink);
+  transition:
+    transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 140ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 140ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@utility sticker-btn-secondary {
+  composes: sticker-btn;
+  background-color: transparent;
+  color: var(--color-cream);
+  box-shadow: 4px 4px 0 var(--color-dusk);
+}
+
+@utility sticker-btn-yellow {
+  composes: sticker-btn;
+  background-color: var(--color-zzz);
+}
+
+/* Motion ---------------------------------------------------------------- */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 24s linear infinite;
+  will-change: transform;
+}
+
+@keyframes heartbeat-idle {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: the site becomes a calm, complete, static document. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .ticker-track {
+    animation: none;
+  }
+}
+
+/* Hide the native cursor only where we draw our own, and never over
+   anything the visitor has to click. */
+@media (pointer: fine) {
+  @media (prefers-reduced-motion: no-preference) {
+    html.has-custom-cursor,
+    html.has-custom-cursor a,
+    html.has-custom-cursor button,
+    html.has-custom-cursor input,
+    html.has-custom-cursor select,
+    html.has-custom-cursor textarea {
+      cursor: none;
+    }
+  }
 }
