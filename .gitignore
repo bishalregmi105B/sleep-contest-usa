@@ -57,3 +57,6 @@ playwright-report/
 # local dev server logs
 *.log
 dev.log
+
+# browser automation scratch
+.playwright-mcp/
