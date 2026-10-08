@@ -154,3 +154,10 @@ https://react.dev/link/hydration-mismatch
 [browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
 [browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
  GET /api/stats 200 in 5ms (next.js: 0.9ms, application-code: 4ms)
+ GET /api/stats 200 in 6ms (next.js: 1.2ms, application-code: 5ms)
+ GET / 200 in 156ms (next.js: 2ms, application-code: 154ms)
+[browser] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been removed. Using PCFShadowMap instead.
+ GET / 200 in 216ms (next.js: 3ms, application-code: 213ms)
+ GET /api/stats 200 in 5ms (next.js: 0.9ms, application-code: 4ms)
+ GET /api/stats 200 in 5ms (next.js: 1.3ms, application-code: 4ms)

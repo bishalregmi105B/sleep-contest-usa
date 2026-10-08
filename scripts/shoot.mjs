@@ -54,12 +54,12 @@ for (const vp of VIEWPORTS) {
     }
     await el.scrollIntoViewIfNeeded();
     await page.waitForTimeout(900);
-    await el.screenshot({ path: `${OUT}/${vp.name}-${id}.png` }).catch(async () => {
-      await page.screenshot({ path: `${OUT}/${vp.name}-${id}.png` });
+    await el.screenshot({ path: `${OUT}/${vp.name}-${id}.jpg`, type: 'jpeg', quality: 78 }).catch(async () => {
+      await page.screenshot({ path: `${OUT}/${vp.name}-${id}.jpg`, type: 'jpeg', quality: 78 });
     });
   }
 
-  await page.screenshot({ path: `${OUT}/${vp.name}-full.png`, fullPage: true });
+  await page.screenshot({ path: `${OUT}/${vp.name}-full.jpg`, type: 'jpeg', quality: 70, fullPage: true });
   await context.close();
 }
 
