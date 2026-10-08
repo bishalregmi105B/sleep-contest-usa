@@ -53,3 +53,7 @@ public/assets/generated/
 tests/screenshots/
 test-results/
 playwright-report/
+
+# local dev server logs
+*.log
+dev.log
