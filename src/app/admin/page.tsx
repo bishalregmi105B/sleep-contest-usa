@@ -13,6 +13,11 @@ import { destroySession, isAuthenticated } from '@/lib/auth';
 import { ADMIN } from '@/content/site';
 import { AdminLogin } from '@/components/sections/AdminLogin';
 import { AdminTable } from '@/components/sections/AdminTable';
+import { AdminSettingsForm } from '@/components/sections/AdminSettingsForm';
+import { AdminHealthCard } from '@/components/sections/AdminHealthCard';
+import { getSettings } from '@/lib/settings';
+import { outboxHealth } from '@/lib/outbox';
+import { waitlistSize } from '@/lib/registrations';
 import {
   DailyChart,
   Funnel,
@@ -92,7 +97,8 @@ export default async function AdminPage({
   const current = Math.max(1, Number(page) || 1);
 
 
-  const [pageResult, total, paid, statusCounts, daily, leaders, reserved] = await Promise.all([
+  const [pageResult, total, paid, statusCounts, daily, leaders, reserved, settings, outbox, waitlist] =
+    await Promise.all([
     listRegistrations({
       limit: PAGE_SIZE,
       cursor: cursorFrom(current),
@@ -104,6 +110,9 @@ export default async function AdminPage({
     dailyPaid(CHART_DAYS),
     topRecruiters(5),
     currentReserved(),
+    getSettings(),
+    outboxHealth(),
+    waitlistSize(),
   ]);
 
   // Keyset pagination: page N resumes from the cursor the previous page
@@ -174,6 +183,25 @@ export default async function AdminPage({
               <ReferralLeaders leaders={leaders} />
             </Panel>
           </div>
+        </div>
+
+        <div className="mt-8">
+          <Panel title="Health">
+            <AdminHealthCard
+              reserved={reserved}
+              maxRegistrations={settings.maxRegistrations}
+              paid={paid}
+              total={total}
+              waitlist={waitlist}
+              outbox={outbox}
+            />
+          </Panel>
+        </div>
+
+        <div className="mt-8">
+          <Panel title="Settings">
+            <AdminSettingsForm initial={settings} currentCount={paid} />
+          </Panel>
         </div>
 
         <AdminTable

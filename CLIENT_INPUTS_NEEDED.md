@@ -144,3 +144,133 @@ brand more than a contest that never launched.
 (`SITE.goal` in `src/content/site.ts`) updates the counter, the facts bar, the
 rules, the refund policy, the emails and the sitemap at once. If it is not
 realistic, say so now rather than after launch.
+---
+
+## 10. Guinness World Records — the badge is built but cannot go live
+
+The client says this is a Guinness World Records official attempt and supplied
+the "Official Attempt" logo. **The badge is built and gated, and it will not
+appear on the site until the items below are answered.**
+
+Why it cannot simply be switched on: Guinness World Records requires a licence
+for any commercial use of its name or logos, the Official Record Attempt mark is
+for promoting an attempt you have registered, and receiving attempt guidelines
+is **not** the same as being cleared to attempt. Until the written approval is on
+file, using the logo would be unlicensed use on a page that takes money.
+
+In the meantime, and by design: no logo, and no occurrence of "Guinness" or
+"world record" anywhere on the site — pages, metadata, OG image, JSON-LD, emails
+or rules. This is enforced by `scripts/check-integrity.mjs` at build time and
+asserted on a rendered page in the test suite.
+
+| What | Owner | Why it matters |
+| --- | --- | --- |
+| **[BLOCKING]** Written approval and licence agreement from Guinness | You | Until this exists the badge stays off and no brand wording appears. |
+| Guinness brand-usage guidelines | You | Specifies clear space, minimum size, and where the mark may and may not appear. |
+| **[BLOCKING]** The record category being attempted, and its published guidelines | You | Determines whether the format is eligible at all. |
+| **[BLOCKING]** The adjudicator assigned by Guinness | You | An adjudicator is required. We cannot infer one. |
+| **[BLOCKING]** Confirmed attempt date | You | |
+| Is heart-rate scoring compatible with those guidelines? | You / a lawyer | Guinness guidelines constrain the measurement method. This may need redesigning before the attempt. |
+| Is "deepest sleeper wins" compatible? | You / a lawyer | The category must fit the format, not the other way round. |
+| Approval of the exact "Official Attempt" wording | You | With the flag on, the only permitted claim is "Official Attempt". We never claim a record has been set. |
+
+To enable it once you have them: drop the logo at
+`public/assets/brand/gwr-official-attempt.png` and process it with
+`npm run assets:brand`, then set the approval reference and date in
+`/admin` → Settings. The form will not let you enable the badge without both.
+
+---
+
+## 11. Photos and logos of other sleep contests — permission needed
+
+The client asked for logos and photos from other countries' sleep competitions.
+
+We have **not** used any. Two reasons:
+
+1. Scraping images from Google Images and publishing them on a commercial page
+   infringes copyright, and invites takedown notices.
+2. Showing another organiser's logo on a page that takes money implies a
+   partnership they never agreed to.
+
+Instead there is a **"Sleep contests around the world"** section using text and
+outbound links to the original reporting. Every fact was checked against a source
+we actually fetched, and where the sources contradicted the brief we used the
+sources — the 2010 Spanish organiser is ANAS, not "AEV"; the event was 2010, not
+2011; and the Business Insider India domain no longer resolves, so that citation
+points at an archived copy.
+
+| What | Owner | Why it matters |
+| --- | --- | --- |
+| **[BLOCKING]** Written permission, or a purchased licence, for each image you want | You | Any photo or logo of another event needs written permission from that organiser. Until then we use text and links. |
+| Which images, specifically | You | We will not choose third-party imagery ourselves. |
+
+Any image that is added must be declared in `src/content/licensed-media.ts` with
+its licence, attribution, source and proof of right. A build check fails
+otherwise, so undeclared imagery cannot ship by accident.
+
+---
+
+## 12. Hosting — a plan decision
+
+The site processes payments, which is commercial use.
+
+- **Vercel Hobby is licensed for non-commercial personal use only**, and runs
+  cron at most once a day with imprecise timing. We do not use the Hobby tier.
+- **Vercel Pro or Enterprise is required** for this site's cron schedule
+  (every minute) and for commercial use.
+- Self-hosting on a DigitalOcean droplet with Docker and Caddy is supported and
+  is documented in `DEPLOY.md` and `deploy/`.
+
+| What | Owner | Why it matters |
+| --- | --- | --- |
+| **[BLOCKING]** Vercel Pro, or a decision to self-host | You | Commercial use and cron frequency both depend on it. |
+| **[BLOCKING]** Managed PostgreSQL account | You | The site no longer runs without a real database. |
+| **[BLOCKING]** Redis (Upstash or self-hosted) | You | Rate limits are per-instance without it. |
+| **[BLOCKING]** Stripe live keys and the webhook endpoint URL | You | No ticket is issued without them, by design. |
+| **[BLOCKING]** Email sending domain verified (SPF, DKIM, DMARC) and a sender address | You | Unverified senders get spam-binned. |
+| Turnstile site and secret keys | You | Recommended before a launch; the form relies on rate limits alone without it. |
+
+---
+
+## 13. Payments-lawyer review — not legal advice
+
+The structure is: a **paid entry**, **cash prizes**, and a result decided by a
+**measurement** (heart rate), with a refund promise if the date is not announced.
+
+In several US states that combination is treated as a **lottery or a game of
+chance** and requires registration, bonding, specific disclosures and permitted
+game mechanics. Whether it applies here depends on the exact structure and the
+states entrants are in, and **we are not lawyers — this must be reviewed by a
+promotions lawyer before the contest is announced.**
+
+| What | Owner | Why it matters |
+| --- | --- | --- |
+| **[BLOCKING]** Promotions-lawyer review of the paid-entry structure, rules, waiver and privacy policy | You | See above. |
+| **[BLOCKING]** A decision on a free entry route | You | A free alternative is often what takes a contest out of the lottery definition. Not decided for you. |
+| **[BLOCKING]** Confirmation the privacy policy matches what the site actually stores | You | It now stores hashed IPs, hashed emails for rate limiting, and a payment reference. |
+
+---
+
+## 14. Imagery still needed
+
+| What | Owner | Why it matters |
+| --- | --- | --- |
+| **[BLOCKING]** Real photographs and video from a comparable event | You | The current images are labelled concept visuals. They look good and they are not real, which the page says. |
+| **[BLOCKING]** The official logo in `public/assets/brand/` | You | Needed for the record-attempt badge and for social sharing. |
+
+---
+
+## 15. Things we will not do without a decision from you
+
+| Request | Why we did not just build it |
+| --- | --- |
+| Show "293 / 500" when the real count differs | False social proof on a page that takes money. Deceptive design under Section 5 of the FTC Act. |
+| Advertise a cap of 300 or 500 while accepting 200,000 | False scarcity, same exposure. |
+| Seed or offset the counter to look busier | A faked public number. |
+| Put the Guinness logo up now | Unlicensed use without written approval. |
+| Copy other organisers' photos and logos | Infringement, and implies a partnership. |
+| Issue tickets without payment when Stripe keys are missing | Hands out prize eligibility for free. |
+
+In each case we built the honest equivalent and it is described in
+`BACKEND_REPORT.md`. Say the word and we will change any of them — but they are
+your call to make, not ours to make quietly.

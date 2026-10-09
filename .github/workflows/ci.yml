@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main, change-request-backend]
+  pull_request:
+
+# A new push supersedes an in-flight run for the same ref. Load tests and
+# integration suites are slow enough that this matters on a busy branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    # Real PostgreSQL and Redis. The correctness properties this project claims —
+    # atomic capacity, exactly-once webhooks, unique mat numbers, a shared
+    # sliding-window rate limiter — are properties of the database and the cache.
+    # Against a test double they would only prove the code calls the double.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sc
+          POSTGRES_PASSWORD: scpass
+          POSTGRES_DB: sleepcontest_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U sc -d sleepcontest_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://sc:scpass@localhost:5432/sleepcontest_test?connection_limit=50
+      DIRECT_URL: postgresql://sc:scpass@localhost:5432/sleepcontest_test
+      REDIS_URL: redis://localhost:6379
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      SESSION_SECRET: ci-session-secret-at-least-32-characters
+      ADMIN_PASSWORD_HASH: scrypt.16384.8.1.AAAAAAAAAAAAAAAAAAAAAA==.PLACEHOLDER
+      CRON_SECRET: ci-cron-secret-at-least-24-chars
+      IP_PEPPER: ci-ip-pepper-value-1234
+      MOCK_PAYMENTS: 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Build-time honesty gates. These fail on a faked count, on licensed brand
+      # wording that could render ungated, on undeclared imagery, and on the mock
+      # payment provider being reachable in production.
+      - name: Integrity and media gates
+        run: |
+          node scripts/check-integrity.mjs
+          node scripts/check-media.mjs
+
+      - run: npm run typecheck
+
+      - run: npm run lint
+
+      - name: Apply migrations
+        run: npx prisma migrate deploy
+
+      - name: Unit and integration tests
+        run: npm test
+
+      # The build must not reach a database or the network: it analyses route
+      # modules, and anything that connects at build time breaks the deploy.
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      - name: Migration is up to date with the schema
+        run: |
+          npx prisma migrate diff \
+            --from-migrations prisma/migrations \
+            --to-schema-datamodel prisma/schema.prisma \
+            --shadow-database-url "$DIRECT_URL" \
+            --exit-code
+        # A non-zero exit here means someone changed schema.prisma without
+        # writing the migration, so a deploy would silently miss a column.

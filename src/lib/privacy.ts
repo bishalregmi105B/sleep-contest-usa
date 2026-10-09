@@ -19,7 +19,14 @@ import { env } from './env';
  * leaves the server.
  */
 
-function pepper(kind: string): string {
+/**
+ * The pepper for hashed identifiers.
+ *
+ * One value for both hashes, taken from `IP_PEPPER`. A domain separator is
+ * added at each call site instead (`ip:`, `email:`), so a hash of an IP can
+ * never equal a hash of an email address.
+ */
+function pepper(): string {
   const configured = env.ipPepper || env.sessionSecret;
   // In development there may be no pepper; a fixed one is acceptable because
   // the data being hashed locally is test data. `assertServerConfigured`
@@ -28,12 +35,12 @@ function pepper(kind: string): string {
 }
 
 export function hashIp(ip: string): string {
-  return createHash('sha256').update(`ip:${pepper('ip')}:${ip}`).digest('hex').slice(0, 32);
+  return createHash('sha256').update(`ip:${pepper()}:${ip}`).digest('hex').slice(0, 32);
 }
 
 export function hashEmail(email: string): string {
   return createHash('sha256')
-    .update(`email:${pepper('email')}:${email.toLowerCase().trim()}`)
+    .update(`email:${pepper()}:${email.toLowerCase().trim()}`)
     .digest('hex')
     .slice(0, 32);
 }

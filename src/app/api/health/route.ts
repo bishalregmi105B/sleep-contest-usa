@@ -7,7 +7,6 @@ import {
   paymentsEnabled,
   redisEnabled,
   resendEnabled,
-  stripeEnabled,
   turnstileEnabled,
   validateEnv,
 } from '@/lib/env';

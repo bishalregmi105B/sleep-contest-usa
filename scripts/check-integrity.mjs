@@ -18,7 +18,6 @@ import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const SRC = path.join(ROOT, 'src');
-const CONTENT = path.join(ROOT, 'src/content');
 const GWR_DIR = path.join(SRC, 'components/gwr');
 
 /** Property names that would let a real count be faked. */

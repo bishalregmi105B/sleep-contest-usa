@@ -62,9 +62,11 @@ export async function GET(request: Request) {
     log.error('sweep: hold expiry failed');
   }
 
-  // Reconciliation is the more expensive job, so it runs on a coarser cadence
-  // than the per-minute sweep. Cheap enough to skip most runs.
-  if (shouldReconcile()) {
+  // Reconciliation is the more expensive job, so it runs on a coarse cadence
+  // rather than every minute. `?reconcile=1` forces it, which is what the
+  // runbook tells an operator to run after a suspected incident.
+  const force = new URL(request.url).searchParams.has('reconcile');
+  if (force || shouldReconcile()) {
     try {
       result.reconciled = await reconcile();
     } catch (err) {
@@ -86,7 +88,7 @@ export async function GET(request: Request) {
 }
 
 /**
- * Reconcile at most every five minutes.
+ * Reconcile at most every five minutes, unless `?reconcile=1` is passed.
  *
  * Keyed on the wall-clock minute so the decision needs no shared state: every
  * instance computes the same answer, and repeated cron delivery inside the same

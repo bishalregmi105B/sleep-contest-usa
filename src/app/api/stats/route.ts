@@ -3,7 +3,6 @@ import { paidCount as readPaidCount, currentReserved } from '@/lib/capacity';
 import { getProgress } from '@/lib/progress';
 import { getSettings } from '@/lib/settings';
 import { fallbackKV, getKV, withKV } from '@/lib/kv';
-import { log } from '@/lib/logger';
 
 
 /**

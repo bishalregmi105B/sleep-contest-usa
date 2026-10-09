@@ -31,7 +31,13 @@ const MAX_AGE_SECONDS = 60 * 60 * 8; // 8 hours
  * compile and no dependency to keep patched. `npm run admin:hash` produces the
  * value that goes in `ADMIN_PASSWORD_HASH`.
  *
- * Format: `scrypt$N$r$p$saltB64$hashB64`
+ * Format: `scrypt.N.r.p.saltB64.hashB64`
+ *
+ * Dot-separated, **not** the conventional `$`-separated form. A `.env` file is
+ * shell-flavoured: sourcing one expands `$1` and `$8` as positional parameters
+ * and silently deletes them, so a `$`-delimited hash arrives mangled and the
+ * admin password simply never works. Base64 cannot contain a dot, so this
+ * format survives every .env loader and every shell.
  */
 
 const SCRYPT_N = 16384;
@@ -48,7 +54,7 @@ export function hashPassword(password: string): string {
     p: SCRYPT_P,
     maxmem: MAXMEM,
   });
-  return `scrypt$${SCRYPT_N}$${SCRYPT_R}$${SCRYPT_P}$${salt.toString('base64')}$${derived.toString('base64')}`;
+  return `scrypt.${SCRYPT_N}.${SCRYPT_R}.${SCRYPT_P}.${salt.toString('base64')}.${derived.toString('base64')}`;
 }
 
 /**
@@ -61,18 +67,33 @@ export function hashPassword(password: string): string {
 export async function passwordMatches(candidate: string): Promise<boolean> {
   if (!adminEnabled) return false;
   const stored = env.adminPasswordHash;
-  if (!stored.startsWith('scrypt$')) return false;
+  if (!stored.startsWith('scrypt.')) return false;
 
-  const [, n, r, p, saltB64, hashB64] = stored.split('$');
-  if (!n || !r || !p || !saltB64 || !hashB64) return false;
+  // Six dot-separated fields, index 0 being the algorithm. A value that has been
+  // through shell expansion arrives with fields missing, and is rejected here
+  // rather than parsed into nonsense.
+  const parts = stored.split('.');
+  if (parts.length !== 6) return false;
+
+  const [algorithm, nRaw, rRaw, pRaw, saltB64, hashB64] = parts;
+  if (algorithm !== 'scrypt' || !nRaw || !rRaw || !pRaw || !saltB64 || !hashB64) return false;
+
+  const n = Number(nRaw);
+  const r = Number(rRaw);
+  const p = Number(pRaw);
+  // A malformed or absurd parameter set must not be passed to scrypt, which
+  // would either throw or allocate an enormous amount of memory.
+  if (!Number.isInteger(n) || n < 2 || (n & (n - 1)) !== 0) return false;
+  if (!Number.isInteger(r) || r < 1) return false;
+  if (!Number.isInteger(p) || p < 1) return false;
 
   try {
     const salt = Buffer.from(saltB64, 'base64');
     const expected = Buffer.from(hashB64, 'base64');
     const derived = await scryptAsync(candidate, salt, expected.length, {
-      N: Number(n),
-      r: Number(r),
-      p: Number(p),
+      N: n,
+      r,
+      p,
       maxmem: MAXMEM,
     });
     return derived.length === expected.length && timingSafeEqual(derived, expected);

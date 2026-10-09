@@ -101,7 +101,7 @@ const REQUIRED_IN_PRODUCTION: ReadonlyArray<readonly [string, (e: EnvRecord) => 
   ['SESSION_SECRET', (e) => e.sessionSecret.length >= 32, 'must be set and at least 32 characters.'],
   [
     'ADMIN_PASSWORD_HASH',
-    (e) => e.adminPasswordHash.startsWith('scrypt$'),
+    (e) => e.adminPasswordHash.startsWith('scrypt.'),
     'must be a scrypt hash, not a plaintext password. Generate one with `npm run admin:hash -- "<password>"`.',
   ],
   ['CRON_SECRET', (e) => e.cronSecret.length >= 24, 'must be set and at least 24 characters.'],

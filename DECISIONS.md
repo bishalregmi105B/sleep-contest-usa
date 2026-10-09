@@ -222,3 +222,123 @@ rather than stepping.
 instruction.** The `/api/health` check stays: it is a deployment diagnostic, it
 returns 503, and a simulated payment provider is the failure most likely to be
 missed. The banner was page copy and the client does not want it.
+
+---
+
+# Change request: backend rebuild and client changes
+
+Recorded during the work described in `STATE_OF_THE_CODEBASE.md` and
+`BACKEND_REPORT.md`. One line per decision, with the reason.
+
+## Backend
+
+- **PostgreSQL only; the in-memory store is deleted.** It was the *default*,
+  because `.env.example` shipped `DATABASE_URL="file:./dev.db"`, which is not a
+  Postgres URL. A deploy that copied the example file lost every registration.
+
+- **Mat numbers from a sequence, not `MAX()+1`.** The old read-modify-write
+  raced; correctness depended on a unique constraint and a retry loop. Measured
+  at 1,000 concurrent transitions: 1,000 distinct numbers.
+
+- **A `Counter.paid` row rather than `COUNT(*)`.** Measured on 200,000 rows:
+  `COUNT(*)` is 21.6 ms with autovacuum current and 28 ms without, against a
+  20 ms hot-path budget. The counter row is 0.084 ms. Denormalised, so
+  reconciliation runs every five minutes.
+
+- **A partial unique index on active emails, enforced in the database.** The
+  application-level check raced. A check and an insert cannot be made atomic
+  without the database doing it.
+
+- **The webhook event id is inserted first, in the payment's transaction.** It
+  is the idempotency gate. `WebhookEvent` existed in the schema and was never
+  written to; the comment above it claimed replay was handled.
+
+- **Duplicate webhook deliveries are rejected before opening a transaction.**
+  Found by the 500-parallel test: a transaction holds a pool connection for its
+  whole duration, so a retry burst exhausted the pool and returned 500 to
+  Stripe, which retried, which lengthened the queue.
+
+- **`enqueue()` takes the caller's transaction connection.** It called
+  `getDb()` internally, so the outbox row was written on a second connection,
+  outside the payment transaction: a rolled-back payment left a confirmation
+  queued for a ticket that was never issued.
+
+- **scrypt for the admin password, via `node:crypto`.** The old code read
+  `ADMIN_PASSWORD` and compared it in plaintext, so the password sat in the
+  environment of every process that served a request. scrypt is built in, so
+  there is no native module to compile and no dependency to keep patched.
+
+- **Redis required for correctness at scale, optional for boot.** The site must
+  keep taking registrations without it, but must log loudly and say so. A
+  per-process limiter on a multi-instance host multiplies every limit by the
+  instance count, which is the defect the old `rate-limit.ts` had.
+
+- **Email is an outbox row, sent by `after()` and the sweeper.** Sending inline
+  put provider latency inside Stripe's 300 ms budget.
+
+- **Streaming CSV with keyset pagination.** The old export was
+  `findMany({})` plus a join, which is an out-of-memory kill at 200,000 rows.
+  Offset pagination was also replaced: page N reads and discards N × pageSize
+  rows.
+
+- **CSV cells are formula-injection guarded.** A registrant who types `=cmd|…`
+  into the name field would otherwise execute when an operator opens the file.
+
+- **scrypt over bcrypt/argon2.** Same class of KDF, zero dependencies, and
+  argon2id needs a native build that has broken CI on this project before.
+
+- **vitest 3, not 5.** vitest 5 requires `@types/node` ≥ 22 and the project
+  pins ^20. Upgrading `@types/node` risked unrelated type churn for no benefit.
+
+## Client requests
+
+- **The counter shows the real count against a milestone ladder, not
+  "293/500".** The brief asked for a number that was not the real count, and
+  for a cap that contradicted the stated 200,000 goal. That is false social
+  proof and false scarcity on a page that takes money — deceptive design under
+  Section 5 of the FTC Act. The ladder gives the same sense of momentum using
+  only true numbers, and the client can change every rung from admin.
+
+- **The Guinness badge is built but gated.** Licensing is the client's risk, not
+  ours. Receiving attempt guidelines is not consent to attempt. The admin form
+  refuses to enable it without a written approval reference and a date, and a
+  build check fails on ungated brand wording.
+
+- **The world section is text and links, not copied logos and photos.** Scraping
+  images from a search engine infringes copyright; another organiser's logo on a
+  page that takes money implies a partnership. Text and links are also more
+  credible because the reader can check them.
+
+- **Where the sources contradicted the brief, the sources won.** The 2010
+  Spanish organiser is ANAS, not "AEV". The event was 2010, not 2011.
+  businessinsider.in no longer resolves, so the citation points at an archive.
+  The Japanese event's outcome could not be confirmed, so it is presented as
+  announced and never as concluded.
+
+- **No "world's first" anywhere**, and no private individuals named.
+
+## Process
+
+- **The audit came first and is a deliverable.** `STATE_OF_THE_CODEBASE.md`
+  found 24 mocked or missing items and 20 risks. Two of its findings —
+  the `counter.ts` comment claiming mock registrations were excluded upstream,
+  and `.env.example` describing a banner that was removed on request — were
+  documentation claiming behaviour the code did not have.
+
+- **Guardrails that fail the build, not review.** `check-integrity.mjs` and
+  `check-media.mjs` run in `prebuild` and CI. Review does not scale, and an
+  honesty rule that is only a convention is not a rule.
+
+- **Concurrency is tested against a real database.** Every correctness property
+  here is a property of PostgreSQL and Redis. A test double would assert only
+  that the code calls the double — the "structural checks pass while the flow is
+  broken" failure.
+
+- **Route segment config removed.** `export const runtime` and
+  `export const dynamic` are both rejected under Next 16's `cacheComponents`;
+  request-time is the default for handlers that touch runtime data, and
+  `connection()` is called explicitly where it matters.
+
+- **The initial migration was edited after being applied locally.** Valid for a
+  fresh database, which is what every deployment starts from, but recorded
+  because it is the kind of thing that surprises someone later.

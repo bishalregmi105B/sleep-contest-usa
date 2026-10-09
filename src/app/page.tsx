@@ -159,14 +159,20 @@ async function CounterSection() {
  */
 async function WorldSection() {
   await connection();
+
+  // The try only wraps the data read. Constructing JSX inside a try/catch does
+  // not catch render errors — React renders later — so it would imply a
+  // guarantee it cannot make.
+  let show = false;
   try {
-    const settings = await getPublicSettings();
-    if (!settings.showWorldSection) return null;
-    return <WorldOfSleepContests />;
+    show = (await getPublicSettings()).showWorldSection;
   } catch {
     // Never let an optional section take the home page down.
-    return null;
+    show = false;
   }
+
+  if (!show) return null;
+  return <WorldOfSleepContests />;
 }
 
 /**
@@ -205,11 +211,16 @@ function SectionFallback({ id }: { readonly id: string }) {
  */
 async function GwrHeroBadge() {
   await connection();
+
+  let enabled = false;
   try {
-    const settings = await getPublicSettings();
-    if (!settings.gwrEnabled) return null;
-    return <GwrBadge enabled className="mt-6" />;
+    enabled = (await getPublicSettings()).gwrEnabled;
   } catch {
-    return null;
+    // Off if settings cannot be read. Failing closed is the only safe default
+    // for a licensed mark.
+    enabled = false;
   }
+
+  if (!enabled) return null;
+  return <GwrBadge enabled className="mt-6" />;
 }
