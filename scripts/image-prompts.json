@@ -1,0 +1,158 @@
+{
+  "$comment": "Prompts for every photograph the site expects. scripts/generate-images.mjs reads this file when GEMINI_API_KEY is present; without a key nothing happens and the site runs its dark cinematic fallback. Style lock v2 is prepended to every prompt by the script. Generated files need a human review before launch: check faces, hands, logos and any accidental text in frame.",
+  "styleLock": "Generate a photograph, not an illustration. Documentary event photography at night, shot on a full-frame mirrorless camera, 35mm lens at f/1.4 (or 85mm f/1.8 for close-ups), ISO 3200, slight natural film grain, honest imperfections (uneven light, slight asymmetry, mild motion softness). Lit by practical warm tungsten work lights and cool moonlight. Low-contrast, lifted indigo shadows, natural skin tones, muted color. Fictional adult people, eyes closed when sleeping. Clean frame with no text, no numbers, no logos, no brand marks.",
+  "images": [
+    {
+      "key": "cine/k1",
+      "path": "public/assets/images/cine/k1.webp",
+      "width": 2400,
+      "height": 1350,
+      "section": "hero",
+      "prompt": "Wide shot of an open-air stadium at dusk from outside a gate, a long line of people in pajamas carrying pillows, sky fading from burnt amber at the horizon to deep indigo, a pale moon, warm light spilling from the gate."
+    },
+    {
+      "key": "cine/k2",
+      "path": "public/assets/images/cine/k2.webp",
+      "width": 2400,
+      "height": 1350,
+      "section": "counter",
+      "prompt": "Aerial drone view at night of a stadium field covered in thousands of neat rows of sleeping mats, soft warm aisle lights, light haze, a few people lying down."
+    },
+    {
+      "key": "cine/k3",
+      "path": "public/assets/images/cine/k3.webp",
+      "width": 2400,
+      "height": 1350,
+      "section": "how",
+      "prompt": "Low-angle view along an aisle of sleeping mats, people in pajamas asleep on both sides, strings of warm lights overhead, shallow depth of field."
+    },
+    {
+      "key": "cine/k4",
+      "path": "public/assets/images/cine/k4.webp",
+      "width": 2400,
+      "height": 1350,
+      "section": "squad",
+      "prompt": "Close-up of a sleeping adult's face in profile on a mat, eyes closed, a small heart-rate clip on the ear lobe glowing faintly green, cool moonlight and a warm rim light."
+    },
+    {
+      "key": "cine/k5",
+      "path": "public/assets/images/cine/k5.webp",
+      "width": 2400,
+      "height": 1350,
+      "section": "reserve",
+      "prompt": "Blue-hour view of the same field, the mats catching the first cool light, mist at ground level, a distant stadium rim."
+    },
+    {
+      "key": "cine/k6",
+      "path": "public/assets/images/cine/k6.webp",
+      "width": 2400,
+      "height": 1350,
+      "section": "cta",
+      "prompt": "Sunrise over the stadium field, low sun flaring through haze, long warm light across rows of mats, a few people stretching awake."
+    },
+    {
+      "key": "how-1-register",
+      "path": "public/assets/images/how-1-register.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "how",
+      "prompt": "A hand holding a phone at night, screen glow lighting the face from below, the screen content out of focus and unreadable."
+    },
+    {
+      "key": "how-2-pajamas",
+      "path": "public/assets/images/how-2-pajamas.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "how",
+      "prompt": "Flat-lay of folded ordinary pajamas, a pillow and a rolled mat on a wooden floor, warm lamp light from one side."
+    },
+    {
+      "key": "how-3-leaderboard",
+      "path": "public/assets/images/how-3-leaderboard.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "how",
+      "prompt": "Macro of a fingertip heart-rate clip glowing softly, very shallow depth of field, dark background."
+    },
+    {
+      "key": "how-4-feather",
+      "path": "public/assets/images/how-4-feather.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "how",
+      "prompt": "Silhouette of a referee in a striped shirt standing in a mat aisle holding an air horn, backlit by warm work lights, face not visible."
+    },
+    {
+      "key": "squad-noise",
+      "path": "public/assets/images/squad-noise.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "squad",
+      "prompt": "Product-style macro of a vintage air horn on a dark surface with a hard rim light."
+    },
+    {
+      "key": "squad-tickle",
+      "path": "public/assets/images/squad-tickle.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "squad",
+      "prompt": "Extreme macro of a feather held above a sleeper's closed eyelashes."
+    },
+    {
+      "key": "squad-smell",
+      "path": "public/assets/images/squad-smell.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "squad",
+      "prompt": "Bacon sizzling in a pan with backlit steam, a steaming coffee cup out of focus behind it."
+    },
+    {
+      "key": "gallery-1",
+      "path": "public/assets/images/gallery-1.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "gallery",
+      "prompt": "Wide aerial view of rows of sleeping mats under aisle lights at night, seen from high in the stands."
+    },
+    {
+      "key": "gallery-2",
+      "path": "public/assets/images/gallery-2.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "gallery",
+      "prompt": "Candid close view of two friends asleep in ordinary pajamas, one hugging a pillow, faces relaxed and eyes closed."
+    },
+    {
+      "key": "gallery-3",
+      "path": "public/assets/images/gallery-3.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "gallery",
+      "prompt": "A referee's hand holding a feather over a sleeping contestant, the contestant's face out of focus."
+    },
+    {
+      "key": "gallery-4",
+      "path": "public/assets/images/gallery-4.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "gallery",
+      "prompt": "A large dark stadium screen glowing with abstract green light lines, no text and no numbers, silhouettes of people in front of it."
+    },
+    {
+      "key": "gallery-5",
+      "path": "public/assets/images/gallery-5.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "gallery",
+      "prompt": "A squad member walking down a mat aisle, air horn held at their side, backlit by warm work lights."
+    },
+    {
+      "key": "gallery-6",
+      "path": "public/assets/images/gallery-6.webp",
+      "width": 1600,
+      "height": 1200,
+      "section": "gallery",
+      "prompt": "Steam rising across warm lights at the edge of the field, low and drifting, dark background."
+    }
+  ]
+}

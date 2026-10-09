@@ -25,19 +25,19 @@ export function SectionHeading({
   return (
     <div className={centered ? 'mx-auto max-w-3xl text-center' : 'max-w-2xl'}>
       {eyebrow ? (
-        <p className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-mint">
+        <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-tungsten/80">
           {eyebrow}
         </p>
       ) : null}
       <Tag
-        className="text-headline-lg-mobile md:text-headline-lg font-display font-extrabold text-cream sm:text-4xl"
+        className={`font-display font-extrabold uppercase tracking-[-0.01em] text-paper ${
+          centered ? 'text-[clamp(2rem,5vw,3.25rem)]' : 'text-[clamp(1.75rem,4vw,2.5rem)]'
+        }`}
       >
         {title}
       </Tag>
       {sub ? (
-        <p
-          className={`mt-4 text-body-lg text-lavender ${centered ? 'mx-auto' : ''}`}
-        >
+        <p className={`mt-5 text-lg leading-relaxed text-mist ${centered ? 'mx-auto' : ''}`}>
           {sub}
         </p>
       ) : null}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Downloads the three webfonts this site uses into src/app/fonts/.
+ * Downloads the webfonts this site uses into src/app/fonts/.
  *
  * next/font/google fetches from fonts.googleapis.com during the build, which
  * makes every deployment depend on a third party being reachable from the build
@@ -34,10 +34,16 @@ const UA =
  */
 const SUBSET = 'latin';
 
+/**
+ * Display is a condensed title-card face, body is DM Sans, and every number that
+ * changes uses JetBrains Mono with tabular figures. Space Mono was the previous
+ * mono; JetBrains Mono is kept because its digits are the same width at every
+ * weight, which is what makes a counting number stop jittering as it ticks.
+ */
 const FAMILIES = [
-  { slug: 'rubik', family: 'Rubik', query: 'family=Rubik:wght@300..900' },
+  { slug: 'big-shoulders', family: 'Big Shoulders Display', query: 'family=Big+Shoulders+Display:wght@700..900' },
   { slug: 'dm-sans', family: 'DM Sans', query: 'family=DM+Sans:wght@100..1000' },
-  { slug: 'space-mono', family: 'Space Mono', query: 'family=Space+Mono:wght@400;700' },
+  { slug: 'jetbrains-mono', family: 'JetBrains Mono', query: 'family=JetBrains+Mono:wght@400..700' },
 ];
 
 const BLOCK = /\/\*\s*([a-z0-9-]+)\s*\*\/\s*@font-face\s*\{([^}]*)\}/g;
@@ -54,8 +60,8 @@ async function main() {
     const url = `https://fonts.googleapis.com/css2?${query}&display=swap`;
     const css = await (await fetch(url, { headers: { 'User-Agent': UA } })).text();
 
-    // Rubik and DM Sans come back as one variable file per subset; Space Mono is
-    // genuinely static, so it yields one file per weight.
+    // Big Shoulders Display, DM Sans and JetBrains Mono all come back as one
+    // variable file per subset, so each family yields a single woff2.
     const found = new Map();
     for (const [, subset, body] of css.matchAll(BLOCK)) {
       if (subset !== SUBSET) continue;

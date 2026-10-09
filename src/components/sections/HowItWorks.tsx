@@ -1,78 +1,48 @@
-import Image from 'next/image';
-import { STEPS } from '@/content/site';
-import { asset } from '@/lib/assets';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { HOW, STEPS } from '@/content/site';
+import { Plate } from '@/components/media/Plate';
 import { SectionHeading } from './SectionHeading';
 import { SectionScrim } from './SectionScrim';
 
 /**
  * S3 How it works.
  *
- * A real four-step sequence, so the numbering carries meaning here (unlike the
- * eyebrow labels elsewhere). On desktop this becomes a pinned horizontal rail;
- * on mobile and with reduced motion it is a plain vertical stack.
+ * Four editorial columns. The number is a mono numeral on the photograph and
+ * the heading carries no "Step N:" prefix: the old build showed both, which is
+ * two devices competing for one job.
  */
 export function HowItWorks() {
   return (
     <section id="how" aria-labelledby="how-heading" className="section-shell overflow-hidden">
       <SectionScrim />
       <div className="content-frame relative z-10">
-        <SectionHeading
-          title="How America’s deepest sleeper wins"
-          sub={`Four steps from tonight to the cash. Our ${STEPS[2]?.title.toLowerCase()} is the easy part.`}
-          as="h2"
-        />
+        <SectionHeading title={HOW.heading} sub={HOW.sub} as="h2" />
 
         <ol
-          className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4"
           data-testid="how-steps"
         >
           {STEPS.map((step, index) => {
-            const image = asset(step.asset);
             const number = String(index + 1).padStart(2, '0');
 
             return (
-              <GlassCard
-                as="li"
-                key={step.title}
-                className="flex flex-col overflow-hidden p-0"
-              >
-                <div className="relative aspect-16/10 w-full overflow-hidden bg-indigo">
-                  {image.exists ? (
-                    <Image
-                      src={image.src}
-                      alt={step.alt}
-                      fill
-                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                      loading="lazy"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div
-                      aria-hidden="true"
-                      className="size-full"
-                      style={{
-                        background:
-                          'radial-gradient(80% 70% at 50% 30%, #3A2C78, #0B0620)',
-                      }}
-                    />
-                  )}
-                  <span
-                    aria-hidden="true"
-                    className="absolute left-3 top-3 rounded-md bg-zzz px-2 py-1 font-mono text-sm font-bold text-ink"
-                  >
-                    {number}
-                  </span>
-                </div>
+              <li key={step.title} className="group flex flex-col">
+                <figure className="relative overflow-hidden rounded-t-[12px] border border-b-0 border-white/10">
+                  <Plate
+                    assetKey={step.asset}
+                    alt={step.alt}
+                    className="aspect-3/2 w-full"
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    caption={number}
+                  />
+                </figure>
 
-                <div className="flex flex-1 flex-col gap-3 p-5">
-                  <h3 className="text-headline-sm font-display font-bold text-cream">
-                    <span className="sr-only">Step {index + 1}: </span>
+                <div className="panel flex flex-1 flex-col gap-2 rounded-t-none p-5">
+                  <h3 className="font-display text-xl font-bold uppercase leading-tight tracking-wide text-paper">
                     {step.title}
                   </h3>
-                  <p className="text-body-sm text-lavender">{step.body}</p>
+                  <p className="text-sm leading-relaxed text-mist">{step.body}</p>
                 </div>
-              </GlassCard>
+              </li>
             );
           })}
         </ol>

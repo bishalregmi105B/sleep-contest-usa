@@ -1,51 +1,58 @@
 @import "tailwindcss";
 
 /*
- * Design tokens.
+ * "Midnight documentary" design tokens.
  *
- * Values come from design/DESIGN_PLAN.md, which reconciles the client brief
- * (Section 1 and 4) with the Stitch export's inline tailwind.config. Stitch
- * wins for spacing and radius; the brief wins for palette and content.
+ * Reality carries the page and brand personality survives in only four places:
+ * the indigo night base, one signal-pink CTA colour, the heartbeat motif and the
+ * gold prize gradient. Everything else is photography, light or data.
  */
 
 @theme {
-  /* Surfaces and sky */
+  /* Surfaces ------------------------------------------------------------ */
+  --color-ink: #07060f;
   --color-midnight: #0b0620;
   --color-indigo: #1b1450;
+  /* Rare section tint. Never a flat card fill. */
   --color-dusk: #3a2c78;
-  --color-cream: #fff8e7;
-  --color-lavender: #d9d2ff;
-  --color-zzz: #ffe14a;
-  --color-pillow: #ff4f8b;
-  --color-dawn: #ff9a3c;
+
+  /* Type ---------------------------------------------------------------- */
+  --color-paper: #f3ebdd;
+  --color-mist: #b9b4d6;
+
+  /* Light --------------------------------------------------------------- */
+  --color-tungsten: #ffb867;
+
+  /* Brand --------------------------------------------------------------- */
+  --color-signal: #e8467f;
+  --color-signal-ink: #1a0b12;
   --color-mint: #35f2b0;
-  --color-ink: #1a0b12;
+  --color-alert: #ff8a80;
 
-  /* Stitch surface ramp, kept so exported classes and tokens agree */
-  --color-surface: #140f2a;
-  --color-surface-lowest: #0f0a24;
-  --color-surface-low: #1d1832;
-  --color-surface-high: #2b2642;
-  --color-surface-highest: #36314d;
+  /* Realistic sky stops. A dusk sky does not run pink to orange. */
+  --color-dusk-horizon: #c9743a;
+  --color-night: #0b0620;
+  --color-dawn-low: #2a3a66;
+  --color-dawn-high: #e9a66a;
 
-  /* Type */
-  --font-display: var(--font-rubik), system-ui, sans-serif;
+  /* Type ---------------------------------------------------------------- */
+  --font-display: var(--font-big-shoulders), "Arial Narrow", system-ui, sans-serif;
   --font-body: var(--font-dm-sans), system-ui, sans-serif;
-  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  /* Stitch type scale */
+  /* One type scale. Display is a condensed title-card face. */
   --text-display-hero: 72px;
-  --text-display-hero--line-height: 76px;
+  --text-display-hero--line-height: 66px;
   --text-display-hero-mobile: 44px;
-  --text-display-hero-mobile--line-height: 48px;
+  --text-display-hero-mobile--line-height: 41px;
   --text-headline-lg: 40px;
-  --text-headline-lg--line-height: 46px;
+  --text-headline-lg--line-height: 37px;
   --text-headline-lg-mobile: 30px;
-  --text-headline-lg-mobile--line-height: 36px;
+  --text-headline-lg-mobile--line-height: 28px;
   --text-headline-md: 28px;
-  --text-headline-md--line-height: 34px;
+  --text-headline-md--line-height: 26px;
   --text-headline-sm: 22px;
-  --text-headline-sm--line-height: 28px;
+  --text-headline-sm--line-height: 21px;
   --text-body-lg: 18px;
   --text-body-lg--line-height: 28px;
   --text-body-md: 16px;
@@ -53,45 +60,34 @@
   --text-body-sm: 14px;
   --text-body-sm--line-height: 20px;
 
-  /* Radius, straight from the Stitch config */
-  --radius-sm: 0.5rem;
-  --radius-DEFAULT: 1rem;
-  --radius-md: 1.5rem;
-  --radius-lg: 2rem;
-  --radius-xl: 3rem;
-  --radius-card: 28px;
+  /* One radius scale. Cards 10 to 14px. */
+  --radius-card: 12px;
+  --radius-lg: 14px;
   --radius-pill: 9999px;
 
-  /* Stitch spacing */
-  --spacing-gutter: 1.5rem;
-  --spacing-margin: 3rem;
-  --spacing-space-xs: 0.25rem;
-  --spacing-space-sm: 0.5rem;
-  --spacing-space-md: 1rem;
-  --spacing-space-lg: 1.5rem;
-  --spacing-space-xl: 2.5rem;
+  /*
+   * Layered, realistic elevation. The inset 1px highlight is what makes a dark
+   * card read as a physical surface catching light from above rather than as a
+   * flat rectangle. No hard offset shadows anywhere.
+   */
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.06) inset,
+    0 24px 60px -24px rgb(0 0 0 / 0.85);
+  --shadow-raised: 0 1px 0 rgb(255 255 255 / 0.09) inset,
+    0 2px 6px rgb(0 0 0 / 0.4), 0 32px 64px -28px rgb(0 0 0 / 0.9);
+  /* Soft, realistic button shadow. Pressed state drops it and translates 1px. */
+  --shadow-signal: 0 1px 0 rgb(255 255 255 / 0.22) inset,
+    0 6px 16px -6px rgb(232 70 127 / 0.5), 0 2px 6px rgb(0 0 0 / 0.4);
+  --shadow-signal-press: 0 1px 0 rgb(255 255 255 / 0.18) inset,
+    0 2px 6px -3px rgb(232 70 127 / 0.45), 0 1px 2px rgb(0 0 0 / 0.5);
 
-  /* Elevation: hard offset shadows, sticker language */
-  --shadow-sticker: 6px 6px 0 var(--color-zzz);
-  --shadow-sticker-ink: 4px 4px 0 var(--color-midnight);
-  --shadow-sticker-pink: 10px 10px 0 var(--color-pillow);
-  --shadow-card: 0 18px 40px -18px rgb(11 6 32 / 0.9);
-  --shadow-glow-pink: 0 0 0 1px var(--color-pillow), 0 12px 40px -12px rgb(255 79 139 / 0.55);
-
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-cine: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/*
- * Sky variables. The 3D scene writes these as the page scrolls so the
- * CSS-only fallback (no WebGL) shows exactly the same colours.
- * Defaults are the dusk hero state.
- */
 :root {
-  --sky-top: #3a2c78;
-  --sky-mid: #ff4f8b;
-  --sky-bottom: #ff9a3c;
-
-  --header-h: 80px;
+  --header-h: 72px;
+  /* Film grade. Both are painted over the whole page by the Stage layers. */
+  --grain-opacity: 0.06;
+  --vignette-strength: 0.3;
 }
 
 /* Base ------------------------------------------------------------------ */
@@ -103,134 +99,173 @@
 
   html {
     scroll-behavior: smooth;
-    /* Anchor targets clear the floating header. */
-    scroll-padding-top: calc(var(--header-h) + 16px);
+    /* Anchor targets clear the fixed header. */
+    scroll-padding-top: calc(var(--header-h) + 24px);
+    color-scheme: dark;
   }
 
   body {
-    background-color: var(--color-midnight);
-    color: var(--color-cream);
+    background-color: var(--color-ink);
+    color: var(--color-paper);
     font-family: var(--font-body);
     font-size: var(--text-body-md);
     line-height: var(--text-body-md--line-height);
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 900;
+    font-weight: 800;
+    /* Title-card setting: tight, balanced, never a puffy balloon. */
+    line-height: 0.92;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
 
   /* Never wider than a comfortable measure. */
   p {
-    max-width: 80ch;
+    max-width: 72ch;
   }
 
-  /* Focus is always visible and always the same. */
+  /* Any number that can change gets tabular figures, so it never jitters. */
+  [data-numeric],
+  .font-mono,
+  time {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
   :focus-visible {
-    outline: 3px solid var(--color-zzz);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-tungsten);
+    outline-offset: 3px;
     border-radius: 4px;
   }
 
   ::selection {
-    background: var(--color-pillow);
-    color: var(--color-ink);
-  }
-
-  /* Respect the notch and the home indicator. */
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--color-signal);
+    color: var(--color-signal-ink);
   }
 }
 
-/* Utilities ------------------------------------------------------------- */
+/* Layout --------------------------------------------------------------- */
 
 @utility content-frame {
   width: 100%;
   max-width: 1180px;
   margin-inline: auto;
-  padding-inline: 1rem;
+  padding-inline: 1.25rem;
 
   @media (width >= 48rem) {
-    padding-inline: 1.5rem;
+    padding-inline: 2rem;
   }
 }
 
+/*
+ * Full-height section with a consistent vertical rhythm. The 3D scene and the
+ * cinematic stage are fixed behind everything; sections sit above them.
+ */
 @utility section-shell {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* Tall enough to feel full-screen, but flexible so a section with more
-     content than one viewport (the squad's three cards and its replay button)
-     grows instead of clipping the last element off the fold. */
   min-height: 100svh;
-  padding-block: clamp(7rem, 14vh, 10rem);
+  padding-block: clamp(6rem, 12vh, 9rem);
+  scroll-margin-top: var(--header-h);
 }
 
-/* The sticky header floats over a transparent page, so header text needs a
-   scrim to clear the sky at every point in the scroll. */
-@utility glass {
-  background-color: color-mix(in oklab, var(--color-indigo) 62%, transparent);
-  border: 1px solid var(--color-dusk);
+/* Hairline surface used by cards, the facts bar and the trust strip. */
+@utility panel {
+  background-color: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
 }
 
-@utility tilt-l {
-  transform: rotate(-3deg);
+/* Glass panels blur only on the high tier; backdrop-filter is expensive. */
+@utility panel-glass {
+  composes: panel;
+  background-color: color-mix(in oklab, var(--color-indigo) 55%, transparent);
 }
 
-@utility tilt-r {
-  transform: rotate(3deg);
+/* Foil gradient. Reserved for prize numerals and nothing else. */
+@utility text-foil {
+  background-image: linear-gradient(
+    100deg,
+    #f5d77a 0%,
+    #c9953c 45%,
+    #f5d77a 70%,
+    #c9953c 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  /* Keeps the gradient from being treated as an image by the compositor. */
+  will-change: transform;
 }
 
-@utility text-ink-on-pink {
-  color: var(--color-ink);
+/* Film grain and vignette ------------------------------------------------ */
+
+/*
+ * FilmGrain. A fixed, pointer-events-none overlay above everything. The noise
+ * tile is an inline SVG feTurbulence, generated once by CSS rather than shipped
+ * as a raster, so it costs no request and scales to any display.
+ *
+ * Stepped at roughly 8fps via steps() rather than smoothed: real film grain is
+ * not a smooth loop, and a smooth one reads as video noise.
+ */
+@utility film-grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  animation: grain-shift 800ms steps(1) infinite;
 }
 
-/* Components ------------------------------------------------------------ */
-
-/* Pill sticker button with a hard offset shadow that compresses on press. */
-@utility sticker-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-pill);
-  border: 3px solid var(--color-ink);
-  background-color: var(--color-pillow);
-  color: var(--color-ink);
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: var(--text-body-md);
-  line-height: 1;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-sticker-pink);
-  transition:
-    transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 140ms cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 140ms ease;
-  -webkit-tap-highlight-color: transparent;
+@keyframes grain-shift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(-2%, 1%, 0);
+  }
+  50% {
+    transform: translate3d(1%, -2%, 0);
+  }
+  75% {
+    transform: translate3d(-1%, -1%, 0);
+  }
+  100% {
+    transform: translate3d(2%, 1%, 0);
+  }
 }
 
-@utility sticker-btn-secondary {
-  composes: sticker-btn;
-  background-color: transparent;
-  color: var(--color-cream);
-  box-shadow: 4px 4px 0 var(--color-dusk);
+@utility vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 100% at 50% 45%,
+    transparent 45%,
+    rgb(0 0 0 / var(--vignette-strength)) 100%
+  );
 }
 
-@utility sticker-btn-yellow {
-  composes: sticker-btn;
-  background-color: var(--color-zzz);
+/* ECG paper grid, used behind the progress line at very low contrast. */
+@utility ecg-grid {
+  /* Paper, not graph paper: about 4% so the trace stays the subject. */
+  background-image: linear-gradient(rgb(185 180 214 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(185 180 214 / 0.07) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* Motion ---------------------------------------------------------------- */
@@ -247,21 +282,116 @@
 @utility ticker-track {
   display: inline-flex;
   white-space: nowrap;
-  animation: marquee 24s linear infinite;
+  animation: marquee 38s linear infinite;
   will-change: transform;
 }
 
-@keyframes heartbeat-idle {
-  0%,
-  100% {
-    opacity: 0.85;
+/* A quiet one-shot reveal, reused by the title card and section entrances. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    filter: blur(6px);
+    letter-spacing: 0.06em;
   }
-  50% {
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+    letter-spacing: -0.01em;
+  }
+}
+
+@utility reveal {
+  animation: reveal-up 1100ms var(--ease-cine) both;
+}
+
+@keyframes dawn-ramp {
+  from {
+    opacity: 0.55;
+  }
+  to {
     opacity: 1;
   }
 }
 
-/* Reduced motion: the site becomes a calm, complete, static document. */
+@utility dawn-ramp {
+  animation: dawn-ramp 1400ms var(--ease-cine) both;
+}
+
+/*
+ * The squad replay: a 300ms tungsten flash and a 2px nudge. Physical, brief and
+ * quiet — the old version shook the section with a 3px offset animation, which
+ * read as a cartoon spring rather than as a wake-up round.
+ */
+/*
+ * "Lights down". One animation that carries the wordmark in, holds it, then
+ * fades the overlay out and takes it out of hit-testing entirely, so no React
+ * state and no re-render is involved. The preloader script in the document head
+ * sets data-preloader="done" before first paint for a returning visitor, which
+ * skips it completely.
+ */
+@keyframes lights-down {
+  0% {
+    opacity: 0;
+    visibility: visible;
+  }
+  18% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.lights-down {
+  animation: lights-down 1900ms var(--ease-cine) forwards;
+}
+
+html[data-preloader='done'] .lights-down,
+html[data-preloader='done'] .lights-down * {
+  animation: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+@keyframes rounds-flash {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  40% {
+    background-color: rgb(255 184 103 / 0.18);
+  }
+}
+
+@keyframes rounds-nudge {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    transform: translate3d(2px, 0, 0);
+  }
+  75% {
+    transform: translate3d(-2px, 0, 0);
+  }
+}
+
+.is-rounds-flash {
+  animation:
+    rounds-flash 300ms ease-out 1,
+    rounds-nudge 200ms ease-in-out 1;
+}
+
+/*
+ * Reduced motion. The site becomes a calm, complete, static document: grain and
+ * vignette stay (they are texture, not motion), everything that moves stops.
+ */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -275,66 +405,55 @@
     transition-duration: 0.001ms !important;
   }
 
-  .ticker-track {
+  .ticker-track,
+  .film-grain {
     animation: none;
   }
-}
 
-/* Hide the native cursor only where we draw our own, and never over
-   anything the visitor has to click. */
-@media (pointer: fine) {
-  @media (prefers-reduced-motion: no-preference) {
-    html.has-custom-cursor,
-    html.has-custom-cursor a,
-    html.has-custom-cursor button,
-    html.has-custom-cursor input,
-    html.has-custom-cursor select,
-    html.has-custom-cursor textarea {
-      cursor: none;
-    }
+  /* Reduced motion means no "lights down" fade at all: the overlay would serve
+     no purpose and would delay the first real paint by 1.9 seconds. */
+  .lights-down,
+  .lights-down * {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
   }
 }
-/*
- * Hero poster hand-off.
- *
- * The poster is server-rendered and priority-loaded so it is the LCP element and
- * the fallback when WebGL is unavailable. Once the canvas is live it steps back
- * to a wash, because it would otherwise sit opaque in front of the scene. Under
- * reduced motion it stays opaque: there is no animation to reveal, and the
- * static night behind it would only reduce contrast.
- */
-[data-hero-poster] {
-  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
-}
 
 /*
- * With a live scene the poster becomes the illustrated foreground and the sky
- * above it becomes real. A mask rather than a flat opacity, so the sleeper and
- * clouds stay solid at the bottom while the moon and Zzz have clear sky to move
- * through at the top.
+ * The low tier keeps the page calm too: FilmGrain is disabled outright, because
+ * a full-screen blended overlay is the single most expensive thing on a phone
+ * that cannot afford it. set by FilmGrain's tier check in the DOM.
  */
-html[data-scene='webgl'] [data-hero-poster] {
-  opacity: 0.92;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 22%,
-    rgb(0 0 0 / 0.55) 40%,
-    rgb(0 0 0 / 0.9) 54%,
-    #000 66%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 22%,
-    rgb(0 0 0 / 0.55) 40%,
-    rgb(0 0 0 / 0.9) 54%,
-    #000 66%
-  );
+html[data-tier='low'] .film-grain,
+html[data-tier='none'] .film-grain {
+  display: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html[data-scene='webgl'] [data-hero-poster] {
-    opacity: 0.85;
+/* Print: the ticket has to survive being printed. ------------------------ */
+
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .film-grain,
+  .vignette,
+  .no-print,
+  header,
+  footer {
+    display: none !important;
+  }
+
+  [data-ticket] {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+    break-inside: avoid;
   }
 }

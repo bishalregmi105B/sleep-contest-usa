@@ -10,32 +10,14 @@ import type { Tier } from '@/lib/quality';
  * Mount point for the single persistent canvas.
  *
  * The canvas is loaded with `ssr: false` and only after first paint and an
- * idle callback, so the 3D chunk never sits in the critical path. When the
- * tier is `none` (no WebGL2, or reduced motion) the static night renders
- * instead and no WebGL context is created at all.
+ * idle callback, so the WebGL chunk never sits in the critical path. When the
+ * tier is `none` (no WebGL2, or reduced motion) no context is created at all
+ * and the cinematic CSS sky carries the page on its own.
  */
 const SceneRoot = dynamic(
   () => import('./SceneRoot').then((m) => m.SceneRoot),
   { ssr: false },
 );
-
-/**
- * Layered night built from the hero poster and CSS gradients. Used when WebGL
- * is unavailable or the visitor prefers reduced motion, and when the context is
- * lost mid-session.
- */
-function StaticNight() {
-  return (
-    <div
-      aria-hidden="true"
-      className="fixed inset-0 -z-0"
-      style={{
-        background:
-          'linear-gradient(to top, var(--sky-bottom) 0%, var(--sky-mid) 45%, var(--sky-top) 100%)',
-      }}
-    />
-  );
-}
 
 export function SceneSlot() {
   const [ready, setReady] = useState(false);
@@ -44,17 +26,15 @@ export function SceneSlot() {
   useEffect(() => {
     const detected = detectTier();
     scrollState.tier = detected;
+    document.documentElement.dataset.tier = detected;
 
+    // Reduced motion and no-WebGL both land here. The sky, grain and vignette
+    // are already painted, so there is nothing to fall back to.
     if (detected === 'none') return;
 
-    // Wait for first paint, then for an idle slot, before creating a WebGL
-    // context. The static night covers the page in the meantime.
     const schedule = () => {
       setTier(detected);
       setReady(true);
-      // The poster is painted first so it is the LCP element, then steps back
-      // once the canvas is live: an opaque poster would otherwise hide the
-      // scene sitting behind it.
       document.documentElement.dataset.scene = 'webgl';
     };
 
@@ -67,14 +47,8 @@ export function SceneSlot() {
     return () => clearTimeout(id);
   }, []);
 
-  if (tier === 'none') return <StaticNight />;
+  // Nothing to mount: the CSS cinematic stage is the whole background.
+  if (tier === 'none') return null;
 
-  return (
-    <>
-      {/* Always present behind the canvas so there is never a flash of flat
-          colour before the scene resolves its tier. */}
-      <StaticNight />
-      {ready ? <SceneRoot tier={tier} /> : null}
-    </>
-  );
+  return ready ? <SceneRoot tier={tier} /> : null;
 }

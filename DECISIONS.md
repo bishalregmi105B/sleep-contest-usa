@@ -136,3 +136,89 @@ icosahedra merged into one geometry with recomputed vertex normals.
 environment either, so there was nothing to reflect or bounce off. Ambient,
 key and fill lights are all tinted from the current sky colour, so the lighting
 shifts with the time of night rather than staying fixed.
+
+---
+
+# Realism upgrade (`realism-upgrade` branch)
+
+**No photoreal assets ship with this build.** The brief offers one fallback and we
+took it: no image-generation tool and no `GEMINI_API_KEY` were available, so every
+Stitch-derived cartoon raster is archived to `design/archive/` and the site runs
+the dark cinematic gradient with FilmGrain and Vignette as its base state. That is
+the brief's own rule (Section 0.5, and Definition of Done: "looks intentional with
+zero generated assets"), and it is strictly safer than the alternative: with no
+cartoon in `public/` the site cannot regress into one. Dropping the Section 5 files
+into `public/assets/` upgrades it with no code change, because `assets:scan` runs
+on predev and prebuild.
+
+**Fonts stay self-hosted.** `next/font/google` fetches from fonts.googleapis.com
+during the build, and an unparseable response from that host killed a real Vercel
+deploy. Big Shoulders Display and JetBrains Mono are therefore downloaded once by
+`scripts/fetch-fonts.mjs` and committed, exactly like the three they replace.
+
+**The 3D scene lost almost everything.** Section 6.2 says to keep only stars, a
+faceless moon, dust and light shafts. That is what remains. The capsule sleeper,
+the moon's face and nightcap, the Zzz letters, the clouds and the squad props are
+deleted rather than restyled, because restyling them would still read as toys.
+
+**The counter hides a zero.** The public counter shows a real number only once it
+is at or above `NEXT_PUBLIC_COUNTER_MIN_PUBLIC` (default 500). Below that it shows
+the target and the story, never "0 / 200,000", which is the exact failure the
+brief describes. The admin view always shows the true count.
+
+**The gallery stopped claiming photographs it does not have.** With no images
+shipped, the section rendered six identical unlit rectangles under a heading
+that said "Concept visuals generated to show what the night could look like".
+That is the specific dishonesty the brief warns about, so the gallery now
+branches on whether the files exist: with photographs it shows the bento grid,
+without them it shows the night's schedule and says photography follows the
+first event.
+
+**The squad cards became typographic rather than three empty boxes.** Three
+unlit 3:2 rectangles side by side read as three broken cards. When an image is
+missing, the slot collapses to a mono numeral and the card carries its own copy.
+
+**Client answers are rendered as a labelled note, never as bracketed prose.** The
+rules and privacy pages carry four decisions only the client can make. They are
+surfaced rather than silently omitted, because a paid-entry contest that is
+quiet about safety questions is worse than one that admits the answer is not
+settled — but a literal "[CLIENT: confirm...]" in production copy is not a note,
+it is a bug. `ClientNote` renders them as a labelled panel instead.
+
+**The moon's surface is baked to a texture.** It was a three-octave 3D noise
+fragment shader evaluated per pixel per frame. The surface of the moon does not
+change, so that was waste by construction. Baking it once removed the single most
+expensive shader on the page.
+
+**The WebGL layer is the remaining performance cost, and that trade is the
+client's.** Script evaluation is about three seconds of main-thread time on a
+4x throttle, all of it three.js, in a lazily-loaded chunk that mounts on idle.
+LCP (1.2s), CLS (0.026) and transfer (712 KB) are all within budget and the LCP
+element is the headline rather than the canvas. Dropping WebGL for a pure CSS
+atmosphere would remove the remaining jank on slow phones at the cost of the
+moon and the dust. That is a real trade with a real cost, so it is logged rather
+than taken quietly.
+
+**WebKit is unverified here.** `libmanette-0.2-0` is missing on this machine and
+there is no sudo, so Safari and iOS are untested. `scripts/smoke.mjs` reports it
+as SKIP rather than as a pass, because a silent skip would be worse than a gap.
+
+**The keyframes are fetched on approach, not all at once.** Six 2400px
+photographs are about a megabyte. Loading them together pushed the page past
+2 MB before a visitor had scrolled anywhere. Only the hero frame is requested
+initially; the rest are armed a little before the scroll reaches them, so each
+has decoded by the time its section arrives.
+
+**The crossfade eases rather than tracks scroll.** Each photograph eases towards
+its target opacity on the GSAP ticker, frame-rate independent, so a fast flick
+still dissolves instead of snapping. Two supporting changes matter as much: a
+style is only written once the value has moved enough to be visible, and the CSS
+gradient behind the photographs is repainted only while it is actually on show
+rather than sixty times a second. Measured on the running site: opacity moves in
+small increments across samples with both frames overlapping mid-transition,
+rather than stepping.
+
+**The on-page "payments are simulated" banner was removed on the client's
+instruction.** The `/api/health` check stays: it is a deployment diagnostic, it
+returns 503, and a simulated payment provider is the failure most likely to be
+missed. The banner was page copy and the client does not want it.

@@ -2,16 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { NAV, SITE } from '@/content/site';
-import { StickerButton } from '@/components/ui/StickerButton';
+import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 import { MobileMenu } from './MobileMenu';
 import { SoundToggle } from './SoundToggle';
 
 /**
- * Floating pill navigation.
+ * Floating navigation.
  *
- * Hides when scrolling down and returns when scrolling up (A16), so the header
- * never covers the content the visitor is reading. With reduced motion it stays
- * visible at all times.
+ * A translucent ink bar with a hairline, not a pill with a hard border. Hides
+ * when scrolling down and returns when scrolling up, so the header never covers
+ * the content the visitor is reading. With reduced motion it stays visible at
+ * all times.
  */
 export function Header() {
   const [hidden, setHidden] = useState(false);
@@ -24,7 +26,7 @@ export function Header() {
       if (reduced) return;
       const y = window.scrollY;
       // Only react past a small threshold, so small bounces do not flicker it.
-      if (y > 120 && y > lastY.current + 4) setHidden(true);
+      if (y > 140 && y > lastY.current + 4) setHidden(true);
       else if (y < lastY.current - 4) setHidden(false);
       lastY.current = y;
     };
@@ -35,22 +37,20 @@ export function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-40 transition-transform duration-300 ease-out motion-reduce:transition-none ${
+      className={`fixed inset-x-0 top-0 z-40 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
         hidden ? '-translate-y-full' : 'translate-y-0'
       }`}
     >
       <div className="content-frame pt-4">
         <nav
           aria-label="Main"
-          // Opaque, not translucent: at 85% the sky behind showed through and
-          // the nav looked like it was colliding with the ticker.
-          className="flex items-center justify-between gap-4 rounded-pill border-2 border-dusk bg-midnight px-4 py-2 [box-shadow:0_10px_30px_-12px_rgb(11_6_32_/_0.9)]"
+          className="flex items-center justify-between gap-4 rounded-pill border border-white/10 bg-ink/85 px-4 py-2 shadow-[var(--shadow-card)] backdrop-blur-md"
         >
           <a
             href="#hero"
-            className="flex items-center gap-2 font-display text-sm font-black uppercase text-cream"
+            className="flex items-center gap-2.5 font-display text-sm font-bold uppercase tracking-wide text-paper"
           >
-            <MoonMark />
+            <CrescentMark />
             <span className="hidden sm:inline">{SITE.name}</span>
             <span className="sm:hidden">Sleep Contest</span>
           </a>
@@ -60,7 +60,7 @@ export function Header() {
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="inline-flex min-h-11 items-center rounded-pill px-4 text-body-sm font-bold text-lavender transition-colors hover:bg-dusk/50 hover:text-cream"
+                  className="inline-flex min-h-11 items-center rounded-pill px-4 text-sm font-medium text-mist transition-colors duration-200 hover:bg-white/5 hover:text-paper"
                 >
                   {item.label}
                 </a>
@@ -70,9 +70,14 @@ export function Header() {
 
           <div className="flex items-center gap-2">
             <SoundToggle />
-            <StickerButton href="#reserve" className="hidden !min-h-11 !px-5 !py-2 text-sm sm:inline-flex">
+            <ButtonLink
+              href="#reserve"
+              size="sm"
+              event={RESERVE_CLICK}
+              className="hidden sm:inline-flex"
+            >
               Reserve for $10
-            </StickerButton>
+            </ButtonLink>
             <MobileMenu />
           </div>
         </nav>
@@ -81,22 +86,17 @@ export function Header() {
   );
 }
 
-/** Moon in a nightcap, built in code so no image is needed. */
-function MoonMark() {
+/**
+ * A plain crescent. No face, no nightcap, no pompom: the old mark was a
+ * character, and a character is what made this read as a toy.
+ */
+function CrescentMark() {
   return (
-    <span
-      aria-hidden="true"
-      className="grid size-8 place-items-center rounded-full bg-zzz"
-    >
-      <svg viewBox="0 0 24 24" className="size-5 text-ink">
-        <path
-          d="M15.5 3a9 9 0 1 0 5.5 12.9A7.5 7.5 0 0 1 15.5 3Z"
-          fill="currentColor"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
+    <svg viewBox="0 0 24 24" className="size-5 text-tungsten" aria-hidden="true">
+      <path
+        d="M15.6 2.6a9.6 9.6 0 1 0 5.8 13.8 7.9 7.9 0 0 1-5.8-13.8Z"
+        fill="currentColor"
+      />
+    </svg>
   );
 }

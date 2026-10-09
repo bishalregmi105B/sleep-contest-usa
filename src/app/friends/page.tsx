@@ -46,7 +46,7 @@ export default async function FriendsPage({
   }
 
   return (
-    <main id="main" className="relative min-h-svh bg-midnight">
+    <main id="main" className="relative min-h-svh bg-ink">
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-0"
@@ -58,16 +58,16 @@ export default async function FriendsPage({
 
       <div className="content-frame relative z-10 flex min-h-svh flex-col justify-center gap-10 py-20">
         <header className="max-w-2xl">
-          <h1 className="font-display text-headline-lg-mobile font-black uppercase text-cream sm:text-headline-lg">
+          <h1 className="font-display text-3xl font-black uppercase text-paper sm:text-4xl">
             {FRIENDS.title}
           </h1>
-          <p className="mt-4 text-body-lg text-lavender">{FRIENDS.sub}</p>
+          <p className="mt-4 text-lg text-mist">{FRIENDS.sub}</p>
         </header>
 
         {code ? (
           <ReferralShare link={link} />
         ) : (
-          <p className="max-w-2xl rounded-lg border-2 border-dusk bg-indigo/70 p-6 text-body-md text-lavender">
+          <p className="max-w-2xl rounded-lg border-2 border-white/10 bg-indigo/40/70 p-6 text-base text-mist">
             Open the link on your ticket to see your personal referral link. Top
             recruiters are listed below.
           </p>
@@ -76,36 +76,36 @@ export default async function FriendsPage({
         <section aria-labelledby="top-recruiters" className="max-w-2xl">
           <h2
             id="top-recruiters"
-            className="font-mono text-xs font-bold uppercase tracking-widest text-mint"
+            className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-mint"
           >
             {FRIENDS.topRecruiters}
           </h2>
-          <p className="mt-2 text-body-sm text-lavender/80">{FRIENDS.topRecruitersNote}</p>
+          <p className="mt-2 text-sm text-mist/80">{FRIENDS.topRecruitersNote}</p>
 
           {recruiters.length === 0 ? (
-            <p className="mt-4 text-body-md text-lavender">{FRIENDS.empty}</p>
+            <p className="mt-4 text-base text-mist">{FRIENDS.empty}</p>
           ) : (
             <ol className="mt-4 space-y-2">
               {recruiters.map((row, index) => (
                 <li
                   key={row.refCode}
-                  className="flex items-center justify-between rounded-md border-2 border-dusk bg-indigo/70 px-5 py-3"
+                  className="flex items-center justify-between rounded-md border-2 border-white/10 bg-indigo/40/70 px-5 py-3"
                 >
                   <span className="flex items-center gap-4">
                     <span
                       aria-hidden="true"
-                      className="grid size-8 place-items-center rounded-full bg-zzz font-mono text-sm font-bold text-ink"
+                      className="grid size-8 place-items-center rounded-full bg-tungsten font-mono text-sm font-bold text-ink"
                     >
                       {index + 1}
                     </span>
-                    <span className="font-mono text-cream">
+                    <span className="font-mono text-paper">
                       Mat{' '}
                       {row.matNumber === null
                         ? 'pending'
                         : `#${row.matNumber.toLocaleString('en-US')}`}
                     </span>
                   </span>
-                  <span className="font-mono text-sm text-zzz">
+                  <span className="font-mono text-sm text-tungsten">
                     {row.count} referral{row.count === 1 ? '' : 's'}
                   </span>
                 </li>
@@ -115,7 +115,7 @@ export default async function FriendsPage({
         </section>
 
         <p>
-          <Link href="/" className="text-body-sm text-lavender underline decoration-dusk underline-offset-4 hover:text-zzz">
+          <Link href="/" className="text-sm text-mist underline decoration-dusk underline-offset-4 hover:text-tungsten">
             Back to {SITE.name}
           </Link>
         </p>

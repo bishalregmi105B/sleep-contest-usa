@@ -6,10 +6,22 @@ import manifest from './assets.generated.json';
  * `scripts/scan-assets.mjs` writes `assets.generated.json` on predev and
  * prebuild by scanning public/. Components ask for a key and get back whether
  * it exists, so a missing asset renders its fallback instead of a 404.
+ *
+ * The site ships with **no** raster images at all. Every key below is expected
+ * to be absent until a real photograph is generated (see ASSETS_TO_GENERATE.md)
+ * and dropped into public/assets/. The dark cinematic fallback is the intended
+ * base state, not a degraded one.
  */
 
 export type AssetKey =
-  | 'hero-poster'
+  /* Cinematic keyframes, dusk to dawn. */
+  | 'cine/k1'
+  | 'cine/k2'
+  | 'cine/k3'
+  | 'cine/k4'
+  | 'cine/k5'
+  | 'cine/k6'
+  /* Section stills. */
   | 'how-1-register'
   | 'how-2-pajamas'
   | 'how-3-leaderboard'
@@ -17,11 +29,17 @@ export type AssetKey =
   | 'squad-noise'
   | 'squad-tickle'
   | 'squad-smell'
-  | 'gallery-sleeping-floor'
-  | 'gallery-squad-closeup'
-  | 'gallery-judge'
-  | 'squad-backdrop'
-  | 'cta-backdrop'
+  | 'gallery-1'
+  | 'gallery-2'
+  | 'gallery-3'
+  | 'gallery-4'
+  | 'gallery-5'
+  | 'gallery-6'
+  /* Optional video. */
+  | 'video/hero-loop'
+  /* A public-domain NASA colour map for the moon, if one is dropped in. */
+  | 'images/moon-color'
+  | 'moon-color'
   | (string & {});
 
 export type Asset = {
@@ -35,46 +53,32 @@ const table = manifest as Record<string, { src: string; bytes: number }>;
  * Resolves an asset key to a public path.
  *
  * Returns `exists: false` when nothing was scanned for that key, which is the
- * signal for the caller to draw a procedural or CSS fallback.
+ * signal for the caller to draw the cinematic fallback instead.
  */
 export function asset(key: AssetKey): Asset {
-  const hit = table[key];
+  const hit =
+    table[key] ??
+    (key === 'images/moon-color' ? table['moon-color'] : undefined) ??
+    (key === 'moon-color' ? table['images/moon-color'] : undefined);
   return hit ? { src: hit.src, exists: true } : { src: '', exists: false };
 }
 
 /** True when the asset is present on disk. */
 export function hasAsset(key: AssetKey): boolean {
-  return Boolean(table[key]);
+  return asset(key).exists;
 }
 
-/** Keys the brief expects but the repo does not ship yet. */
-export const MISSING_ASSETS: readonly string[] = [
-  'layers/sleeper',
-  'layers/moon',
-  'layers/zzz',
-  'layers/stars',
-  'layers/clouds',
-  'squad-backdrop',
-  'cta-backdrop',
-  'trophy-gold',
-  'trophy-silver',
-  'trophy-bronze',
-  'cash-bag',
-  'video/hero-loop',
-  'video/squad-teaser',
-  'video/gallery-1',
-  'video/gallery-2',
-  'models/sleeper',
-  'models/pillow',
-  'models/moon',
-  'models/zzz',
-  'models/air-horn',
-  'models/alarm-clock',
-  'models/feather',
-  'models/bacon',
-  'models/trophy',
-  'models/podium',
-  'audio/lullaby',
-  'audio/airhorn',
-  'audio/ding',
-];
+/** How many of the given keys are actually present. Drives the stage's mode. */
+export function countPresent(keys: readonly AssetKey[]): number {
+  return keys.reduce((n, key) => n + (hasAsset(key) ? 1 : 0), 0);
+}
+
+/** The six cinematic keyframes, in the order the scroll sequence uses them. */
+export const CINE_KEYS = [
+  'cine/k1',
+  'cine/k2',
+  'cine/k3',
+  'cine/k4',
+  'cine/k5',
+  'cine/k6',
+] as const satisfies readonly AssetKey[];

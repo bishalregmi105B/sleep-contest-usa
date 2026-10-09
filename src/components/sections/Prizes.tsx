@@ -1,34 +1,46 @@
-import { PRIZES, PRIZES_SECTION, PRICE_CARD, sponsorClause } from '@/content/site';
-import { GlassCard } from '@/components/ui/GlassCard';
+import {
+  GRAND_PRIZE,
+  PRIZES,
+  PRIZE_TOTAL,
+  PRIZES_SECTION,
+  PRICE_CARD,
+  sponsorClause,
+  usd,
+} from '@/content/site';
+import { Card } from '@/components/ui/Card';
 import { SlotRoll } from './SlotRoll';
 import { SectionHeading } from './SectionHeading';
 import { SectionScrim } from './SectionScrim';
 
-/** Podium step heights and colours, tallest and gold in the centre. */
-const STEPS = [
-  { place: 2, height: 'h-32 sm:h-40', metal: 'bg-gradient-to-b from-[#E8ECF5] to-[#9AA3B8]', label: '2nd' },
-  { place: 1, height: 'h-48 sm:h-60', metal: 'bg-linear-to-b from-[#FFE14A] to-[#C99700]', label: '1st' },
-  { place: 3, height: 'h-24 sm:h-32', metal: 'bg-linear-to-b from-[#E0A071] to-[#8A4B22]', label: '3rd' },
-] as const;
-
-function prizeFor(place: number) {
-  return PRIZES.find((p) => p.place === place);
-}
-
 /**
  * S5 Prizes.
  *
- * The podium is DOM with CSS 3D perspective rather than WebGL, so the money
- * stays crisp, selectable and readable by a screen reader. Real <ol> semantics
- * with the steps visually arranged.
+ * A typographic ladder on a dark stage rather than a DOM podium. The old
+ * podium was three tilted blocks in cartoon metal gradients with a trophy
+ * emoji, which read as a toy; the money itself was never the thing that looked
+ * cheap. Here the grand prize is a single large numeral in the foil gradient,
+ * and places 2 to 5 are a quiet hairline list.
+ *
+ * The numeral rolls once when it is half in view. Reduced motion shows the
+ * final value immediately.
  */
 export function Prizes() {
-  const runnerUp = prizeFor(4);
-  const fifth = prizeFor(5);
+  const runnersUp = PRIZES.filter((prize) => !prize.grand);
 
   return (
     <section id="prizes" aria-labelledby="prizes-heading" className="section-shell overflow-hidden">
       <SectionScrim />
+
+      {/* One warm beam and a little haze behind the grand prize. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-0 top-0 h-full w-full"
+        style={{
+          background:
+            'radial-gradient(46% 52% at 32% 44%, rgba(245,215,122,0.10) 0%, transparent 68%)',
+        }}
+      />
+
       <div className="content-frame relative z-10">
         <SectionHeading
           title={PRIZES_SECTION.heading}
@@ -36,94 +48,75 @@ export function Prizes() {
           as="h2"
         />
 
-        <div className="mt-14 grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:items-start">
-          <div className="[perspective:900px]">
-            <ol className="flex items-end justify-center gap-3 [transform:rotateX(6deg)] sm:gap-6">
-              {STEPS.map((step) => {
-                const prize = prizeFor(step.place);
-                if (!prize) return null;
-                const isGrand = prize.grand;
+        <div className="mt-16 grid gap-12 lg:grid-cols-[1.35fr_1fr] lg:items-start">
+          {/* The grand prize, on its own stage. */}
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-mist/75">
+              {PRIZES_SECTION.grandCaption}
+            </p>
+            <p className="mt-4">
+              <SlotRoll amount={GRAND_PRIZE} label={PRIZES_SECTION.grandCaption} />
+            </p>
+            <p className="mt-5 max-w-md text-lg leading-relaxed text-mist">
+              {PRIZES_SECTION.prizeCardTitle}
+            </p>
+            {sponsorClause ? (
+              <p className="mt-3 font-mono text-sm text-tungsten/80">{sponsorClause}</p>
+            ) : null}
 
-                return (
-                  <li
-                    key={prize.place}
-                    className={`relative flex ${step.height} w-24 flex-col items-center justify-center rounded-t-lg border-[3px] border-ink ${step.metal} sm:w-36`}
-                  >
-                    {isGrand ? (
-                      <span className="absolute -top-4 rotate-[-4deg] rounded-sm bg-pillow px-2 py-1 font-mono text-[10px] font-bold text-ink">
-                        {PRIZES_SECTION.grandRibbon}
-                      </span>
-                    ) : null}
-
-                    <span className="font-mono text-xs font-bold uppercase text-ink/70">
-                      {step.label}
-                    </span>
-                    {isGrand ? (
-                      <span className="my-1 text-2xl sm:text-3xl" aria-hidden="true">
-                        🏆
-                      </span>
-                    ) : null}
-                    <span className="font-mono text-sm font-bold text-ink sm:text-lg">
-                      ${prize.amount.toLocaleString('en-US')}
-                    </span>
-                  </li>
-                );
-              })}
-            </ol>
-
-            {/* 4th and 5th sit below the podium, as two smaller blocks. */}
-            <ol className="mt-4 flex justify-center gap-6">
-              {[runnerUp, fifth].map((prize) =>
-                prize ? (
-                  <li
-                    key={prize.place}
-                    className="flex w-24 flex-col items-center gap-1 rounded-lg border-2 border-dusk bg-indigo/80 px-3 py-3 sm:w-28"
-                  >
-                    <span className="font-mono text-[11px] font-bold uppercase text-lavender">
-                      {prize.place}th
-                    </span>
-                    <span className="font-mono text-sm text-zzz">
-                      ${prize.amount.toLocaleString('en-US')}
-                    </span>
-                  </li>
-                ) : null,
-              )}
-            </ol>
+            <div className="mt-10 border-t border-white/10 pt-6">
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-mist/75">
+                {PRIZES_SECTION.totalCaption}
+              </p>
+              <p className="mt-1 font-mono text-3xl font-bold tabular-nums text-paper" data-numeric>
+                {usd(PRIZE_TOTAL)}
+              </p>
+            </div>
           </div>
 
           <div className="space-y-6">
-            <GlassCard className="p-8 text-center">
-              <p className="text-body-md text-lavender">{PRIZES_SECTION.prizeCardTitle}</p>
-              <div className="mt-4">
-                <SlotRoll
-                  amount={100_000}
-                  label="Grand prize"
-                />
-              </div>
-              {sponsorClause ? (
-                <p className="mt-4 font-mono text-sm text-mint">{sponsorClause}</p>
-              ) : null}
-            </GlassCard>
+            {/* Places 2 to 5: a ladder, not blocks. */}
+            <Card className="p-7">
+              <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-mist/75">
+                {PRIZES_SECTION.ladderCaption}
+              </h3>
+              <ol className="mt-5">
+                {runnersUp.map((prize) => (
+                  <li
+                    key={prize.place}
+                    className="flex items-baseline justify-between gap-4 border-t border-white/10 py-3.5 first:border-t-0 first:pt-0"
+                  >
+                    <span className="font-mono text-xs uppercase tracking-[0.14em] text-mist/75">
+                      {prize.label}
+                    </span>
+                    <span className="font-mono text-lg font-bold tabular-nums text-paper">
+                      {usd(prize.amount)}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </Card>
 
-            <div className="rounded-lg border-[3px] border-ink bg-cream p-8 text-ink [box-shadow:10px_10px_0_var(--color-zzz)]">
-              <h3 className="font-display text-2xl font-black uppercase">{PRICE_CARD.title}</h3>
-              <p className="mt-3 font-mono text-4xl font-bold">
+            {/* The price. */}
+            <Card className="p-7">
+              <h3 className="font-display text-xl font-bold uppercase tracking-wide text-paper">
+                {PRICE_CARD.title}
+              </h3>
+              <p className="mt-3 font-mono text-4xl font-bold tabular-nums text-paper" data-numeric>
                 ${PRICE_CARD.total}
               </p>
               <ul className="mt-5 space-y-2">
                 {PRICE_CARD.lines.map((line) => (
-                  <li key={line} className="flex items-start gap-2 text-body-sm">
-                    <span aria-hidden="true" className="mt-1 text-pillow">
-                      ●
-                    </span>
+                  <li key={line} className="flex items-start gap-2.5 text-sm text-mist">
+                    <span aria-hidden="true" className="mt-2 size-1 shrink-0 rounded-full bg-tungsten" />
                     {line}
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 border-t-2 border-dashed border-ink/20 pt-4 text-body-sm font-bold">
+              <p className="mt-5 border-t border-white/10 pt-4 text-sm leading-relaxed text-paper">
                 {PRICE_CARD.refundLine}
               </p>
-            </div>
+            </Card>
           </div>
         </div>
       </div>

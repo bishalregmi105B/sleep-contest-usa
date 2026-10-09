@@ -46,15 +46,15 @@ export function AdminLogin() {
   return (
     <form
       onSubmit={submit}
-      className="mx-auto w-full max-w-sm rounded-lg border-2 border-dusk bg-indigo/80 p-8"
+      className="mx-auto w-full max-w-sm rounded-lg border-2 border-white/10 bg-indigo/40/80 p-8"
     >
-      <h1 className="font-display text-2xl font-black uppercase text-cream">
+      <h1 className="font-display text-2xl font-black uppercase text-paper">
         {ADMIN.title}
       </h1>
-      <p className="mt-2 text-body-sm text-lavender">Sign in to see registrations.</p>
+      <p className="mt-2 text-sm text-mist">Sign in to see registrations.</p>
 
       <div className="mt-6 flex flex-col gap-1.5">
-        <label htmlFor="admin-password" className="text-body-sm font-bold text-cream">
+        <label htmlFor="admin-password" className="text-sm font-bold text-paper">
           {ADMIN.password}
         </label>
         <input
@@ -66,12 +66,12 @@ export function AdminLogin() {
           onChange={(event) => setPassword(event.target.value)}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? 'admin-error' : undefined}
-          className="min-h-12 rounded-md border-[3px] border-ink bg-white px-4 text-base text-ink"
+          className="min-h-12 rounded-md border border-white/15 bg-white px-4 text-base text-ink"
         />
       </div>
 
       {error ? (
-        <p id="admin-error" role="alert" className="mt-2 text-body-sm font-bold text-pillow">
+        <p id="admin-error" role="alert" className="mt-2 text-sm font-bold text-signal">
           {error}
         </p>
       ) : null}
@@ -79,7 +79,7 @@ export function AdminLogin() {
       <button
         type="submit"
         disabled={busy}
-        className="sticker-btn mt-6 w-full disabled:opacity-70"
+        className="mt-6 w-full disabled:opacity-60"
         data-testid="admin-submit"
       >
         {busy ? 'Checking…' : ADMIN.signIn}

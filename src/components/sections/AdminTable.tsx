@@ -18,8 +18,8 @@ export type AdminRow = {
 
 const STATUS_STYLES: Record<string, string> = {
   paid: 'bg-mint text-ink',
-  pending: 'bg-zzz text-ink',
-  refunded: 'bg-lavender text-ink',
+  pending: 'bg-tungsten text-ink',
+  refunded: 'bg-mist text-ink',
 };
 
 /**
@@ -52,17 +52,17 @@ export function AdminTable({
           value={term}
           onChange={(event) => setTerm(event.target.value)}
           placeholder={ADMIN.search}
-          className="min-h-11 flex-1 rounded-pill border-2 border-dusk bg-indigo/70 px-5 text-body-md text-cream placeholder:text-lavender/60"
+          className="min-h-11 flex-1 rounded-pill border-2 border-white/10 bg-indigo/40/70 px-5 text-base text-paper placeholder:text-mist/75"
         />
         <button
           type="submit"
-          className="sticker-btn sticker-btn-yellow !min-h-11 !px-6 !py-2 text-sm"
+          className="min-h-11 rounded-pill bg-signal px-6 py-2 text-sm font-bold uppercase tracking-wide text-signal-ink transition-colors hover:bg-[#f05389]"
         >
           Search
         </button>
       </form>
 
-      <div className="mt-6 overflow-x-auto rounded-lg border-2 border-dusk">
+      <div className="mt-6 overflow-x-auto rounded-lg border-2 border-white/10">
         <table className="w-full min-w-[46rem] border-collapse text-left">
           <caption className="sr-only">
             Contest registrations with mat number, entrant, status and referral
@@ -73,7 +73,7 @@ export function AdminTable({
                 <th
                   key={column}
                   scope="col"
-                  className="px-4 py-3 font-mono text-[11px] font-bold uppercase tracking-widest text-cream"
+                  className="px-4 py-3 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-paper"
                 >
                   {column}
                 </th>
@@ -85,36 +85,36 @@ export function AdminTable({
               <tr>
                 <td
                   colSpan={ADMIN.columns.length}
-                  className="px-4 py-8 text-center text-body-md text-lavender"
+                  className="px-4 py-8 text-center text-base text-mist"
                 >
                   {ADMIN.empty}
                 </td>
               </tr>
             ) : (
               registrations.map((row) => (
-                <tr key={row.publicId} className="border-t border-dusk/60">
-                  <td className="px-4 py-3 font-mono text-zzz">
+                <tr key={row.publicId} className="border-t border-white/10/60">
+                  <td className="px-4 py-3 font-mono text-tungsten">
                     {row.matNumber === null
                       ? '—'
                       : `#${row.matNumber.toLocaleString('en-US')}`}
                   </td>
-                  <td className="px-4 py-3 text-cream">{row.fullName}</td>
-                  <td className="px-4 py-3 font-mono text-sm text-lavender">
+                  <td className="px-4 py-3 text-paper">{row.fullName}</td>
+                  <td className="px-4 py-3 font-mono text-sm text-mist">
                     {row.email}
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-sm px-2 py-1 font-mono text-xs font-bold uppercase ${
-                        STATUS_STYLES[row.status] ?? 'bg-lavender text-ink'
+                        STATUS_STYLES[row.status] ?? 'bg-mist text-ink'
                       }`}
                     >
                       {row.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-mono text-sm text-lavender">
+                  <td className="px-4 py-3 font-mono text-sm text-mist">
                     {row.referredBy ?? '—'}
                   </td>
-                  <td className="px-4 py-3 font-mono text-sm text-lavender">
+                  <td className="px-4 py-3 font-mono text-sm text-mist">
                     {row.paidAt ? row.paidAt.toISOString().slice(0, 16).replace('T', ' ') : '—'}
                   </td>
                 </tr>
@@ -128,7 +128,7 @@ export function AdminTable({
         <PageLink page={current - 1} query={query} disabled={current <= 1}>
           Previous
         </PageLink>
-        <span className="font-mono text-sm text-lavender">Page {current}</span>
+        <span className="font-mono text-sm text-mist">Page {current}</span>
         <PageLink page={current + 1} query={query} disabled={registrations.length < 25}>
           Next
         </PageLink>
@@ -150,7 +150,7 @@ function PageLink({
 }) {
   if (disabled) {
     return (
-      <span className="rounded-pill border-2 border-dusk/40 px-5 py-2 text-body-sm text-lavender/40">
+      <span className="rounded-pill border-2 border-white/10/40 px-5 py-2 text-sm text-mist/75">
         {children}
       </span>
     );
@@ -163,7 +163,7 @@ function PageLink({
   return (
     <Link
       href={`/admin?${params.toString()}`}
-      className="rounded-pill border-2 border-dusk px-5 py-2 text-body-sm font-bold text-cream hover:bg-dusk/40"
+      className="rounded-pill border-2 border-white/10 px-5 py-2 text-sm font-bold text-paper hover:bg-dusk/40"
     >
       {children}
     </Link>

@@ -1,24 +1,28 @@
-import { COUNTER, SITE } from '@/content/site';
-import { HeartbeatLine } from '@/components/ui/HeartbeatLine';
-import { StickerButton } from '@/components/ui/StickerButton';
+import { COUNTER, SITE, plain } from '@/content/site';
+import { counterDisplay } from '@/lib/counter';
+import { EcgLine } from '@/components/ui/EcgLine';
+import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 import { ShareButton } from './ShareButton';
 import { SectionHeading } from './SectionHeading';
 import { SectionScrim } from './SectionScrim';
 
 type CounterProps = {
-  /** Paid registration count, read from the database on the server. */
+  /** Paid registration count, read from the store on the server. */
   readonly count: number;
 };
 
 /**
  * S2 Counter.
  *
- * The number is the real database count, server-rendered, so it is correct
- * before hydration and in the HTML for crawlers. The client island below
- * refreshes it after paint.
+ * The number is the real count, server-rendered, so it is correct before
+ * hydration and present in the HTML for crawlers. Below the public threshold
+ * the numeral is replaced by the target and the story: see `lib/counter.ts` for
+ * why a zero is never shown.
  */
 export function Counter({ count }: CounterProps) {
-  const formatted = count.toLocaleString('en-US');
+  const display = counterDisplay(count);
+  const showCount = display.kind === 'count';
 
   return (
     <section
@@ -29,46 +33,55 @@ export function Counter({ count }: CounterProps) {
       <SectionScrim />
       <div className="content-frame relative z-10">
         <div className="mx-auto max-w-4xl">
-          <SectionHeading
-            title="Sleepers registered so far"
-            as="h2"
-            align="center"
-          />
+          <SectionHeading title="Sleepers registered so far" as="h2" align="center" />
 
-          <div className="mt-10 flex flex-col items-center gap-2">
-            <p className="flex flex-wrap items-center justify-center gap-3">
-              <span
-                className="font-mono text-5xl font-bold text-zzz tabular-nums sm:text-6xl md:text-7xl"
-                data-testid="counter-value"
-              >
-                {formatted}
-              </span>
-              <span className="font-mono text-2xl text-lavender sm:text-3xl">
-                / {SITE.goal.toLocaleString('en-US')}
-              </span>
-              {SITE.demoMode ? (
-                <span className="rounded-full border-2 border-zzz px-3 py-1 font-mono text-xs font-bold uppercase text-zzz">
-                  {COUNTER.demoTag}
+          <div className="mt-10 flex flex-col items-center gap-3">
+            {showCount ? (
+              <p className="flex flex-wrap items-baseline justify-center gap-3">
+                <span
+                  className="font-mono text-5xl font-bold tabular-nums text-paper sm:text-6xl md:text-7xl"
+                  data-numeric
+                  data-testid="counter-value"
+                >
+                  {display.count.toLocaleString('en-US')}
                 </span>
-              ) : null}
-            </p>
+                <span className="font-mono text-2xl text-mist/70 sm:text-3xl">
+                  / {plain(SITE.goal)}
+                </span>
+              </p>
+            ) : (
+              <p
+                className="max-w-xl text-center text-lg leading-relaxed text-paper"
+                data-testid="counter-target"
+              >
+                {display.copy}
+              </p>
+            )}
 
-            <HeartbeatLine
+            {SITE.demoMode ? (
+              <span className="rounded-pill border border-mint/40 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-mint">
+                {COUNTER.demoTag}
+              </span>
+            ) : null}
+
+            <EcgLine
               value={count}
               max={SITE.goal}
               label={COUNTER.label}
-              className="mt-4 w-full"
+              className="mt-5 w-full"
+              hideValue={!showCount}
+              beats={14}
             />
 
-            <p className="max-w-xl text-center text-body-md text-lavender">
+            <p className="mt-1 max-w-xl text-center text-base leading-relaxed text-mist">
               {COUNTER.note}
             </p>
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <StickerButton href="#reserve" data-testid="counter-cta">
+            <ButtonLink href="#reserve" event={RESERVE_CLICK} data-testid="counter-cta">
               Reserve my spot · $10
-            </StickerButton>
+            </ButtonLink>
             <ShareButton />
           </div>
         </div>

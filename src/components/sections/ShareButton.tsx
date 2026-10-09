@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { COUNTER } from '@/content/site';
-import { StickerButton } from '@/components/ui/StickerButton';
+import { COUNTER, SITE } from '@/content/site';
+import { Button } from '@/components/ui/Button';
+import { SHARE_CLICK, track } from '@/lib/analytics';
 
 /**
  * "Bring a friend" share control.
@@ -26,12 +27,13 @@ export function ShareButton() {
   }, []);
 
   const share = useCallback(async () => {
+    track(SHARE_CLICK);
     const url = `${window.location.origin}/friends`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'The Great America’s Sleep Contest',
+          title: SITE.name,
           text: '200,000 Americans are trying to sleep through a wake-up squad. Win $100,000.',
           url,
         });
@@ -53,9 +55,9 @@ export function ShareButton() {
 
   return (
     <>
-      <StickerButton variant="ghost" onClick={share} data-testid="share-button">
+      <Button variant="secondary" onClick={share} data-testid="share-button">
         {COUNTER.bringFriend}
-      </StickerButton>
+      </Button>
       <p role="status" aria-live="polite" className="sr-only">
         {status}
       </p>

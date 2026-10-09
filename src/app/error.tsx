@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { SITE } from '@/content/site';
+import { ERROR_PAGE, SITE } from '@/content/site';
+import { Button } from '@/components/ui/Button';
 
 /**
  * Route-level error boundary.
@@ -24,32 +25,32 @@ export default function Error({
   return (
     <main
       id="main"
-      className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-midnight px-4 text-center"
+      className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-ink px-4 text-center"
     >
-      <span aria-hidden="true" className="text-6xl">
-        💤
-      </span>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-0"
+        style={{
+          backgroundImage:
+            'radial-gradient(70% 50% at 50% 100%, rgba(255,184,103,0.10) 0%, transparent 70%), linear-gradient(to top, #1B1450 0%, #0B0620 45%, #07060F 100%)',
+        }}
+      />
 
-      <h1 className="font-display text-headline-lg-mobile font-black uppercase text-cream sm:text-headline-lg">
-        Something woke us up
+      <h1 className="font-display text-[clamp(2rem,5vw,3rem)] font-extrabold uppercase leading-none text-paper">
+        {ERROR_PAGE.title}
       </h1>
-      <p className="max-w-md text-body-lg text-lavender">
-        That did not work. Try again, and if it keeps happening the mat is still
-        open.
-      </p>
+      <p className="max-w-md text-lg leading-relaxed text-mist">{ERROR_PAGE.body}</p>
 
       {error.digest ? (
-        <p className="font-mono text-xs text-lavender/60">
-          Reference: {error.digest}
-        </p>
+        <p className="font-mono text-xs text-mist/75">Reference: {error.digest}</p>
       ) : null}
 
-      <button type="button" onClick={reset} className="sticker-btn">
-        Try again
-      </button>
+      <Button onClick={reset} className="mt-2">
+        {ERROR_PAGE.retry}
+      </Button>
 
-      <p className="mt-6 text-body-sm text-lavender/70">
-        <Link href="/" className="underline underline-offset-4 hover:text-zzz">
+      <p className="mt-4 text-sm text-mist/75">
+        <Link href="/" className="underline decoration-white/20 underline-offset-4 hover:text-tungsten">
           Back to {SITE.name}
         </Link>
       </p>
