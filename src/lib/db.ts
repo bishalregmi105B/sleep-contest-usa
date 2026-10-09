@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client';
-import { assertServerConfigured, env } from './env';
+import { env } from './env';
 
 /**
  * Prisma client, PostgreSQL only.
@@ -43,9 +43,16 @@ function withPoolLimit(url: string): string {
   return `${url}${separator}connection_limit=1`;
 }
 
+/**
+ * Builds the client.
+ *
+ * Deliberately does **not** assert that the whole environment is sound. This
+ * function is reached by the admin and health pages, and those have to keep
+ * loading when production is misconfigured — otherwise the operator cannot see
+ * or fix the misconfiguration. The money paths call `assertServerConfigured`
+ * themselves, where failing closed is the right answer.
+ */
 async function createClient(): Promise<PrismaClient> {
-  assertServerConfigured();
-
   if (!env.databaseUrl) {
     throw new Error(
       'DATABASE_URL is not set. Start the database (docker compose up -d) or copy .env.example to .env.local.',

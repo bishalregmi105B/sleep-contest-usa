@@ -8,6 +8,7 @@ import { findByPublicId } from '@/lib/repository';
 import { getSettings } from '@/lib/settings';
 import { getStripe, isRetryableStripeError } from '@/lib/payments/stripe';
 import { mockPaymentsAllowed, paymentsEnabled, siteUrl } from '@/lib/env';
+import { assertServerConfigured } from '@/lib/env';
 import { getDb } from '@/lib/db';
 import { enqueueStandalone } from '@/lib/outbox';
 import { checkoutSchema } from '@/lib/validators';
@@ -36,6 +37,11 @@ const CHECKOUT_EXPIRY_SECONDS = 30 * 60;
  */
 export async function POST(request: Request) {
   return withRouteLogging(request, 'POST /api/checkout', async (ctx) => {
+    // Taking money requires a correctly configured environment. Refusing here
+    // is the whole point: a misconfigured deploy must not collect a
+    // registration it cannot turn into a ticket.
+    assertServerConfigured();
+
     const declaredLength = Number(request.headers.get('content-length') ?? '0');
     if (declaredLength > MAX_BODY_BYTES) {
       return NextResponse.json({ message: RESERVE.errors.generic }, { status: 413 });

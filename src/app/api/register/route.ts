@@ -15,6 +15,7 @@ import {
 import { getSettings } from '@/lib/settings';
 import { turnstileEnabled, verifyTurnstile } from '@/lib/turnstile';
 import { paymentsEnabled } from '@/lib/env';
+import { assertServerConfigured } from '@/lib/env';
 
 
 /**
@@ -52,6 +53,11 @@ const MAX_BODY_BYTES = 8_192;
  */
 export async function POST(request: Request) {
   return withRouteLogging(request, 'POST /api/register', async (ctx) => {
+    // Taking money requires a correctly configured environment. Refusing here
+    // is the whole point: a misconfigured deploy must not collect a
+    // registration it cannot turn into a ticket.
+    assertServerConfigured();
+
     // ---- body size -------------------------------------------------------
     // Checked on the raw bytes as well as the header, because content-length is
     // client-supplied.

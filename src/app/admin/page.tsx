@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
-  countByStatus,
+  countReferred,
   dailyPaid,
+  highestMat,
   listRegistrations,
   topRecruiters,
   totalRegistrations,
@@ -97,7 +98,7 @@ export default async function AdminPage({
   const current = Math.max(1, Number(page) || 1);
 
 
-  const [pageResult, total, paid, statusCounts, daily, leaders, reserved, settings, outbox, waitlist] =
+  const [pageResult, total, paid, daily, leaders, reserved, settings, outbox, waitlist, referred, maxMat] =
     await Promise.all([
     listRegistrations({
       limit: PAGE_SIZE,
@@ -106,20 +107,20 @@ export default async function AdminPage({
     }),
     totalRegistrations(),
     paidCount(),
-    countByStatus(),
     dailyPaid(CHART_DAYS),
     topRecruiters(5),
     currentReserved(),
     getSettings(),
     outboxHealth(),
     waitlistSize(),
+    countReferred(),
+    highestMat(),
   ]);
 
   // Keyset pagination: page N resumes from the cursor the previous page
   // returned, instead of skipping N * PAGE_SIZE rows in the database.
   const registrations = pageResult.rows;
-  const referred = statusCounts.paid ?? 0;
-  const maxMat = paid > 0 ? paid : 0;
+  // Registrations that have not reached a paid state, for the funnel.
   const unpaid = total - paid;
 
   const signOut = async () => {

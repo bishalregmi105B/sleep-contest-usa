@@ -181,25 +181,49 @@ export function validateEnv(): { ok: boolean; problems: EnvProblem[]; advisory: 
 let startupChecked = false;
 
 /**
- * Fails fast, once, the first time anything server-side touches the database.
+ * Logs every configuration problem once, and returns whether the environment is
+ * sound. Does **not** throw.
  *
- * Lazy rather than at module scope on purpose: `next build` imports route
- * modules to analyse them, and throwing at import time would fail the build of
- * an otherwise-correct deployment. A build does not need credentials; a request
- * does.
+ * Diagnostic routes call this. An operator whose production deploy is
+ * misconfigured needs `/admin`, `/api/health` and `/api/ready` to load — those
+ * are where the problems are reported and fixed. Crashing those pages turns a
+ * configuration mistake into an unreachable site with a generic error page,
+ * which is strictly worse than a site that renders and says what is wrong.
  */
-export function assertServerConfigured(): void {
-  if (startupChecked || !isProduction) return;
+export function reportConfiguration(): boolean {
+  if (startupChecked || !isProduction) return true;
   startupChecked = true;
 
   const { problems, advisory } = validateEnv();
   for (const note of advisory) console.warn(`[env] WARNING: ${note}`);
 
   if (problems.length > 0) {
-    const detail = problems.map((p) => `  - ${p.variable} ${p.message}`).join('\n');
-    throw new Error(
-      `Refusing to serve traffic: the environment is not configured for production.\n${detail}\n` +
-        'These are startup errors on purpose. Running anyway would issue tickets without taking payment, or lose registrations.',
-    );
+    for (const p of problems) console.error(`[env] ${p.variable} ${p.message}`);
+    return false;
   }
+  return true;
+}
+
+/**
+ * Throws if the environment cannot safely serve money.
+ *
+ * Called by the routes that take a registration, start a payment, or accept a
+ * webhook — the paths where running anyway would issue a ticket without taking
+ * payment, or lose a registration. Those refuse loudly on purpose.
+ *
+ * Lazy rather than at module scope: `next build` imports route modules to
+ * analyse them, and throwing at import time would fail the build of an
+ * otherwise-correct deployment. A build does not need credentials; a request
+ * does.
+ */
+export function assertServerConfigured(): void {
+  if (!isProduction) return;
+  if (reportConfiguration()) return;
+
+  const { problems } = validateEnv();
+  const detail = problems.map((p) => `  - ${p.variable} ${p.message}`).join('\n');
+  throw new Error(
+    `Refusing to serve traffic: the environment is not configured for production.\n${detail}\n` +
+      'These are startup errors on purpose. Running anyway would issue tickets without taking payment, or lose registrations.',
+  );
 }

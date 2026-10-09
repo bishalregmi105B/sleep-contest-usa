@@ -4,7 +4,7 @@ import { log } from '@/lib/logger';
 import { drainSoon } from '@/lib/outbox';
 import { constructStripeEvent } from '@/lib/payments/stripe';
 import { processEvent } from '@/lib/webhooks';
-import { stripeEnabled } from '@/lib/env';
+import { assertServerConfigured, stripeEnabled } from '@/lib/env';
 
 
 /**
@@ -36,6 +36,9 @@ import { stripeEnabled } from '@/lib/env';
  *     what keeps the acknowledgement inside 300 ms.
  */
 export async function POST(request: Request) {
+  // A payment webhook must never be processed by a half-configured deployment.
+  assertServerConfigured();
+
   if (!stripeEnabled) {
     return Response.json({ message: 'Stripe is not configured.' }, { status: 501 });
   }

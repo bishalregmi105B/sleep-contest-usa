@@ -164,6 +164,36 @@ export async function totalRegistrations(): Promise<number> {
   return Number(rows[0]?.count ?? 0);
 }
 
+/**
+ * Registrations that came from someone's referral link.
+ *
+ * A separate query rather than a derivation, because "how many people are on
+ * the leaderboard" and "how many have paid" are different questions. Coinciding
+ * in one snapshot does not make them the same number.
+ */
+export async function countReferred(): Promise<number> {
+  const db = await getDb();
+  const rows = await db.$queryRaw<Array<{ count: bigint }>>`
+    SELECT count(*)::bigint AS count FROM "Registration" WHERE "referredBy" IS NOT NULL
+  `;
+  return Number(rows[0]?.count ?? 0);
+}
+
+/**
+ * The highest mat number issued.
+ *
+ * `MAX(matNumber)` is O(1) against `Registration_matNumber_key`, which is the
+ * unique index. It is the true highest, including any issued to an internal
+ * registration, because that is what "mats assigned" means operationally.
+ */
+export async function highestMat(): Promise<number> {
+  const db = await getDb();
+  const rows = await db.$queryRaw<Array<{ max: number | null }>>`
+    SELECT MAX("matNumber") AS max FROM "Registration" WHERE "matNumber" IS NOT NULL
+  `;
+  return rows[0]?.max ?? 0;
+}
+
 export async function countByStatus(): Promise<Record<string, number>> {
   const db = await getDb();
   const rows = await db.$queryRaw<Array<{ status: string; count: bigint }>>`
