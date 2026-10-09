@@ -89,8 +89,8 @@ for (const engine of ENGINES) {
     await page.locator('#reserve').scrollIntoViewIfNeeded();
     await page.waitForTimeout(600);
 
-    const suffix = engine.name.slice(0, 3);
-    await page.getByLabel('Full name').fill(`Smoke ${suffix}`);
+    const suffix = `${engine.name.slice(0, 3)}-${Date.now()}`;
+    await page.getByLabel('Full name').fill(`Smoke ${engine.name.slice(0, 3)}`);
     await page.getByLabel('Email').fill(`smoke-${suffix}@example.com`);
     await page.getByLabel('Mobile').fill('5125550142');
     await page.getByLabel('Date of birth').fill('1990-04-12');
