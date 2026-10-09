@@ -1,3 +1,16 @@
+import { config as loadEnv } from 'dotenv';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
+// `dotenv/config` only reads `.env`. Next.js reads `.env.local` first, which is
+// where a developer's local database URL actually lives, so without this the
+// seed throws "DATABASE_URL or DIRECT_URL must be set" on a perfectly
+// configured machine.
+for (const file of ['.env.local', '.env']) {
+  const full = path.join(process.cwd(), file);
+  if (existsSync(full)) loadEnv({ path: full });
+}
+
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import { normalizeEmail, normalizeMobile } from '../src/lib/privacy';

@@ -31,7 +31,7 @@ export type ProgressInput = {
 
 export type Progress =
   /** Below the public threshold: show the target, no number. */
-  | { readonly kind: 'hidden'; readonly copy: string }
+  | { readonly kind: 'hidden'; readonly copy: string; readonly goalLine: string }
   /** Between the threshold and the first milestone. */
   | {
       readonly kind: 'progress';
@@ -95,6 +95,9 @@ export function getProgress(input: ProgressInput): Progress {
     return {
       kind: 'hidden',
       copy: `Registration is open. We need ${withCommas(goal)} sleepers.`,
+      // Shown in every state: the goal does not become secret because the count
+      // is not yet public.
+      goalLine,
     };
   }
 

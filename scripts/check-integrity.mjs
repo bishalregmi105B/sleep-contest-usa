@@ -89,9 +89,11 @@ async function walk(dir) {
 {
   const files = await walk(SRC);
   for (const file of files) {
+    // `rel` is repo-relative, so the allowlist has to be too. Getting this
+    // wrong once meant the gate flagged the file that defines the gate.
     const rel = path.relative(ROOT, file);
     if (file.startsWith(GWR_DIR)) continue;
-    if (rel.startsWith('content/')) continue;          // behind the flag
+    if (rel.startsWith(path.join('src', 'content') + path.sep)) continue; // behind the flag
     if (/\.(test|spec)\./.test(file)) continue;        // asserting absence
     if (file.includes(path.join('lib', 'integrity'))) continue;
     // The settings module *defines* the gate (gwrEnabled, gwrApprovalRef) and

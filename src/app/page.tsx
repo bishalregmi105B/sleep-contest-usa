@@ -22,8 +22,11 @@ import { Gallery } from '@/components/sections/Gallery';
 import { Reserve } from '@/components/sections/Reserve';
 import { Faq } from '@/components/sections/Faq';
 import { FinalCta } from '@/components/sections/FinalCta';
-import { NOSCRIPT } from '@/content/site';
+import { NOSCRIPT, SITE } from '@/content/site';
 import { paidCount } from '@/lib/registrations';
+import { getSettings, getPublicSettings } from '@/lib/settings';
+import { WorldOfSleepContests } from '@/components/sections/WorldOfSleepContests';
+import { GwrBadge } from '@/components/gwr/GwrBadge';
 
 /**
  * Home page.
@@ -57,6 +60,9 @@ export default function HomePage() {
 
       <JsonLd />
       <Header />
+      <Suspense fallback={null}>
+        <GwrHeroBadge />
+      </Suspense>
       {/* Reserves the floating header's height so the ticker and the first
           section's copy never slide underneath it. */}
       <div aria-hidden="true" className="h-[72px] shrink-0" />
@@ -81,6 +87,9 @@ export default function HomePage() {
           <FactsBar />
         </div>
         <HowItWorks />
+        <Suspense fallback={null}>
+          <WorldSection />
+        </Suspense>
         <Squad />
         <Prizes />
         <Gallery />
@@ -113,7 +122,16 @@ async function CounterSection() {
   await connection();
 
   let count = 0;
+  let milestones: number[] = [SITE.goal];
+  let goal: number = SITE.goal;
+  let counterMinPublic = SITE.counterMinPublic;
+
   try {
+    const settings = await getSettings();
+    milestones = [...settings.milestones];
+    goal = settings.goal;
+    counterMinPublic = settings.counterMinPublic;
+    // O(1): reads the denormalised counter row, not COUNT(*).
     count = await paidCount();
   } catch (err) {
     // A database that is not yet migrated must not take the page down.
@@ -123,7 +141,32 @@ async function CounterSection() {
     );
   }
 
-  return <Counter count={count} />;
+  return (
+    <Counter
+      count={count}
+      milestones={milestones}
+      goal={goal}
+      counterMinPublic={counterMinPublic}
+    />
+  );
+}
+
+/**
+ * The "sleep contests around the world" section, behind `showWorldSection`.
+ *
+ * Reads the cached public settings rather than the full document, and renders
+ * nothing at all when the flag is off.
+ */
+async function WorldSection() {
+  await connection();
+  try {
+    const settings = await getPublicSettings();
+    if (!settings.showWorldSection) return null;
+    return <WorldOfSleepContests />;
+  } catch {
+    // Never let an optional section take the home page down.
+    return null;
+  }
 }
 
 /**
@@ -150,4 +193,23 @@ function SectionFallback({ id }: { readonly id: string }) {
       <div className="content-frame" />
     </section>
   );
+}
+
+/**
+ * The licensed-attempt badge in the hero.
+ *
+ * Behind `gwrEnabled`, which stays off until the client supplies written
+ * approval from the record body (see src/content/gwr.ts and
+ * CLIENT_INPUTS_NEEDED.md). Renders null when the flag is off or the asset is
+ * missing, in which case no brand wording appears anywhere on the page.
+ */
+async function GwrHeroBadge() {
+  await connection();
+  try {
+    const settings = await getPublicSettings();
+    if (!settings.gwrEnabled) return null;
+    return <GwrBadge enabled className="mt-6" />;
+  } catch {
+    return null;
+  }
 }

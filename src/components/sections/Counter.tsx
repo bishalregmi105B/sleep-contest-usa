@@ -1,5 +1,5 @@
 import { COUNTER, SITE, plain } from '@/content/site';
-import { counterDisplay } from '@/lib/counter';
+import { getProgress } from '@/lib/progress';
 import { EcgLine } from '@/components/ui/EcgLine';
 import { ButtonLink } from '@/components/ui/Button';
 import { RESERVE_CLICK } from '@/lib/analytics';
@@ -8,21 +8,39 @@ import { SectionHeading } from './SectionHeading';
 import { SectionScrim } from './SectionScrim';
 
 type CounterProps = {
-  /** Paid registration count, read from the store on the server. */
+  /** Real paid, non-internal count. Never adjusted. */
   readonly count: number;
+  /** Admin-editable milestone ladder, ascending, last entry equals the goal. */
+  readonly milestones: readonly number[];
+  /** The public final goal. */
+  readonly goal: number;
+  /** Below this count the target is shown instead of a number. */
+  readonly counterMinPublic: number;
 };
 
 /**
  * S2 Counter.
  *
- * The number is the real count, server-rendered, so it is correct before
- * hydration and present in the HTML for crawlers. Below the public threshold
- * the numeral is replaced by the target and the story: see `lib/counter.ts` for
- * why a zero is never shown.
+ * The number is the real paid count, server-rendered, so it is correct before
+ * hydration and present in the HTML for crawlers.
+ *
+ * ## Why a milestone ladder rather than "N / 200,000"
+ *
+ * The client asked for "293 / 500" and then for 200,000 people. Those cannot
+ * both be true, and printing a number that is not the real count is false
+ * social proof on a page that takes money.
+ *
+ * So the display shows the real count against the **next milestone** — a
+ * reachable target the ladder moves through — while the final goal stays on
+ * screen permanently. Same sense of momentum, only true numbers. The ladder,
+ * the goal and the threshold are all editable from admin.
+ *
+ * All the rules live in `lib/progress.ts`, which is unit-tested; this component
+ * only renders the result.
  */
-export function Counter({ count }: CounterProps) {
-  const display = counterDisplay(count);
-  const showCount = display.kind === 'count';
+export function Counter({ count, milestones, goal, counterMinPublic }: CounterProps) {
+  const progress = getProgress({ paidCount: count, milestones, goal, counterMinPublic });
+  const showCount = progress.kind === 'progress' || progress.kind === 'complete';
 
   return (
     <section
@@ -36,17 +54,37 @@ export function Counter({ count }: CounterProps) {
           <SectionHeading title="Sleepers registered so far" as="h2" align="center" />
 
           <div className="mt-10 flex flex-col items-center gap-3">
-            {showCount ? (
-              <p className="flex flex-wrap items-baseline justify-center gap-3">
-                <span
-                  className="font-mono text-5xl font-bold tabular-nums text-paper sm:text-6xl md:text-7xl"
-                  data-numeric
-                  data-testid="counter-value"
+            {showCount && progress.kind === 'progress' ? (
+              <>
+                <p className="flex flex-wrap items-baseline justify-center gap-3">
+                  <span
+                    className="font-mono text-5xl font-bold tabular-nums text-paper sm:text-6xl md:text-7xl"
+                    data-numeric
+                    data-testid="counter-value"
+                  >
+                    {progress.count.toLocaleString('en-US')}
+                  </span>
+                  <span className="font-mono text-2xl text-mist sm:text-3xl font-medium">
+                    / {plain(progress.currentMilestone)}
+                  </span>
+                </p>
+                <p
+                  className="font-mono text-xs uppercase tracking-[0.16em] text-mist font-semibold"
+                  data-testid="counter-milestone"
                 >
-                  {display.count.toLocaleString('en-US')}
+                  {progress.label}
+                </p>
+              </>
+            ) : showCount && progress.kind === 'complete' ? (
+              <p
+                className="text-center text-lg leading-relaxed text-paper"
+                data-testid="counter-target"
+              >
+                <span className="font-mono text-5xl font-bold tabular-nums" data-numeric data-testid="counter-value">
+                  {progress.count.toLocaleString('en-US')}
                 </span>
-                <span className="font-mono text-2xl text-mist sm:text-3xl font-medium">
-                  / {plain(SITE.goal)}
+                <span className="block pt-2 font-mono text-xs uppercase tracking-[0.16em] text-mist font-semibold">
+                  Goal reached
                 </span>
               </p>
             ) : (
@@ -54,7 +92,7 @@ export function Counter({ count }: CounterProps) {
                 className="max-w-xl text-center text-lg leading-relaxed text-paper"
                 data-testid="counter-target"
               >
-                {display.copy}
+                {progress.kind === 'hidden' ? progress.copy : ''}
               </p>
             )}
 
@@ -66,16 +104,30 @@ export function Counter({ count }: CounterProps) {
 
             <EcgLine
               value={count}
-              max={SITE.goal}
+              max={progress.kind === 'progress' ? progress.currentMilestone : goal}
               label={COUNTER.label}
               className="mt-5 w-full"
               hideValue={!showCount}
               beats={14}
             />
 
-            <p className="mt-1 max-w-xl text-center text-base leading-relaxed text-mist">
-              {COUNTER.note}
+            {progress.kind === 'progress' ? (
+              <p
+                className="font-mono text-xs uppercase tracking-[0.14em] text-mist font-semibold"
+                data-testid="counter-overall"
+              >
+                {progress.overall}
+              </p>
+            ) : null}
+
+            <p
+              className="mt-1 max-w-xl text-center text-base leading-relaxed text-paper font-semibold"
+              data-testid="counter-goal"
+            >
+              {progress.goalLine}
             </p>
+
+            <p className="max-w-xl text-center text-base leading-relaxed text-mist">{COUNTER.note}</p>
           </div>
 
           <div className="mt-10 flex flex-col items-center gap-3">
