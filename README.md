@@ -6,19 +6,60 @@ through it: spiky while a sleeper is awake, flat once they are asleep deeply.
 That same heartbeat is how the contest is scored, so the motif is the argument
 rather than decoration.
 
-**Everything runs with zero credentials.** No database, no environment file, no
-API keys. Payments use a simulated provider, email prints to the console, and
-registrations are held in memory.
+**It builds with zero credentials, and refuses to run in production without
+them.** Locally you can start with nothing configured. In production the server
+throws on first request if the database is missing, and issues **no tickets at
+all** if Stripe is not configured — it serves a waitlist instead, and says so.
+
+That is a deliberate change. The previous build defaulted to an in-memory store
+and a mock payment provider, which meant a deploy that lost its Stripe keys
+quietly handed out paid tickets for free. See `BACKEND_REPORT.md` §4.
 
 ## Run it
 
 ```bash
+docker compose up -d          # PostgreSQL and Redis
+cp .env.example .env.local    # point DATABASE_URL at compose
 npm install
+npm run db:migrate
 npm run dev
 ```
 
-That is the whole setup. Open <http://localhost:3000>. The full flow works end to
-end: register → pay $10 → boarding-pass ticket → referral link → admin.
+Open <http://localhost:3000>. The full flow works end to end: register → pay
+$10 → boarding-pass ticket → referral link → admin.
+
+The build itself needs no database and no network:
+
+```bash
+npm run build
+```
+
+## What the backend does
+
+- **Capacity is enforced, not advertised.** The registration cap is an atomic
+  database check, editable from admin. Past it, the site serves an honest
+  waitlist rather than an error page.
+- **The public counter is the real paid count.** No offsets, no seeds, no
+  multipliers — a build check fails if anyone adds one. It is shown against an
+  admin-editable milestone ladder with the final goal always visible.
+- **Payments are exactly-once.** Webhook events are written in the same
+  transaction as the state change, so a Stripe retry cannot double-issue a mat
+  number or re-send a confirmation.
+- **Email is an outbox.** Provider latency never sits inside the webhook's
+  acknowledgement budget, and a provider outage queues rather than loses mail.
+- **It is built and measured for 200,000 registrations.** Numbers, machine specs
+  and reproduction commands in `LOAD_TEST_REPORT.md`.
+
+## Tests
+
+```bash
+npm test        # 58 tests, against real PostgreSQL and Redis
+```
+
+The concurrency tests are not mocks. Every guarantee this project claims —
+atomic capacity, exactly-once webhooks, unique mat numbers, a shared sliding
+window — is a property of the database and the cache, and a test double would
+only prove the code calls the double.
 
 ## What it looks like
 
