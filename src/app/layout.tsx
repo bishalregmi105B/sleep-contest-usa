@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { SkipLink } from '@/components/layout/SkipLink';
+import { AnalyticsProvider } from '@/components/layout/AnalyticsProvider';
 import { SITE } from '@/content/site';
 import './globals.css';
 
@@ -136,6 +137,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body className="bg-ink text-paper">
         <SkipLink />
         {children}
+        <AnalyticsProvider />
       </body>
     </html>
   );

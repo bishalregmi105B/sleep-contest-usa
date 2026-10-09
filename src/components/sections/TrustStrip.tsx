@@ -25,7 +25,7 @@ export function TrustStrip({ stripeLive }: { readonly stripeLive: boolean }) {
       </nav>
 
       {stripeLive ? (
-        <p className="mt-4 flex items-center gap-2 font-mono text-[11px] leading-relaxed text-mist/60">
+        <p className="mt-4 flex items-center gap-2 font-mono text-[11px] leading-relaxed text-mist/75">
           {TRUST.stripeLive}
         </p>
       ) : null}

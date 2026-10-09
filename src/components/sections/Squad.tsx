@@ -145,7 +145,7 @@ function Telemetry() {
                   y={158}
                   textAnchor="middle"
                   fill="currentColor"
-                  className="text-[9px] text-mist/60"
+                  className="text-[9px] text-mist/75"
                 >
                   {`+${(i + 1) * 20}m`}
                 </text>
@@ -153,7 +153,7 @@ function Telemetry() {
             ))}
           </svg>
 
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/50">
+          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/75">
             {SQUAD.telemetryCaption}
           </p>
         </figure>

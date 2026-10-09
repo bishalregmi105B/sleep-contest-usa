@@ -1,1 +1,12 @@
-{}
+{
+  "how-1-register": {
+    "src": "/assets/images/how-1-register.webp",
+    "bytes": 53110,
+    "exists": true
+  },
+  "how-3-leaderboard": {
+    "src": "/assets/images/how-3-leaderboard.webp",
+    "bytes": 29818,
+    "exists": true
+  }
+}

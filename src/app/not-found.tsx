@@ -21,7 +21,7 @@ export default function NotFound() {
         }}
       />
 
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-mist/50">404</p>
+      <p className="font-mono text-xs uppercase tracking-[0.2em] text-mist/75">404</p>
 
       <h1 className="font-display text-[clamp(2rem,5vw,3rem)] font-extrabold uppercase leading-none text-paper">
         {NOT_FOUND.title}

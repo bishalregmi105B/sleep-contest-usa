@@ -51,7 +51,7 @@ export function Prizes() {
         <div className="mt-16 grid gap-12 lg:grid-cols-[1.35fr_1fr] lg:items-start">
           {/* The grand prize, on its own stage. */}
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-mist/50">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-mist/75">
               {PRIZES_SECTION.grandCaption}
             </p>
             <p className="mt-4">
@@ -65,7 +65,7 @@ export function Prizes() {
             ) : null}
 
             <div className="mt-10 border-t border-white/10 pt-6">
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-mist/50">
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-mist/75">
                 {PRIZES_SECTION.totalCaption}
               </p>
               <p className="mt-1 font-mono text-3xl font-bold tabular-nums text-paper" data-numeric>
@@ -77,7 +77,7 @@ export function Prizes() {
           <div className="space-y-6">
             {/* Places 2 to 5: a ladder, not blocks. */}
             <Card className="p-7">
-              <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-mist/50">
+              <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-mist/75">
                 {PRIZES_SECTION.ladderCaption}
               </h3>
               <ol className="mt-5">
@@ -86,7 +86,7 @@ export function Prizes() {
                     key={prize.place}
                     className="flex items-baseline justify-between gap-4 border-t border-white/10 py-3.5 first:border-t-0 first:pt-0"
                   >
-                    <span className="font-mono text-xs uppercase tracking-[0.14em] text-mist/60">
+                    <span className="font-mono text-xs uppercase tracking-[0.14em] text-mist/75">
                       {prize.label}
                     </span>
                     <span className="font-mono text-lg font-bold tabular-nums text-paper">

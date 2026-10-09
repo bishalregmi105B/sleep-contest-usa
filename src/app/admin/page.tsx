@@ -6,6 +6,12 @@ import { destroySession, isAuthenticated } from '@/lib/auth';
 import { ADMIN } from '@/content/site';
 import { AdminLogin } from '@/components/sections/AdminLogin';
 import { AdminTable } from '@/components/sections/AdminTable';
+import {
+  DailyChart,
+  Funnel,
+  Panel,
+  ReferralLeaders,
+} from '@/components/sections/AdminDashboard';
 import { SignOutButton } from '@/components/sections/SignOutButton';
 
 export const metadata: Metadata = {
@@ -22,6 +28,9 @@ export const instant = false;
 
 
 const PAGE_SIZE = 25;
+
+/** How many days the dashboard chart covers. */
+const CHART_DAYS = 30;
 
 /**
  * Admin dashboard.
@@ -66,13 +75,17 @@ export default async function AdminPage({
 
   const store = getStore();
 
-  const [registrations, total, paid, referred, maxMat] = await Promise.all([
-    store.list({ query: query || undefined, skip: (current - 1) * PAGE_SIZE, take: PAGE_SIZE }),
-    store.countAll(),
-    store.countPaid(),
-    store.countReferred(),
-    store.highestMat(),
-  ]);
+  const [registrations, total, paid, referred, maxMat, daily, unpaid, leaders] =
+    await Promise.all([
+      store.list({ query: query || undefined, skip: (current - 1) * PAGE_SIZE, take: PAGE_SIZE }),
+      store.countAll(),
+      store.countPaid(),
+      store.countReferred(),
+      store.highestMat(),
+      store.dailyPaid(CHART_DAYS),
+      store.countUnpaid(),
+      store.topRecruiters(5),
+    ]);
 
   const signOut = async () => {
     'use server';
@@ -89,7 +102,7 @@ export default async function AdminPage({
           <div className="flex items-center gap-3">
             <a
               href="/api/admin/export"
-              className="inline-flex min-h-11 items-center rounded-pill border-2 border-white/10 px-5 text-sm font-bold text-paper hover:bg-dusk/40"
+              className="inline-flex min-h-11 items-center rounded-pill border border-white/20 px-5 text-sm font-medium text-paper transition-colors hover:bg-white/5"
             >
               {ADMIN.export}
             </a>
@@ -108,7 +121,7 @@ export default async function AdminPage({
           ].map((stat) => (
             <div
               key={stat.label}
-              className="rounded-lg border-2 border-white/10 bg-indigo/40/70 p-5"
+              className="panel p-5"
             >
               <dt className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-mist">
                 {stat.label}
@@ -119,6 +132,23 @@ export default async function AdminPage({
             </div>
           ))}
         </dl>
+
+        {/* Three panels above the table: what came in, what completed, and who
+            brought whom. */}
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+          <Panel title={ADMIN.dailyTitle}>
+            <DailyChart data={daily} caption={`Paid registrations over the last ${CHART_DAYS} days`} />
+          </Panel>
+
+          <div className="space-y-6">
+            <Panel title={ADMIN.funnelTitle}>
+              <Funnel total={total} paid={paid} unpaid={unpaid} />
+            </Panel>
+            <Panel title={ADMIN.leadersTitle}>
+              <ReferralLeaders leaders={leaders} />
+            </Panel>
+          </div>
+        </div>
 
         <AdminTable registrations={registrations} query={query} current={current} />
       </div>

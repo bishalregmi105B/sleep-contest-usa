@@ -18,7 +18,7 @@ export function RulesSummary() {
       <h3 id="rules-summary-heading" className="font-display text-lg font-bold uppercase tracking-wide text-paper">
         {RULES_SUMMARY.heading}
       </h3>
-      <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/50">
+      <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/75">
         {RULES_SUMMARY.disclaimer}
       </p>
 

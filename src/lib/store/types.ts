@@ -40,6 +40,13 @@ export type Store = {
   highestMat(): Promise<number>;
   updatePending(publicId: string, patch: { fullName: string; mobile: string; cityState: string; dateOfBirth: Date }): Promise<Registration | null>;
   topRecruiters(limit: number): Promise<{ refCode: string; matNumber: number | null; count: number }[]>;
+  /**
+   * Paid registrations per calendar day, oldest first, including days with
+   * zero so the chart's x-axis is continuous rather than skipping empty days.
+   */
+  dailyPaid(days: number): Promise<{ date: string; count: number }[]>;
+  /** Registrations that did not reach a paid state, for the funnel. */
+  countUnpaid(): Promise<number>;
   list(options: { query?: string; skip: number; take: number }): Promise<Registration[]>;
   all(): Promise<Registration[]>;
 };

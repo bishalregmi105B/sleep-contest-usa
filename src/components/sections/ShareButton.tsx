@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { COUNTER, SITE } from '@/content/site';
 import { Button } from '@/components/ui/Button';
+import { SHARE_CLICK, track } from '@/lib/analytics';
 
 /**
  * "Bring a friend" share control.
@@ -26,6 +27,7 @@ export function ShareButton() {
   }, []);
 
   const share = useCallback(async () => {
+    track(SHARE_CLICK);
     const url = `${window.location.origin}/friends`;
 
     if (navigator.share) {

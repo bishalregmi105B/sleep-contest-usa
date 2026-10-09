@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { HERO } from '@/content/site';
 import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 
 /**
  * Sticky bottom bar carrying the primary CTA on small screens.
@@ -33,7 +34,7 @@ export function MobileReserveBar() {
       }`}
       style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
     >
-      <ButtonLink href="#reserve" className="w-full">
+      <ButtonLink href="#reserve" event={RESERVE_CLICK} className="w-full">
         {HERO.cta}
       </ButtonLink>
     </div>

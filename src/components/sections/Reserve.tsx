@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { RESERVE, hasDeadline } from '@/content/site';
 import { registrationSchema, type RegistrationInput } from '@/lib/validators';
 import { stripeLive } from '@/lib/env-public';
+import { FORM_START, FORM_SUBMIT, REGISTERED, track } from '@/lib/analytics';
 import { Field } from '@/components/ui/Field';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -57,6 +58,15 @@ export function Reserve() {
     },
   });
 
+  // Fire form_start once, the first time anything is typed. Deliberately
+  // payload-free: no field name, no value, nothing that could identify anyone.
+  const started = useRef(false);
+  const onFormStart = () => {
+    if (started.current) return;
+    started.current = true;
+    track(FORM_START);
+  };
+
   // Capture ?ref=CODE so a shared link credits the referrer.
   useEffect(() => {
     const ref = params.get('ref');
@@ -66,6 +76,10 @@ export function Reserve() {
   const onSubmit = handleSubmit(async (values) => {
     setStatus('submitting');
     setFormError('');
+    // Both are payload-free. A successful registration is counted server-side
+    // by the store, which is what the admin funnel reads; this only says the
+    // attempt happened.
+    track(FORM_SUBMIT);
 
     // A form that cannot possibly reach the network should say so rather than
     // fail with a generic error.
@@ -109,6 +123,8 @@ export function Reserve() {
 
       const publicId = (registerData as { publicId: string }).publicId;
 
+      track(REGISTERED);
+
       const checkoutRes = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -150,6 +166,7 @@ export function Reserve() {
               ref={formRef}
               noValidate
               onSubmit={onSubmit}
+              onFocusCapture={onFormStart}
               aria-describedby={hasErrors ? 'reserve-error-summary' : undefined}
               data-testid="reserve-form"
             >

@@ -141,6 +141,35 @@ export function databaseStore(): Store {
       return toRegistration(updated);
     },
 
+    async dailyPaid(days) {
+      // Pull only the two columns the chart needs rather than whole rows.
+      const since = new Date(Date.now() - (days - 1) * 86_400_000);
+      since.setUTCHours(0, 0, 0, 0);
+
+      const rows = await db.registration.findMany({
+        where: { status: 'paid', paidAt: { gte: since } },
+        select: { paidAt: true },
+      });
+
+      const counts = new Map<string, number>();
+      for (const row of rows) {
+        if (!row.paidAt) continue;
+        const key = row.paidAt.toISOString().slice(0, 10);
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+
+      const out: { date: string; count: number }[] = [];
+      for (let i = days - 1; i >= 0; i -= 1) {
+        const date = new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10);
+        out.push({ date, count: counts.get(date) ?? 0 });
+      }
+      return out;
+    },
+
+    async countUnpaid() {
+      return db.registration.count({ where: { status: { not: 'paid' } } });
+    },
+
     async topRecruiters(limit) {
       const grouped = await db.registration.groupBy({
         by: ['referredBy'],

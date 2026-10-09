@@ -56,7 +56,7 @@ export function ReferralShare({ link }: { readonly link: string }) {
 
   return (
     <div className="panel p-6">
-      <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-mist/60">
+      <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-mist/75">
         {FRIENDS.yourLink}
       </h2>
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { track } from '@/lib/analytics';
 
 /**
  * The site's one button.
@@ -25,6 +26,11 @@ type BaseProps = {
   readonly variant?: Variant;
   readonly size?: 'sm' | 'md' | 'lg';
   readonly className?: string;
+  /**
+   * Analytics event fired on click. Payload-free by construction: the button
+   * has no idea who clicked it and cannot report anything that identifies them.
+   */
+  readonly event?: string;
 };
 
 type ButtonProps = BaseProps &
@@ -66,21 +72,30 @@ function classes({
 }
 
 export function Button(props: ButtonProps) {
-  const { children, variant, size, className, ...rest } = props;
+  const { children, variant, size, className, event, ...rest } = props;
   return (
     // `rest` is spread first so the computed className always wins: spreading
     // the whole props object after it would let a caller's own className
     // replace the button's styling entirely.
-    <button type={rest.type ?? 'button'} {...rest} className={classes({ variant, size, className })}>
+    <button
+      type={rest.type ?? 'button'}
+      {...rest}
+      className={classes({ variant, size, className })}
+      onClick={event ? (e) => { track(event); rest.onClick?.(e); } : rest.onClick}
+    >
       {children}
     </button>
   );
 }
 
 export function ButtonLink(props: LinkProps) {
-  const { children, variant, size, className, ...rest } = props;
+  const { children, variant, size, className, event, ...rest } = props;
   return (
-    <Link {...rest} className={classes({ variant, size, className })}>
+    <Link
+      {...rest}
+      className={classes({ variant, size, className })}
+      onClick={event ? (e) => { track(event); rest.onClick?.(e); } : rest.onClick}
+    >
       {children}
     </Link>
   );

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NAV } from '@/content/site';
 import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 
 /**
  * Full-screen mobile menu.
@@ -123,7 +124,7 @@ export function MobileMenu() {
           </nav>
 
           <div className="mt-auto">
-            <ButtonLink href="#reserve" size="lg" className="w-full" onClick={close}>
+            <ButtonLink href="#reserve" event={RESERVE_CLICK} size="lg" className="w-full" onClick={close}>
               Reserve for $10
             </ButtonLink>
           </div>

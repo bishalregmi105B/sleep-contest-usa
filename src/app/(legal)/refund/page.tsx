@@ -8,11 +8,14 @@ export const metadata: Metadata = {
   alternates: { canonical: '/refund' },
 };
 
+const LAST_UPDATED = '2026-10-09';
+
 export default function RefundPage() {
   return (
     <LegalLayout
       title="Refund policy"
-      updated="Draft"
+      intro={`When your ${SITE.name} reservation is refunded, how to ask, and how long it takes.`}
+      updated={LAST_UPDATED}
       sections={[
         {
           id: 'summary',

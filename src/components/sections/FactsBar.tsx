@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { FACTS } from '@/content/site';
 import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 
 /**
  * The facts bar.
@@ -29,14 +30,14 @@ export function FactsBar() {
             <dl className="flex flex-1 items-center divide-x divide-white/10">
               {FACTS.cells.map((cell) => (
                 <div key={cell.label} className="flex-1 px-5 first:pl-0">
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/50">
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/75">
                     {cell.label}
                   </dt>
                   <dd className="mt-0.5 truncate text-sm text-paper">{cell.value}</dd>
                 </div>
               ))}
             </dl>
-            <ButtonLink href="#reserve" size="sm" className="shrink-0">
+            <ButtonLink href="#reserve" event={RESERVE_CLICK} size="sm" className="shrink-0">
               {FACTS.cta}
             </ButtonLink>
           </div>
@@ -53,7 +54,7 @@ export function FactsBar() {
           <dl className="grid grid-cols-2 gap-x-4 gap-y-5">
             {FACTS.cells.map((cell) => (
               <div key={cell.label}>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/50">
+                <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/75">
                   {cell.label}
                 </dt>
                 <dd className="mt-1 text-sm leading-snug text-paper">{cell.value}</dd>
@@ -62,7 +63,7 @@ export function FactsBar() {
           </dl>
 
           <div className="mt-6 flex flex-col gap-3">
-            <ButtonLink href="#reserve" className="w-full">
+            <ButtonLink href="#reserve" event={RESERVE_CLICK} className="w-full">
               {FACTS.cta}
             </ButtonLink>
             <div className="flex justify-center gap-5">

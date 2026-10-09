@@ -62,7 +62,7 @@ function PhotoGrid() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/85 via-transparent to-transparent"
           />
 
-          <span className="absolute right-3 top-3 rounded-sm bg-ink/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mist/60 backdrop-blur-sm">
+          <span className="absolute right-3 top-3 rounded-sm bg-ink/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mist/75 backdrop-blur-sm">
             {GALLERY.conceptCaption}
           </span>
 
@@ -112,7 +112,7 @@ function TheNightSchedule() {
         </ol>
       </Card>
 
-      <p className="mt-6 text-center text-sm text-mist/50">
+      <p className="mt-6 text-center text-sm text-mist/75">
         Photography from the first event will appear here.
       </p>
     </div>

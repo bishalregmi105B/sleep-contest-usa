@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { TICKET } from '@/content/site';
 import { Button, ButtonLink } from '@/components/ui/Button';
+import { SHARE_CLICK, track } from '@/lib/analytics';
 import { HeartStrip } from './HeartStrip';
 import { Timeline } from '@/components/sections/Timeline';
 
@@ -62,6 +63,7 @@ export function Ticket({
   }, [referralUrl]);
 
   const share = useCallback(async () => {
+    track(SHARE_CLICK);
     if (navigator.share) {
       try {
         await navigator.share({
@@ -158,7 +160,7 @@ export function Ticket({
 
         <div className="panel mt-4 flex flex-col gap-4 p-5">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-mist/50">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-mist/75">
               {TICKET.yourLink}
             </p>
             <p className="mt-1 break-all font-mono text-sm text-paper">{referralUrl}</p>
@@ -197,7 +199,7 @@ export function Ticket({
         </div>
       </section>
 
-      <p className="mx-auto mt-8 max-w-xl text-center text-sm text-mist/60 no-print">
+      <p className="mx-auto mt-8 max-w-xl text-center text-sm text-mist/75 no-print">
         {TICKET.noCalendar}
       </p>
 

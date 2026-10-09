@@ -42,14 +42,14 @@ export default function Error({
       <p className="max-w-md text-lg leading-relaxed text-mist">{ERROR_PAGE.body}</p>
 
       {error.digest ? (
-        <p className="font-mono text-xs text-mist/50">Reference: {error.digest}</p>
+        <p className="font-mono text-xs text-mist/75">Reference: {error.digest}</p>
       ) : null}
 
       <Button onClick={reset} className="mt-2">
         {ERROR_PAGE.retry}
       </Button>
 
-      <p className="mt-4 text-sm text-mist/60">
+      <p className="mt-4 text-sm text-mist/75">
         <Link href="/" className="underline decoration-white/20 underline-offset-4 hover:text-tungsten">
           Back to {SITE.name}
         </Link>

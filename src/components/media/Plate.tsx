@@ -104,7 +104,7 @@ export function Plate({
       ) : null}
 
       {caption ? (
-        <span className="absolute bottom-3 left-3 rounded-sm bg-ink/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mist/60 backdrop-blur-sm">
+        <span className="absolute bottom-3 left-3 rounded-sm bg-ink/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mist/75 backdrop-blur-sm">
           {caption}
         </span>
       ) : null}

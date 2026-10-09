@@ -66,7 +66,7 @@ export function Timeline({
         ))}
       </ol>
 
-      <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/50">
+      <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/75">
         {TIMELINE.dateAnnouncedAt}
       </p>
     </div>

@@ -20,7 +20,9 @@
     "db:migrate": "node scripts/set-db-provider.mjs auto && prisma migrate deploy",
     "prebuild": "npm run assets:scan",
     "predev": "npm run assets:scan",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "images:generate": "node scripts/generate-images.mjs",
+    "check": "node scripts/check.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -31,6 +33,8 @@
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.1",
     "@types/three": "^0.186.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "detect-gpu": "^5.0.70",
     "dotenv": "^18.0.6",
     "gsap": "^3.15.0",
@@ -48,6 +52,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",

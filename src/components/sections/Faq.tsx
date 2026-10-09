@@ -75,7 +75,7 @@ export function Faq() {
             })}
           </div>
 
-          <p className="mt-6 text-sm text-mist/60">
+          <p className="mt-6 text-sm text-mist/75">
             Full terms are in the{' '}
             <a href="/rules" className="text-paper underline decoration-tungsten/40 underline-offset-4">
               official rules

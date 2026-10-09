@@ -66,12 +66,16 @@ export function SlotRoll({
   return (
     <span
       ref={ref}
-      className="text-foil block font-display text-[clamp(3.5rem,13vw,11rem)] font-extrabold leading-[0.85] tracking-[-0.02em]"
-      aria-label={`${label}: $${amount.toLocaleString('en-US')}`}
+      className="block font-display text-[clamp(3.5rem,13vw,11rem)] font-extrabold leading-[0.85] tracking-[-0.02em]"
       data-testid="grand-prize"
       data-numeric
     >
-      <span aria-hidden="true">${value.toLocaleString('en-US')}</span>
+      {/* The counting numeral is decorative: announcing it every frame would be
+          unusable, and it is a partial number most of the time. */}
+      <span aria-hidden="true" className="text-foil">
+        ${value.toLocaleString('en-US')}
+      </span>
+      <span className="sr-only">{`${label}: $${amount.toLocaleString('en-US')}`}</span>
     </span>
   );
 }

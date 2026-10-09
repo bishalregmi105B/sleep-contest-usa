@@ -1,6 +1,7 @@
 import { FINAL_CTA, HERO } from '@/content/site';
 import { counterDisplay } from '@/lib/counter';
 import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 import { SectionScrim } from './SectionScrim';
 
 /**
@@ -49,7 +50,7 @@ export function FinalCta({ count }: { readonly count: number }) {
           <p className="mx-auto mt-6 text-lg leading-relaxed text-mist">{note}</p>
 
           <div className="mt-9 flex justify-center">
-            <ButtonLink href="#reserve" size="lg" data-testid="cta-cta">
+            <ButtonLink href="#reserve" event={RESERVE_CLICK} size="lg" data-testid="cta-cta">
               {HERO.cta}
             </ButtonLink>
           </div>

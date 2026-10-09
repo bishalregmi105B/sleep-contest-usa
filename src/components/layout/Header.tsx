@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { NAV, SITE } from '@/content/site';
 import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 import { MobileMenu } from './MobileMenu';
 import { SoundToggle } from './SoundToggle';
 
@@ -72,6 +73,7 @@ export function Header() {
             <ButtonLink
               href="#reserve"
               size="sm"
+              event={RESERVE_CLICK}
               className="hidden sm:inline-flex"
             >
               Reserve for $10

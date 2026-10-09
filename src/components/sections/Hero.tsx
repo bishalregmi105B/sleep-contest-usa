@@ -1,5 +1,6 @@
 import { GRAND_PRIZE, HERO, SITE, plain, usd } from '@/content/site';
 import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 
 /**
  * The hero.
@@ -51,7 +52,7 @@ export function Hero() {
             className="reveal mt-9 flex flex-wrap items-center gap-4"
             style={{ animationDelay: '400ms' }}
           >
-            <ButtonLink href="#reserve" size="lg" data-testid="hero-cta">
+            <ButtonLink href="#reserve" event={RESERVE_CLICK} size="lg" data-testid="hero-cta">
               {HERO.cta}
             </ButtonLink>
             <ButtonLink href="#how" variant="secondary" size="lg">
@@ -72,13 +73,13 @@ export function Hero() {
       <div className="content-frame pointer-events-none absolute inset-x-0 top-28 z-10 hidden lg:block">
         <div className="flex justify-end">
           <div className="panel px-7 py-5 text-right">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/60">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/75">
               {HERO.badgeCaption}
             </p>
             <p className="text-foil mt-1 font-display text-5xl font-extrabold leading-none tabular-nums">
               {usd(GRAND_PRIZE)}
             </p>
-            <p className="mt-2 font-mono text-[11px] text-mist/50">
+            <p className="mt-2 font-mono text-[11px] text-mist/75">
               {plain(SITE.goal)} sleepers needed
             </p>
           </div>

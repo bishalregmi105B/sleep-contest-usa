@@ -2,6 +2,7 @@ import { COUNTER, SITE, plain } from '@/content/site';
 import { counterDisplay } from '@/lib/counter';
 import { EcgLine } from '@/components/ui/EcgLine';
 import { ButtonLink } from '@/components/ui/Button';
+import { RESERVE_CLICK } from '@/lib/analytics';
 import { ShareButton } from './ShareButton';
 import { SectionHeading } from './SectionHeading';
 import { SectionScrim } from './SectionScrim';
@@ -78,7 +79,7 @@ export function Counter({ count }: CounterProps) {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <ButtonLink href="#reserve" data-testid="counter-cta">
+            <ButtonLink href="#reserve" event={RESERVE_CLICK} data-testid="counter-cta">
               Reserve my spot · $10
             </ButtonLink>
             <ShareButton />

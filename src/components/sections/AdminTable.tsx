@@ -52,7 +52,7 @@ export function AdminTable({
           value={term}
           onChange={(event) => setTerm(event.target.value)}
           placeholder={ADMIN.search}
-          className="min-h-11 flex-1 rounded-pill border-2 border-white/10 bg-indigo/40/70 px-5 text-base text-paper placeholder:text-mist/60"
+          className="min-h-11 flex-1 rounded-pill border-2 border-white/10 bg-indigo/40/70 px-5 text-base text-paper placeholder:text-mist/75"
         />
         <button
           type="submit"
@@ -150,7 +150,7 @@ function PageLink({
 }) {
   if (disabled) {
     return (
-      <span className="rounded-pill border-2 border-white/10/40 px-5 py-2 text-sm text-mist/40">
+      <span className="rounded-pill border-2 border-white/10/40 px-5 py-2 text-sm text-mist/75">
         {children}
       </span>
     );
