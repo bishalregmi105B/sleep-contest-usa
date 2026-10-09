@@ -45,19 +45,32 @@ const { default: sharp } = await import('sharp');
 
 await mkdir(OUT_DIR, { recursive: true });
 
-// Trim the surrounding white, then restore a small safe margin of our own so
-// the clear space around the mark is deliberate rather than whatever was left.
+// Two kinds of source are handled, and the difference matters:
+//
+//   - An opaque PNG on a white field. `trim()` uses the top-left pixel as its
+//     reference and cuts the white away.
+//   - A PNG with alpha, where the background has already been made transparent.
+//     `trim()` then cuts to the alpha bounds instead.
+//
+// Either way the padding added afterwards is **transparent**, never white. A
+// white pad would silently reintroduce the background the client just removed,
+// and the mark would sit in a white box keyed to the image bounds rather than
+// the plate the component draws behind it.
+const sourceMeta = await sharp(input).metadata();
+
 const trimmed = await sharp(await sharp(input).trim({ threshold: 10 }).toBuffer())
   .extend({
-    top: 24, bottom: 24, left: 24, right: 24,
-    background: { r: 255, g: 255, b: 255, alpha: 1 },
+    top: 28, bottom: 28, left: 28, right: 28,
+    background: { r: 0, g: 0, b: 0, alpha: 0 },
   })
   .toBuffer();
 
 const meta = await sharp(trimmed).metadata();
 console.log(
-  `source   ${path.relative(ROOT, input)}  ${meta.width}x${meta.height}\n` +
-    `trimmed  ${meta.width}x${meta.height}  (white margins removed, 24px safe margin added)`,
+  `source   ${path.relative(ROOT, input)}  ${sourceMeta.width}x${sourceMeta.height}` +
+    `${sourceMeta.hasAlpha ? '  (alpha)' : '  (opaque)'}\n` +
+    `trimmed  ${meta.width}x${meta.height}  (margins removed, 28px transparent safe margin added)` +
+    `\n         Intrinsic size recorded in public/assets/brand/brand.json`,
 );
 
 // 1x and 2x, PNG and WebP. The component prefers WebP and falls back to PNG.
@@ -74,5 +87,20 @@ for (const output of outputs) {
   const info = await stat(path.join(OUT_DIR, output.name));
   console.log(`wrote    ${output.name} and ${webp}  (${Math.round(info.size / 1024)} kB)`);
 }
+
+// Record the intrinsic size. The component reserves layout space from this
+// rather than hardcoding a ratio: the supplied logo is 1248x455 (about 2.7:1),
+// and a 4:3 reservation would either distort it or leave a large blank band.
+const manifestPath = path.join(OUT_DIR, 'brand.json');
+const existing = existsSync(manifestPath)
+  ? JSON.parse(await import('node:fs/promises').then((fs) => fs.readFile(manifestPath, 'utf8')))
+  : {};
+existing['gwr-official-attempt'] = {
+  width: meta.width,
+  height: meta.height,
+  source: SOURCE_NAME,
+  processedAt: new Date().toISOString().slice(0, 10),
+};
+await (await import('node:fs/promises')).writeFile(manifestPath, `${JSON.stringify(existing, null, 2)}\n`);
 
 console.log('\ndone. The badge appears as soon as one of these exists; no rebuild of settings needed.');

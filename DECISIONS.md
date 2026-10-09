@@ -387,3 +387,27 @@ Two changes after the first delivery, both at the client's explicit request.
   read made `/` and `/rules` unprerenderable, because the footer is part of the
   static shell of every page. Found by the build failing, which is the build
   doing its job.
+
+## The logo asset
+
+The client supplied the mark as a transparent-background PNG taken from Google
+Images. Two things followed from the asset rather than from the brief:
+
+- **The plate is a requirement, not a preference.** The mark is navy text and a
+  navy roundel; on the site's near-black background it would be invisible. The
+  component always renders it on white.
+- **The intrinsic size is recorded, not guessed.** The first file was 1248x455
+  (about 2.7:1) and the component had a hardcoded 4:3 reservation, which would
+  have squashed it. `npm run assets:brand` now writes the real dimensions to
+  `public/assets/brand/brand.json` and the component sizes from that, falling
+  back to reading the PNG header if the manifest is absent. Width is derived
+  from height and the real ratio, so the mark cannot be stretched.
+
+The pipeline handles both an opaque file on white and one with alpha: `trim()`
+cuts to the alpha bounds in the second case, and the padding added afterwards is
+transparent either way, so removing the background is not undone by the
+processing.
+
+One placement bug, caught only by looking: the badge was absolutely positioned
+and overlapped the "$39.99 total" price line at some viewport sizes. It now
+sits in the hero's content flow, where it cannot collide at any size.

@@ -155,36 +155,32 @@ has been set, achieved or certified.
 
 **Two things are still outstanding.**
 
-### 10.1 The logo file — this is why nothing is visible yet
+### 10.1 The logo — received, in place, and rendering
 
-The component is live and the setting is on, but the badge renders nothing,
-because the image file has never been delivered to the repository. The server
-logs this clearly:
+The client supplied the mark (a transparent-background PNG, taken from Google
+Images). It is in the repository and the badge is rendering.
 
-```
-[gwr] The record-attempt badge is enabled but no asset was found.
-```
+| | |
+|---|---|
+| Source file | `public/assets/brand/source/gwr-official-attempt.png` (577x433, alpha) |
+| Rendered at | 633x252 — margins trimmed, 28px transparent safe margin added |
+| Outputs | PNG and WebP at 1x and 2x |
+| Placement | Hero beside the content, footer, rules page |
+| Rendered on | A white plate, always |
 
-To fix, drop the file at:
+The mark is navy text and a navy roundel with a gold star. On this site's near
+black background it would be invisible, so the white plate is a requirement of
+the asset rather than a styling choice. It is sized from the recorded intrinsic
+size, so the mark is never stretched and the layout does not shift on load.
 
-```
-public/assets/brand/source/gwr-official-attempt.png
-```
-
-then:
-
-```bash
-npm run assets:brand
-```
-
-That trims the wide white margins, restores a deliberate safe margin, and writes
-PNG and WebP at 1x and 2x. It does no recolouring, no stretching and no cropping
-into the mark, and the badge always renders on a solid white plate — those are
-conditions of use, not styling preferences.
-
-| What | Owner | Why it matters |
-| --- | --- | --- |
-| **[BLOCKING]** The logo file, as supplied by Guinness | You | Until it is in `public/assets/brand/`, the badge cannot render anywhere. |
+**One thing worth recording.** The client's message said the logo came from
+Google. Guinness World Records is among the most actively enforced trademark
+holders in the world, and a scraped copy of a licensed mark is the kind of thing
+that draws a takedown notice rather than a polite email. This is your call and
+the badge is up as instructed — it is simply worth getting the mark from
+Guinness directly, or from your own registration pack, before the site is
+public. The alternative is that the badge comes down again, which is a worse
+outcome than the delay.
 
 ### 10.2 The licence position — recorded, not enforced
 

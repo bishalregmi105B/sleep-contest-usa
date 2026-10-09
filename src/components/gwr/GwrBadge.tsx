@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 /**
@@ -38,6 +38,45 @@ export type GwrBadgeProps = {
   /** `inline` is a smaller plate, for the footer and the rules-page header. */
   readonly variant?: 'card' | 'inline';
 };
+
+type BrandAsset = { width: number; height: number };
+
+/**
+ * Intrinsic size, recorded by `npm run assets:brand`.
+ *
+ * Read rather than hardcoded. The supplied logo is 1248x455, roughly 2.7:1; a
+ * guessed 4:3 reservation either squashes the mark or leaves a wide blank band
+ * under it, and the aspect ratio is also what stops the page shifting when the
+ * image loads.
+ */
+let intrinsic: BrandAsset | null | undefined;
+
+function intrinsicSize(): BrandAsset | null {
+  if (intrinsic !== undefined) return intrinsic;
+  try {
+    const manifest = JSON.parse(
+      readFileSync(path.join(process.cwd(), 'public/assets/brand/brand.json'), 'utf8'),
+    ) as Record<string, BrandAsset>;
+    const entry = manifest['gwr-official-attempt'];
+    intrinsic = entry && entry.width > 0 && entry.height > 0 ? entry : null;
+  } catch {
+    // No manifest. Fall back to reading the PNG header rather than guessing a
+    // ratio, so a hand-dropped file still renders correctly.
+    intrinsic = readPngSize(path.join(process.cwd(), 'public/assets/brand/gwr-official-attempt.png'));
+  }
+  return intrinsic;
+}
+
+/** PNG dimensions are two big-endian uint32s at byte 16, per the spec. */
+function readPngSize(file: string): BrandAsset | null {
+  try {
+    const buffer = readFileSync(file);
+    if (buffer.length < 24 || buffer.toString('ascii', 1, 4) !== 'PNG') return null;
+    return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Resolves the asset once per process.
@@ -85,12 +124,19 @@ export function GwrBadge({ enabled, className = '', variant = 'card' }: GwrBadge
   // alone in place of the mark it refers to.
   if (!src) return null;
 
+  const size = intrinsicSize();
+  // The inline variant is a smaller rendering of the same mark. Width follows
+  // from the real ratio rather than being set independently, so the mark is
+  // never stretched.
+  const maxHeight = variant === 'inline' ? 48 : 78;
+  const maxWidth = size ? Math.round((maxHeight * size.width) / size.height) : maxHeight * 3;
+
   return (
     <div
       className={
         [
           'inline-flex items-center justify-center rounded-lg bg-white',
-          variant === 'inline' ? 'px-4 py-2' : 'px-6 py-4',
+          variant === 'inline' ? 'px-3 py-1.5' : 'px-4 py-2',
           className,
         ]
           .filter(Boolean)
@@ -107,11 +153,12 @@ export function GwrBadge({ enabled, className = '', variant = 'card' }: GwrBadge
       <img
         src={src}
         alt="Guinness World Records Official Attempt"
-        width={variant === 'inline' ? 160 : 240}
-        height={variant === 'inline' ? 120 : 180}
+        width={size?.width}
+        height={size?.height}
         loading="lazy"
         decoding="async"
-        className={variant === 'inline' ? 'h-auto w-auto max-w-[160px]' : 'h-auto w-auto max-w-[240px]'}
+        className="h-auto w-auto"
+        style={{ maxHeight: `${maxHeight}px`, maxWidth: `${maxWidth}px` }}
       />
     </div>
   );

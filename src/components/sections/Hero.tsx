@@ -99,6 +99,17 @@ export function Hero() {
               100% refundable if date doesn&apos;t suit or goal not reached
             </p>
           </div>
+
+          {/* Record-attempt badge. In the content flow rather than absolutely
+              positioned: an absolute placement overlapped the price line at
+              some viewport sizes, which a screenshot caught and reading the
+              DOM would not have. Suspense so it streams rather than forcing
+              the hero to become request-time. */}
+          <div className="mt-8">
+            <Suspense fallback={null}>
+              <GwrSlot />
+            </Suspense>
+          </div>
         </div>
       </div>
 
@@ -124,18 +135,6 @@ export function Hero() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Record-attempt badge, beside the prize plaque. Renders nothing when
-          the setting is off, and the badge itself renders nothing without the
-          asset. */}
-      <div className="content-frame absolute inset-x-0 bottom-20 z-10 flex justify-center">
-        {/* Suspense so this stays a stream rather than forcing the surrounding
-            page to become request-time: the badge reads settings, and the rest
-            of the hero does not need to wait for it. */}
-        <Suspense fallback={null}>
-          <GwrSlot />
-        </Suspense>
       </div>
 
       {/* The honesty label. Every image on this site is illustrative */}
