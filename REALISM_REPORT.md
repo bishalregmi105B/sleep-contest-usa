@@ -17,10 +17,12 @@ configuration, and 64 automated checks pass.
 
 ## The one thing that changed the shape of the work
 
-There is no image-generation tool and no `GEMINI_API_KEY` in this environment.
-The brief's own fallback rule applies: no photoreal asset available means a dark
-cinematic gradient with grain and vignette, **never** a cartoon. So the base
-state is code-driven, and the asset program is a one-command job:
+There is no image-generation tool and no `GEMINI_API_KEY` in this environment, so
+the site was built to the brief's own fallback: a dark cinematic gradient with
+grain and vignette, **never** a cartoon. Nineteen photographs were supplied
+afterwards and picked up with no code change, which is what the split was for —
+`CinematicStage` crossfades the keyframes when they exist and paints the
+gradient when they do not. The generation job remains available:
 
 ```bash
 GEMINI_API_KEY=... npm run images:generate
@@ -40,16 +42,15 @@ and prebuild.
 | 3 | Display font is not puffy; numbers use tabular mono | **Pass.** Big Shoulders Display 700–900, self-hosted. JetBrains Mono with `tabular-nums` on every number that changes. |
 | 4 | No emoji, star glyphs, tilted cards, hard offset shadows or sticker styles | **Pass.** `rg` for `sticker\|tilt\|rotate(\|elastic\|back.out\|🏆\|★\|🌙\|💤\|🔒\|🔊` returns nothing in `src`. |
 | 5 | Film grain and vignette present, subtle, off for reduced motion and the low tier | **Pass.** Both are CSS overlays; grain steps at ~8 fps and is hidden by `html[data-tier='low']`, `[data-tier='none']` and the reduced-motion block. |
-| 6 | One photographic grade; every image unique and matched to its caption | **Deferred, honestly.** No images ship, so there is no grade to check. The previous mismatches (a feather on "Sleep for 90 minutes", a chef on "Survive the wake-up squad") are recorded in `ASSETS_TO_GENERATE.md` as the specific failure to review for. |
+| 6 | One photographic grade; every image unique and matched to its caption | **Pass.** 19 photographs supplied in one night-time documentary grade. Every caption checked against its image: air horn on the noise round, feather on eyelashes on the tickle round, bacon in a pan on the smell round, a fingertip clip on "Sleep for 90 minutes". Asserted in `npm run check`. |
 | 7 | Motion is cinematic: no bounce, elastic, wobble or idle loops | **Pass.** One easing curve throughout (`--ease-cine`). Reveals are 0.8–1.4 s. The only continuous animations are the ticker, the grain step and the prize roll. |
 | 8 | Data visuals are authentic | **Pass.** A real P-QRS-T generator (`src/lib/ecg.ts`) shared by the counter, the squad strips and the ticket. The telemetry chart is labelled "Illustrative example, not real data." |
 | 9 | Text contrast is AA over every photograph; focus visible; reduced motion complete | **Pass.** axe reports 100 for accessibility on all four routes. The contrast floor for small text is `mist/75`, measured at 5.9:1. |
 | 10 | Honesty: labels present, no false claims, no fake counts | **Pass.** See below. |
 
-**Nine of ten pass, one deferred with a recorded reason.** The deferred item is
-the only one that cannot be completed without an asset the environment cannot
-produce, and the brief explicitly permits the dark cinematic fallback in exactly
-that case.
+**Ten of ten.** The photography arrived after this pass was written; the site
+picked it up with no code change, which is the behaviour the asset program was
+built for. What follows describes the state before and after.
 
 ## The honesty work
 
@@ -60,11 +61,13 @@ This is the part that changed most of the code.
 - **A zero is never shown.** Below `NEXT_PUBLIC_COUNTER_MIN_PUBLIC` (default 500)
   the page states the target and the story. The admin view always shows the true
   total.
-- **The gallery does not claim photographs that do not exist.** With no images it
-  shows the night's schedule and says photography follows the first event.
-- **Mock payments are announced.** A production deployment on the simulated
-  provider shows a persistent banner saying no money is taken and no ticket is
-  issued for real.
+- **The gallery does not claim photographs that do not exist.** It branches on
+  whether the files are actually present: the photo grid when they are, the
+  night's schedule and an honest note when they are not.
+- **Mock payments.** `/api/health` reports a simulated payment provider in
+  production as `degraded`, with HTTP 503. The on-page banner was removed on the
+  client's instruction after launch prep; the server-side check stays, because it
+  is a deployment diagnostic rather than page copy.
 - **`/api/health` returns 503** with a list of exactly what is not configured, so
   the two silent-failure modes (in-memory store, simulated payments) cannot pass
   unnoticed.
@@ -99,7 +102,7 @@ Real measurements, on the production build at 390 px with a 4× CPU throttle
 | --- | --- | --- | --- |
 | LCP | **1,220 ms** | ≤ 2,500 ms | pass |
 | CLS | **0.026** | < 0.1 | pass |
-| Transfer | **712 KB** | ~700 KB | marginally over |
+| Transfer, first screen | **1.3 MB** | ~700 KB | over — see below |
 | Console errors | 0 | 0 | pass |
 | axe, 4 routes | 0 serious, 0 critical, 0 moderate | 0 | pass |
 

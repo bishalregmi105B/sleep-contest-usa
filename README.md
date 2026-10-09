@@ -20,9 +20,7 @@ npm run dev
 That is the whole setup. Open <http://localhost:3000>. The full flow works end to
 end: register → pay $10 → boarding-pass ticket → referral link → admin.
 
-## What it looks like, and why it ships empty
-
-The site has **no photographs and no cartoon**. That is deliberate.
+## What it looks like
 
 The previous build was illustrated — glossy clay-and-inflatable renders, a
 sleeping infant in a nightcap, a smiling moon wearing a nightcap, extruded "Zzz"
@@ -30,15 +28,20 @@ letters — and the client's note was "it looks like a cartoon, it needs reality
 Every one of those images is archived in `design/archive/stitch-cartoon/` and
 none is served.
 
-So the page is carried by light: a dusk-to-dawn sky driven from scroll, film
-grain, a vignette, and one atmosphere layer of stars, a faceless cratered moon,
-dust and light shafts. Where a photograph should be, the fallback is an unlit
-frame with a low warm practical light, which reads as intent rather than as a
-missing file. The gallery says outright that photography follows the first event
-rather than showing six empty boxes under a heading about concept visuals.
+The site is now carried by light: nineteen photographs in one night-time
+documentary grade, a dusk-to-dawn sky that crossfades between them as you
+scroll, film grain, a vignette, and one atmosphere layer of stars, a faceless
+cratered moon, dust and light shafts.
 
-When real or generated photographs land in `public/assets/`, the site picks them
-up automatically on the next build. See `ASSETS_TO_GENERATE.md`.
+**The imagery is concept work and says so.** Every photograph is labelled
+"Concept visual", the gallery subheading says they were generated, and the footer
+repeats it. They show what the night could look like, not a past event. Real
+photography from the first event should replace them.
+
+The site still runs with no images at all: `CinematicStage` paints the same sky
+phases as a gradient when the keyframes are absent, and the gallery switches to
+the night's schedule rather than leaving an empty grid under a heading about
+concept visuals. See `ASSETS_TO_GENERATE.md`.
 
 ## Honesty, because this is a paid entry
 
@@ -84,9 +87,10 @@ npm run smoke     # Chromium + Firefox, registration to ticket
 node scripts/shoot.mjs demo/after   # screenshots, 1440 and 390
 ```
 
-`npm run check` covers the counter threshold, production copy, the mock-payments
-banner, the facts bar, FAQ gating, footer identity, analytics payloads, axe on
-four routes, reduced motion, Save-Data, no-WebGL and layout stability.
+`npm run check` covers the counter threshold, production copy, the photography
+(every gallery tile present, uniquely captioned and labelled), the facts bar, FAQ
+gating, footer identity, analytics payloads, axe on four routes, reduced motion,
+Save-Data, no-WebGL and layout stability.
 
 Measured on the production build at 390 px with a 4× CPU throttle: **LCP 1.2 s**,
 **CLS 0.026**, axe clean, zero console errors. `REALISM_REPORT.md` has the full

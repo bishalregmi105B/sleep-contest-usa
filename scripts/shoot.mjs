@@ -77,7 +77,19 @@ for (const vp of VIEWPORTS) {
       const node = document.getElementById(sectionId);
       if (node) window.scrollTo({ top: node.getBoundingClientRect().top + window.scrollY, behavior: 'instant' });
     }, id);
-    await page.waitForTimeout(700);
+
+    // The sky, the sticky header and the film grain are all driven by scroll
+    // position, and resizing the viewport invalidates that. Wait until the
+    // page agrees the section is active before capturing, or the screenshot
+    // shows one section's copy over the previous section's sky.
+    await page
+      .waitForFunction(
+        (sectionId) => document.documentElement.dataset.section === sectionId,
+        id,
+        { timeout: 8000 },
+      )
+      .catch(() => errors.push(`[${vp.name}] ${id} never became the active section`));
+    await page.waitForTimeout(900);
 
     await el.screenshot({ path: `${OUT}/${vp.name}-${id}.jpg`, type: 'jpeg', quality: 78 }).catch(async () => {
       await page.screenshot({ path: `${OUT}/${vp.name}-${id}.jpg`, type: 'jpeg', quality: 78 });

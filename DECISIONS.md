@@ -202,3 +202,23 @@ than taken quietly.
 **WebKit is unverified here.** `libmanette-0.2-0` is missing on this machine and
 there is no sudo, so Safari and iOS are untested. `scripts/smoke.mjs` reports it
 as SKIP rather than as a pass, because a silent skip would be worse than a gap.
+
+**The keyframes are fetched on approach, not all at once.** Six 2400px
+photographs are about a megabyte. Loading them together pushed the page past
+2 MB before a visitor had scrolled anywhere. Only the hero frame is requested
+initially; the rest are armed a little before the scroll reaches them, so each
+has decoded by the time its section arrives.
+
+**The crossfade eases rather than tracks scroll.** Each photograph eases towards
+its target opacity on the GSAP ticker, frame-rate independent, so a fast flick
+still dissolves instead of snapping. Two supporting changes matter as much: a
+style is only written once the value has moved enough to be visible, and the CSS
+gradient behind the photographs is repainted only while it is actually on show
+rather than sixty times a second. Measured on the running site: opacity moves in
+small increments across samples with both frames overlapping mid-transition,
+rather than stepping.
+
+**The on-page "payments are simulated" banner was removed on the client's
+instruction.** The `/api/health` check stays: it is a deployment diagnostic, it
+returns 503, and a simulated payment provider is the failure most likely to be
+missed. The banner was page copy and the client does not want it.

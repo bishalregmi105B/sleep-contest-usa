@@ -413,8 +413,6 @@ export const TRUST = {
    * saying nothing.
    */
   stripeLive: 'Payments are processed by Stripe. We never see or store your card details.',
-  mockPayments:
-    'Preview: payments are simulated. No money is taken and no ticket is issued for real.',
 } as const;
 
 /** "From reserve to wake-up call". One timeline, used in both places it appears. */

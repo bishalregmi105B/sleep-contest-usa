@@ -14,12 +14,14 @@ import {
   RepeatWrapping,
   SRGBColorSpace,
   ShaderMaterial,
+  TextureLoader,
   type Group,
   type Texture,
 } from 'three';
 import { SETTINGS, type Tier } from '@/lib/quality';
 import { presence, scrollState } from '@/lib/scroll-state';
 import { seededRandom } from '@/lib/random';
+import { asset } from '@/lib/assets';
 
 /**
  * The atmosphere layer.
@@ -185,7 +187,7 @@ function Moon() {
         <sphereGeometry args={[1.1, 48, 32]} />
         <meshLambertMaterial
           map={moonTexture()}
-          color="#C9CCDA"
+          color={moonMap.exists ? '#ffffff' : '#C9CCDA'}
           emissive="#2A2F45"
           emissiveIntensity={0.35}
         />
@@ -218,8 +220,23 @@ function Moon() {
  * Equirectangular, so the maria read correctly from any viewing angle.
  */
 let moon: Texture | null = null;
+
+/** A public-domain NASA colour map, when one has been supplied. */
+const moonMap = asset('images/moon-color');
+
 function moonTexture(): Texture {
   if (moon) return moon;
+
+  // The real lunar colour map wins: it is actual data, and no procedural
+  // field is going to improve on it.
+  if (moonMap.exists) {
+    const loader = new TextureLoader();
+    const texture = loader.load(moonMap.src);
+    texture.colorSpace = SRGBColorSpace;
+    texture.wrapS = RepeatWrapping;
+    moon = texture;
+    return texture;
+  }
 
   const size = 512;
   const canvas = document.createElement('canvas');

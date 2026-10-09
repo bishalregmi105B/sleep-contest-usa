@@ -45,13 +45,15 @@ and the age limit come from one content file, so the facts bar, the counter, the
 rules page, the refund policy and the confirmation email cannot disagree with
 each other. Every rule the site states about judging matches the official rules.
 
-**Concept.** The site ships with **no photographs at all**. That is a decision,
-not an omission: an empty image slot under the heading "concept visuals
-generated to show what the night could look like" would be claiming images exist
-when none do. So the gallery shows the night's schedule instead and says plainly
-that photography follows the first event. When real or generated photographs land
-in `public/assets/`, the gallery switches to its photo grid automatically with no
-code change.
+**Concept.** Nineteen photographs were generated to style lock v2 — night-time
+event documentary, warm practical work lights, cool moonlight — and every one is
+labelled "Concept visual" on the page, with the gallery subheading saying so and
+the footer repeating it. They show what the night *could* look like. They are
+not photographs of a past event and the site never implies they are.
+
+The section also branches honestly: when no images are present it shows the
+night's schedule and says photography follows the first event, rather than
+leaving an empty grid under a heading about concept visuals.
 
 **Removed, deliberately.** The old footer said "Join 200,000 Americans already
 registered" directly above a counter reading zero. That claim is gone. Below 500

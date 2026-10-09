@@ -4,7 +4,6 @@ import { Header } from '@/components/layout/Header';
 import { Ticker } from '@/components/layout/Ticker';
 import { Footer } from '@/components/layout/Footer';
 import { MobileReserveBar } from '@/components/layout/MobileReserveBar';
-import { MockPaymentsBanner } from '@/components/layout/MockPaymentsBanner';
 import { Preloader } from '@/components/layout/Preloader';
 import { CinematicStage } from '@/components/media/CinematicStage';
 import { FilmLayers } from '@/components/media/FilmLayers';
@@ -49,7 +48,6 @@ export default function HomePage() {
       </noscript>
 
       <Preloader />
-      <MockPaymentsBanner />
       <CinematicStage />
       {/* One fixed canvas behind everything, loaded after first paint. */}
       <SceneSlot />

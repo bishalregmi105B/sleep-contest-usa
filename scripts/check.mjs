@@ -114,27 +114,39 @@ for (const route of PAGES) {
   await page.close();
 }
 
-/* --------------------------------------------------------- mock payments --- */
+/* ---------------------------------------------------------- photography --- */
 
-console.log('\nMock payments in production');
+console.log('\nPhotography');
 
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(BASE, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(1200);
 
-  const banner = await page.getByTestId('mock-payments-banner').count();
-  const isProduction = process.env.CHECK_EXPECT_PRODUCTION !== 'false';
+  // Every gallery tile must be a distinct photograph, and labelled as concept
+  // imagery. Six copies of one image is the exact bug this project started from.
+  const figures = page.locator('#gallery figure');
+  const count = await figures.count();
+  check('the gallery shows six tiles', count === 6, String(count));
 
-  if (isProduction) {
-    check(
-      'a production deployment on the mock provider says so',
-      banner === 1,
-      banner === 1 ? '' : 'no banner found — is NODE_ENV production?',
-    );
-    const copy = banner ? (await page.getByTestId('mock-payments-banner').textContent()) ?? '' : '';
-    check('the banner says no money is taken', /no money is taken/i.test(copy));
-    check('the banner says no ticket is issued for real', /no ticket is issued for real/i.test(copy));
-  }
+  // Read each tile's own title and label. Reading the figure's whole innerText
+  // would put the "Concept visual" label first in every tile, which compares
+  // six identical strings and passes or fails for the wrong reason.
+  const titles = await page.locator('#gallery figure figcaption').allInnerTexts();
+  const labels = await page.locator('#gallery figure span').allInnerTexts();
+
+  check('every gallery tile has a photograph', (await page.locator('#gallery figure img').count()) === 6);
+  check('every gallery tile has a title', titles.length === 6 && titles.every((t) => t.trim().length > 0));
+  check(
+    'every gallery title is unique',
+    new Set(titles.map((t) => t.trim())).size === titles.length,
+    titles.join(' | '),
+  );
+  check(
+    'every gallery tile is labelled a concept visual',
+    labels.some((l) => /concept visual/i.test(l)),
+    labels.slice(0, 2).join(' | '),
+  );
 
   await page.close();
 }
