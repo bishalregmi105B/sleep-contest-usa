@@ -142,7 +142,8 @@ export function getProgress(input: ProgressInput): Progress {
  */
 export type RegistrationState =
   | { readonly kind: 'open' }
-  | { readonly kind: 'closed'; readonly reason: 'not_open' }
+  /** Kill switch on. The waitlist stays open, because interest is worth keeping. */
+  | { readonly kind: 'closed'; readonly reason: 'not_open'; readonly waitlistAvailable: true }
   | { readonly kind: 'full'; readonly waitlistAvailable: true }
   /** Payments are not configured. Never issue a ticket. */
   | { readonly kind: 'payments_unavailable'; readonly waitlistAvailable: true };
@@ -153,7 +154,12 @@ export function registrationState(input: {
   readonly reserved: number;
   readonly paymentsEnabled: boolean;
 }): RegistrationState {
-  if (!input.registrationOpen) return { kind: 'closed', reason: 'not_open' };
+  if (!input.registrationOpen) {
+    // Registration being switched off is usually temporary — a broadcast slot, a
+    // maintenance window. Letting someone leave their email costs nothing and
+    // is how they hear when it reopens.
+    return { kind: 'closed', reason: 'not_open', waitlistAvailable: true };
+  }
   // Checked before capacity: if we cannot take money, no amount of free space
   // is useful, and the honest message is that payment is unavailable.
   if (!input.paymentsEnabled) return { kind: 'payments_unavailable', waitlistAvailable: true };

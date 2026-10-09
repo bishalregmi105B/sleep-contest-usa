@@ -39,12 +39,24 @@ export type OutboxPayload =
       publicId: string;
     };
 
+type OutboxClient = Pick<
+  Awaited<ReturnType<typeof getDb>>,
+  'emailOutbox'
+>;
+
 /**
- * Queues an email. Called inside the caller's transaction where there is one,
- * so a rolled-back payment cannot leave a confirmation queued.
+ * Queues an email.
+ *
+ * Takes the client explicitly so the caller can pass its **transaction**
+ * connection. That matters: the previous version called `getDb()` internally,
+ * which opened a second connection outside the payment transaction. A payment
+ * that then rolled back would have left a confirmation queued for a ticket that
+ * was never issued, and a confirmation for a ticket with no mat number.
+ *
+ * @param client the caller's transaction client when there is a transaction.
  */
-export async function enqueue(payload: OutboxPayload): Promise<void> {
-  const db = await getDb();
+export async function enqueue(payload: OutboxPayload, client?: OutboxClient): Promise<void> {
+  const db = client ?? (await getDb());
 
   // Keyed on the event, not the time, so a replayed webhook cannot queue a
   // second copy. This is the guarantee that stops double-sending.
