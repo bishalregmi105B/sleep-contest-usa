@@ -16,7 +16,7 @@ import { AdminLogin } from '@/components/sections/AdminLogin';
 import { AdminTable } from '@/components/sections/AdminTable';
 import { AdminSettingsForm } from '@/components/sections/AdminSettingsForm';
 import { AdminHealthCard } from '@/components/sections/AdminHealthCard';
-import { getSettings } from '@/lib/settings';
+import { getSettings, gwrGuard } from '@/lib/settings';
 import { outboxHealth } from '@/lib/outbox';
 import { waitlistSize } from '@/lib/registrations';
 import {
@@ -120,6 +120,9 @@ export default async function AdminPage({
   // Keyset pagination: page N resumes from the cursor the previous page
   // returned, instead of skipping N * PAGE_SIZE rows in the database.
   const registrations = pageResult.rows;
+  // Advisory only. The badge shows either way; this just makes the paperwork
+  // state visible on the page an operator actually looks at.
+  const gwrNote = gwrGuard(settings);
   // Registrations that have not reached a paid state, for the funnel.
   const unpaid = total - paid;
 
@@ -195,6 +198,8 @@ export default async function AdminPage({
               total={total}
               waitlist={waitlist}
               outbox={outbox}
+              settings={settings}
+              gwrNote={gwrNote}
             />
           </Panel>
         </div>

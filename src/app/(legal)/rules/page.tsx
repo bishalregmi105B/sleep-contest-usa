@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { MONEY, PRIZES, PRIZE_TOTAL, SITE, usd, hasDeadline } from '@/content/site';
 import { ClientNote } from '@/components/layout/ClientNote';
 import { LegalLayout } from '@/components/layout/LegalLayout';
+import { GwrSlot } from '@/components/gwr/GwrSlot';
+import { GWR, GWR_CLIENT_INPUTS } from '@/content/gwr';
 
 export const metadata: Metadata = {
   title: 'Official rules',
@@ -166,6 +169,24 @@ export default function RulesPage() {
                 the smell round for dietary, religious and allergy reasons, who
                 should not enter, and what on-site medical support is provided.
               </ClientNote>
+            </>
+          ),
+        },
+        {
+          id: 'record-attempt',
+          heading: GWR.rulesHeading,
+          body: (
+            <>
+              <Suspense fallback={null}>
+                <GwrSlot variant="inline" className="mb-6" />
+              </Suspense>
+              <p>{GWR.rulesIntro}</p>
+              <ul className="mt-4 list-disc pl-6">
+                {GWR_CLIENT_INPUTS.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <p className="mt-4 text-sm opacity-80">{GWR.awaitingClientInput}</p>
             </>
           ),
         },

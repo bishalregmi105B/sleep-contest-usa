@@ -31,7 +31,8 @@
     "fonts:fetch": "node scripts/fetch-fonts.mjs",
     "images:generate": "node scripts/generate-images.mjs",
     "shoot": "node scripts/shoot.mjs",
-    "loadtest:seed": "node loadtest/seed-200k.mjs"
+    "loadtest:seed": "node loadtest/seed-200k.mjs",
+    "assets:brand": "node scripts/process-brand.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -26,7 +26,6 @@ import { NOSCRIPT, SITE } from '@/content/site';
 import { paidCount } from '@/lib/registrations';
 import { getSettings, getPublicSettings } from '@/lib/settings';
 import { WorldOfSleepContests } from '@/components/sections/WorldOfSleepContests';
-import { GwrBadge } from '@/components/gwr/GwrBadge';
 
 /**
  * Home page.
@@ -60,9 +59,6 @@ export default function HomePage() {
 
       <JsonLd />
       <Header />
-      <Suspense fallback={null}>
-        <GwrHeroBadge />
-      </Suspense>
       {/* Reserves the floating header's height so the ticker and the first
           section's copy never slide underneath it. */}
       <div aria-hidden="true" className="h-[72px] shrink-0" />
@@ -199,28 +195,4 @@ function SectionFallback({ id }: { readonly id: string }) {
       <div className="content-frame" />
     </section>
   );
-}
-
-/**
- * The licensed-attempt badge in the hero.
- *
- * Behind `gwrEnabled`, which stays off until the client supplies written
- * approval from the record body (see src/content/gwr.ts and
- * CLIENT_INPUTS_NEEDED.md). Renders null when the flag is off or the asset is
- * missing, in which case no brand wording appears anywhere on the page.
- */
-async function GwrHeroBadge() {
-  await connection();
-
-  let enabled = false;
-  try {
-    enabled = (await getPublicSettings()).gwrEnabled;
-  } catch {
-    // Off if settings cannot be read. Failing closed is the only safe default
-    // for a licensed mark.
-    enabled = false;
-  }
-
-  if (!enabled) return null;
-  return <GwrBadge enabled className="mt-6" />;
 }

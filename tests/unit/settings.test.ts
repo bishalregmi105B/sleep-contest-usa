@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS, gwrGuard, settingsSchema, toPublic } from '@/lib/settings';
+import { DEFAULT_SETTINGS, gwrGuard, gwrPaperworkComplete, settingsSchema, toPublic } from '@/lib/settings';
+import { getProgress } from '@/lib/progress';
 import { normalizeEmail, normalizeMobile, hashEmail, hashIp } from '@/lib/privacy';
 
 describe('settingsSchema', () => {
@@ -37,45 +38,75 @@ describe('settingsSchema', () => {
   });
 });
 
-describe('gwrGuard', () => {
-  it('permits the badge being switched off', () => {
+describe('gwrGuard (advisory only)', () => {
+  it('says nothing when the badge is switched off', () => {
     expect(gwrGuard({ gwrEnabled: false, gwrApprovalRef: '', gwrApprovedAt: null })).toBeNull();
   });
 
-  it('refuses to enable without an approval reference', () => {
-    const problem = gwrGuard({ gwrEnabled: true, gwrApprovalRef: '   ', gwrApprovedAt: null });
-    expect(problem).toMatch(/approval reference/i);
+  it('notes a missing reference without blocking', () => {
+    const note = gwrGuard({ gwrEnabled: true, gwrApprovalRef: '   ', gwrApprovedAt: null });
+    expect(note).toMatch(/approval reference/i);
+    // Explicitly advisory: the badge still shows.
+    expect(note).toMatch(/still show/i);
   });
 
-  it('refuses to enable without an approval date', () => {
+  it('notes a missing date without blocking', () => {
     expect(gwrGuard({ gwrEnabled: true, gwrApprovalRef: 'GWR-123', gwrApprovedAt: null })).toMatch(/date/i);
   });
 
-  it('refuses a nonsense date', () => {
+  it('notes a nonsense date', () => {
     expect(gwrGuard({ gwrEnabled: true, gwrApprovalRef: 'GWR-123', gwrApprovedAt: 'soon' })).toMatch(/valid date/i);
   });
 
-  it('permits enabling once a reference and date are both present', () => {
+  it('is silent once a reference and date are both present', () => {
     expect(
       gwrGuard({ gwrEnabled: true, gwrApprovalRef: 'GWR-2026-114', gwrApprovedAt: '2026-01-15' }),
     ).toBeNull();
   });
 });
 
-describe('toPublic', () => {
-  it('forces the badge off when the guard is not satisfied', () => {
-    const published = toPublic({ ...DEFAULT_SETTINGS, gwrEnabled: true, gwrApprovalRef: '' });
-    expect(published.gwrEnabled).toBe(false);
+describe('gwrPaperworkComplete', () => {
+  it('is true only when a reference and a date are both recorded', () => {
+    expect(gwrPaperworkComplete({ gwrEnabled: true, gwrApprovalRef: 'GWR-1', gwrApprovedAt: '2026-01-15' })).toBe(true);
+    expect(gwrPaperworkComplete({ gwrEnabled: true, gwrApprovalRef: '', gwrApprovedAt: '2026-01-15' })).toBe(false);
+    expect(gwrPaperworkComplete({ gwrEnabled: true, gwrApprovalRef: 'GWR-1', gwrApprovedAt: null })).toBe(false);
+  });
+});
+
+describe('defaults', () => {
+  it('shows the counter from zero, including at zero', () => {
+    expect(DEFAULT_SETTINGS.counterMinPublic).toBe(0);
+    const progress = getProgress({
+      paidCount: 0,
+      milestones: DEFAULT_SETTINGS.milestones,
+      goal: DEFAULT_SETTINGS.goal,
+      counterMinPublic: DEFAULT_SETTINGS.counterMinPublic,
+    });
+    // A real 0 is shown, not hidden.
+    expect(progress.kind).toBe('progress');
+    if (progress.kind === 'progress') {
+      expect(progress.count).toBe(0);
+      expect(progress.currentMilestone).toBe(500);
+      expect(progress.label).toBe('Milestone 1 of 9');
+    }
   });
 
-  it('publishes it once the guard passes', () => {
-    const published = toPublic({
-      ...DEFAULT_SETTINGS,
-      gwrEnabled: true,
-      gwrApprovalRef: 'GWR-2026-114',
-      gwrApprovedAt: '2026-01-15',
-    });
+  it('ships with the record-attempt badge enabled', () => {
+    expect(DEFAULT_SETTINGS.gwrEnabled).toBe(true);
+  });
+});
+
+describe('toPublic', () => {
+  it('publishes the badge state as set, without gating it', () => {
+    const published = toPublic({ ...DEFAULT_SETTINGS, gwrEnabled: true, gwrApprovalRef: '' });
     expect(published.gwrEnabled).toBe(true);
+  });
+
+  it('publishes whether the paperwork is on file, rather than hiding it', () => {
+    const without = toPublic({ ...DEFAULT_SETTINGS, gwrApprovalRef: '' });
+    const with_ = toPublic({ ...DEFAULT_SETTINGS, gwrApprovalRef: 'GWR-1', gwrApprovedAt: '2026-01-15' });
+    expect(without.gwrPaperworkOnFile).toBe(false);
+    expect(with_.gwrPaperworkOnFile).toBe(true);
   });
 
   it('never publishes the approval reference itself', () => {

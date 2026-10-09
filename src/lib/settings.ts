@@ -40,8 +40,11 @@ export const settingsSchema = z
     counterMinPublic: intWithin(0, 1_000_000),
     showWorldSection: z.boolean(),
 
-    // Guinness World Records. Gated, and only an admin with an approval
-    // reference can turn it on: see `gwrGuard`.
+    // Guinness World Records "Official Attempt" badge.
+    //
+    // On by default at the client's instruction. The reference and date are
+    // still recorded, but they are informational: they do not gate display.
+    // See the note on `gwrGuard`.
     gwrEnabled: z.boolean(),
     gwrApprovalRef: z.string().max(200),
     gwrApprovedAt: z.string().nullable(),
@@ -87,11 +90,11 @@ export const DEFAULT_SETTINGS: Settings = {
   maxRegistrations: 200_000,
   goal: 200_000,
   milestones: DEFAULT_MILESTONES,
-  counterMinPublic: 500,
+  counterMinPublic: 0,
   showWorldSection: true,
   // Off, and it cannot be turned on without a written approval reference from
   // Guinness World Records. See CLIENT_INPUTS_NEEDED.md.
-  gwrEnabled: false,
+  gwrEnabled: true,
   gwrApprovalRef: '',
   gwrApprovedAt: null,
   deadline: '',
@@ -103,21 +106,40 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 /**
- * Whether the GWR badge may be enabled.
+ * Advisory checks on the record-attempt badge.
  *
- * Guinness World Records requires a licence for any commercial use of its name
- * and logos, and receiving attempt guidelines is not consent. So the badge is
- * built but cannot go live on a reference the client typed from memory: it
- * needs a non-empty reference and a date. Returns the plain-language reason so
- * the admin form can show it.
+ * ## Why these no longer block
+ *
+ * This used to be a hard gate: the badge could not be enabled without a written
+ * approval reference and a date. That was a deliberate choice, on the basis
+ * that Guinness World Records requires a licence for commercial use of its name
+ * and logos.
+ *
+ * The client has now seen that analysis and instructed that the badge be shown
+ * by default with no document required in admin. It is their trademark and their
+ * commercial decision to make, so the gate is down. The checks below remain as
+ * *advisories*: they still surface in the admin health card and the settings
+ * audit, so the position is visible rather than hidden, but they do not stop the
+ * badge rendering.
+ *
+ * ## What is unchanged
+ *
+ * The badge says "Official Attempt" and nothing more. It never says a record has
+ * been set, achieved or certified. That distinction is the difference between
+ * describing a status and claiming an endorsement nobody has given, so it is
+ * kept regardless of who decides to publish the badge.
+ *
+ * The remaining exposure is trademark, not honesty: publishing the mark without
+ * the licence is a matter for the client's legal advisers, and it is recorded in
+ * CLIENT_INPUTS_NEEDED.md §10.
  */
 export function gwrGuard(next: { gwrEnabled: boolean; gwrApprovalRef: string; gwrApprovedAt: string | null }): string | null {
   if (!next.gwrEnabled) return null;
   if (!next.gwrApprovalRef.trim()) {
-    return 'Enter the written approval reference from Guinness World Records before enabling the badge. Without it, using the logo is unlicensed use.';
+    return 'No approval reference recorded. The badge will still show; record the reference so the licence position is on file.';
   }
   if (!next.gwrApprovedAt) {
-    return 'Enter the date the approval was granted.';
+    return 'No approval date recorded. The badge will still show.';
   }
   if (Number.isNaN(new Date(next.gwrApprovedAt).getTime())) {
     return 'The approval date is not a valid date.';
@@ -126,30 +148,54 @@ export function gwrGuard(next: { gwrEnabled: boolean; gwrApprovalRef: string; gw
 }
 
 /**
+ * Whether the record-attempt paperwork is complete.
+ *
+ * Purely informational. Reported in the admin health card and exposed on the
+ * public settings endpoint so the state is visible everywhere rather than
+ * inferred from silence.
+ */
+export function gwrPaperworkComplete(settings: {
+  gwrEnabled: boolean;
+  gwrApprovalRef: string;
+  gwrApprovedAt: string | null;
+}): boolean {
+  return Boolean(settings.gwrApprovalRef.trim()) && Boolean(settings.gwrApprovedAt);
+}
+
+/**
  * The subset the browser is allowed to see.
  *
  * Explicitly listed rather than derived by omission, so adding a secret to
  * `Settings` later cannot accidentally publish it.
  */
-export type PublicSettings = Pick<
-  Settings,
-  | 'registrationOpen'
-  | 'maxRegistrations'
-  | 'goal'
-  | 'milestones'
-  | 'counterMinPublic'
-  | 'showWorldSection'
-  | 'gwrEnabled'
-  | 'gwrApprovedAt'
-  | 'deadline'
-  | 'sponsor'
-  | 'contactEmail'
-  | 'instagram'
-  | 'tiktok'
-  | 'x'
->;
+/**
+ * The subset the browser is allowed to see.
+ *
+ * Listed explicitly rather than derived by omission, so adding a field to
+ * `Settings` later cannot accidentally publish it. `gwrApprovalRef` is
+ * deliberately absent: it is internal reference material, not something to
+ * publish. Whether that paperwork exists is published instead, as a boolean.
+ */
+export type PublicSettings = {
+  readonly registrationOpen: boolean;
+  readonly maxRegistrations: number;
+  readonly goal: number;
+  readonly milestones: readonly number[];
+  readonly counterMinPublic: number;
+  readonly showWorldSection: boolean;
+  readonly gwrEnabled: boolean;
+  readonly gwrApprovedAt: string | null;
+  /** Whether an approval reference and date are actually on file. */
+  readonly gwrPaperworkOnFile: boolean;
+  readonly deadline: string;
+  readonly sponsor: string;
+  readonly contactEmail: string;
+  readonly instagram: string;
+  readonly tiktok: string;
+  readonly x: string;
+};
 
-const PUBLIC_KEYS: ReadonlyArray<keyof PublicSettings> = [
+const PUBLIC_KEYS = [
   'registrationOpen',
   'maxRegistrations',
   'goal',
@@ -164,13 +210,17 @@ const PUBLIC_KEYS: ReadonlyArray<keyof PublicSettings> = [
   'instagram',
   'tiktok',
   'x',
-];
+] as const satisfies ReadonlyArray<keyof Settings>;
 
 export function toPublic(settings: Settings): PublicSettings {
   const out = {} as Record<string, unknown>;
-  for (const key of PUBLIC_KEYS) {
-    out[key] = key === 'gwrEnabled' ? settings.gwrEnabled && gwrGuard(settings) === null : settings[key];
-  }
+  for (const key of PUBLIC_KEYS) out[key] = settings[key];
+
+  // Derived, not stored. Published so the record-attempt position is stated
+  // plainly on the public endpoint rather than having to be inferred from
+  // whether a badge appears.
+  out.gwrPaperworkOnFile = gwrPaperworkComplete(settings);
+
   return out as PublicSettings;
 }
 
@@ -267,10 +317,7 @@ export async function updateSettings(
   }
 
   const next = parsed.data;
-  const gwrProblem = gwrGuard(next);
-  if (gwrProblem) {
-    return { ok: false, errors: { gwrEnabled: gwrProblem } };
-  }
+  const gwrNote = gwrGuard(next);
 
   const db = await getDb();
   const previous = await getSettings();
@@ -304,6 +351,11 @@ export async function updateSettings(
   const changedKeys = (Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]).filter(
     (k) => JSON.stringify(previous[k]) !== JSON.stringify(next[k]),
   );
+
+  if (gwrNote) {
+    // Advisory, not an error: recorded so it is visible rather than hidden.
+    log.warn('settings: record-attempt paperwork incomplete', { note: gwrNote });
+  }
 
   log.info('settings updated', {
     adminId: actor.adminId,

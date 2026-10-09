@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
+import { GwrSlot } from '@/components/gwr/GwrSlot';
 import {
   CONTACT_EMAIL,
   FOOTER,
@@ -115,6 +117,16 @@ export function Footer() {
             © {COPYRIGHT_YEAR} {SITE.organizer}. All rights reserved.
           </p>
           <p className="max-w-md text-xs leading-relaxed text-mist font-medium">{FOOTER.conceptNote}</p>
+        </div>
+
+        {/* Record-attempt badge. Renders nothing when the setting is off. */}
+        <div className="mt-8 flex justify-center">
+          {/* Streamed, not blocking: the footer is part of the static shell of
+              every page, so a settings read here has to sit inside Suspense or
+              it would make every route request-time. */}
+          <Suspense fallback={null}>
+            <GwrSlot variant="inline" />
+          </Suspense>
         </div>
       </div>
     </footer>

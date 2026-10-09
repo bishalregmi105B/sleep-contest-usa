@@ -197,7 +197,8 @@ export function AdminSettingsForm({
             className={FIELD}
           />
           <p className="pt-1 text-xs text-mist">
-            Below this the page shows the target and the story instead of a zero.
+            Set to 0, which is the default, the real count is always shown including zero. Raise it only if the
+            numeral at zero is a problem for the campaign.
           </p>
         </div>
       </fieldset>
@@ -226,8 +227,8 @@ export function AdminSettingsForm({
       <fieldset className="flex flex-col gap-4">
         <legend className={LABEL}>Record attempt</legend>
         <p className="text-xs text-mist">
-          With this off, no licensed mark and no related wording appears anywhere on the site. It can only be
-          switched on once a written approval reference is recorded below.
+          On by default. With this off, no mark and no related wording appears anywhere on the site. The badge
+          always says &ldquo;Official Attempt&rdquo; and never claims a record has been set.
         </p>
 
         <label className="flex items-center gap-3">
@@ -244,7 +245,7 @@ export function AdminSettingsForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="gwrApprovalRef" className={LABEL}>
-              Written approval reference
+              Approval reference (optional)
             </label>
             <input
               id="gwrApprovalRef"

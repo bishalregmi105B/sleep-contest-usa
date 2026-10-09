@@ -342,3 +342,48 @@ Recorded during the work described in `STATE_OF_THE_CODEBASE.md` and
 - **The initial migration was edited after being applied locally.** Valid for a
   fresh database, which is what every deployment starts from, but recorded
   because it is the kind of thing that surprises someone later.
+
+## Later client instruction: counter and badge
+
+Two changes after the first delivery, both at the client's explicit request.
+
+- **The counter is always shown, including at zero.** `counterMinPublic`
+  defaulted to 500, which meant the page showed the target and the story rather
+  than a numeral until real momentum existed. It now defaults to **0**, so the
+  page shows "0 / 500, Milestone 1 of 9" from the first visit. A real zero is
+  honest — the threshold was a design preference, not an integrity rule — so it
+  stays available as a setting rather than being removed.
+
+- **The record-attempt badge is on by default with no document required.**
+  This reverses the hard gate described earlier in this file. The reasoning that
+  motivated the gate was presented, the client has now seen it and instructed
+  that the badge show anyway, and it is their trademark and their commercial
+  decision.
+
+  What was kept, and why: the badge says **"Official Attempt" and nothing
+  more**. It never says a record has been set, achieved or certified. That line
+  separates describing a status from claiming an endorsement nobody has given,
+  and it holds whoever decides to publish.
+
+  What changed: `gwrGuard` no longer blocks. It now returns an advisory note
+  that is surfaced in the admin health card, logged as a warning, and published
+  as `gwrPaperworkOnFile` on `GET /api/settings/public`. So the licence position
+  is stated openly on every surface rather than being enforced by a build rule or
+  concealed. The residual exposure is trademark, for the client's legal advisers,
+  and it is recorded in CLIENT_INPUTS_NEEDED.md §10.2.
+
+- **The badge renders nothing until the logo file exists, and says so.** The
+  file was never delivered to the repository, so "the badge is on" and "the badge
+  is visible" are different things. The component logs an error naming the paths
+  it looked for, and `npm run assets:brand` trims the margins and writes 1x/2x
+  PNG and WebP. No placeholder mark is ever substituted: inventing something
+  that resembles a licensed logo would be worse than showing nothing.
+
+- **The badge is placed through one `GwrSlot` component** used by the hero,
+  the footer and the rules page. Four call sites each checking the flag
+  separately is four places for the next person to forget one.
+
+- **Each placement sits inside a `Suspense` boundary.** Without it the settings
+  read made `/` and `/rules` unprerenderable, because the footer is part of the
+  static shell of every page. Found by the build failing, which is the build
+  doing its job.

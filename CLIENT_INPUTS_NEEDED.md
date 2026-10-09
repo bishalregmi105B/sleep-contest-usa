@@ -146,40 +146,72 @@ rules, the refund policy, the emails and the sitemap at once. If it is not
 realistic, say so now rather than after launch.
 ---
 
-## 10. Guinness World Records — the badge is built but cannot go live
+## 10. Guinness World Records — badge is on; we need two things
 
-The client says this is a Guinness World Records official attempt and supplied
-the "Official Attempt" logo. **The badge is built and gated, and it will not
-appear on the site until the items below are answered.**
+The badge is **built and switched on by default**, on the client's instruction.
+It appears in the hero beside the prize plaque, in the footer, and in a section
+on the rules page. It always says "Official Attempt" and never claims a record
+has been set, achieved or certified.
 
-Why it cannot simply be switched on: Guinness World Records requires a licence
-for any commercial use of its name or logos, the Official Record Attempt mark is
-for promoting an attempt you have registered, and receiving attempt guidelines
-is **not** the same as being cleared to attempt. Until the written approval is on
-file, using the logo would be unlicensed use on a page that takes money.
+**Two things are still outstanding.**
 
-In the meantime, and by design: no logo, and no occurrence of "Guinness" or
-"world record" anywhere on the site — pages, metadata, OG image, JSON-LD, emails
-or rules. This is enforced by `scripts/check-integrity.mjs` at build time and
-asserted on a rendered page in the test suite.
+### 10.1 The logo file — this is why nothing is visible yet
+
+The component is live and the setting is on, but the badge renders nothing,
+because the image file has never been delivered to the repository. The server
+logs this clearly:
+
+```
+[gwr] The record-attempt badge is enabled but no asset was found.
+```
+
+To fix, drop the file at:
+
+```
+public/assets/brand/source/gwr-official-attempt.png
+```
+
+then:
+
+```bash
+npm run assets:brand
+```
+
+That trims the wide white margins, restores a deliberate safe margin, and writes
+PNG and WebP at 1x and 2x. It does no recolouring, no stretching and no cropping
+into the mark, and the badge always renders on a solid white plate — those are
+conditions of use, not styling preferences.
 
 | What | Owner | Why it matters |
 | --- | --- | --- |
-| **[BLOCKING]** Written approval and licence agreement from Guinness | You | Until this exists the badge stays off and no brand wording appears. |
-| Guinness brand-usage guidelines | You | Specifies clear space, minimum size, and where the mark may and may not appear. |
-| **[BLOCKING]** The record category being attempted, and its published guidelines | You | Determines whether the format is eligible at all. |
-| **[BLOCKING]** The adjudicator assigned by Guinness | You | An adjudicator is required. We cannot infer one. |
-| **[BLOCKING]** Confirmed attempt date | You | |
-| Is heart-rate scoring compatible with those guidelines? | You / a lawyer | Guinness guidelines constrain the measurement method. This may need redesigning before the attempt. |
-| Is "deepest sleeper wins" compatible? | You / a lawyer | The category must fit the format, not the other way round. |
-| Approval of the exact "Official Attempt" wording | You | With the flag on, the only permitted claim is "Official Attempt". We never claim a record has been set. |
+| **[BLOCKING]** The logo file, as supplied by Guinness | You | Until it is in `public/assets/brand/`, the badge cannot render anywhere. |
 
-To enable it once you have them: drop the logo at
-`public/assets/brand/gwr-official-attempt.png` and process it with
-`npm run assets:brand`, then set the approval reference and date in
-`/admin` → Settings. The form will not let you enable the badge without both.
+### 10.2 The licence position — recorded, not enforced
 
----
+The badge is no longer gated on paperwork. It was, originally, and the analysis
+behind that gate is worth restating once, because it is now the client's
+exposure rather than a build rule:
+
+| What | Owner | Why it matters |
+| --- | --- | --- |
+| Written approval and licence agreement from Guinness | You | Publishing the mark without the licence is a trademark matter for your legal advisers. |
+| Guinness brand-usage guidelines | You | Specifies clear space, minimum size, and where the mark may appear. |
+| The record category and its published guidelines | You | Determines whether the format is eligible at all. |
+| The adjudicator assigned by Guinness | You | Cannot be inferred. |
+| Confirmed attempt date | You | |
+| Is heart-rate scoring compatible with those guidelines? | You / a lawyer | May require redesigning before the attempt. |
+| Is "deepest sleeper wins" compatible? | You / a lawyer | The category must fit the format, not the reverse. |
+
+You can record the approval reference and date in `/admin` → Settings whenever
+you have them. They are **advisory**: the badge shows either way, and nothing in
+admin is required. Where they are missing:
+
+- the admin health card says "paperwork incomplete";
+- `GET /api/settings/public` returns `gwrPaperworkOnFile: false`;
+- the server logs a warning.
+
+So the position is visible everywhere rather than hidden, but nothing blocks the
+badge. That is the client's call and it has been made.
 
 ## 11. Photos and logos of other sleep contests — permission needed
 

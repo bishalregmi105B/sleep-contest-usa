@@ -10,6 +10,8 @@
  * above the cap, and the runbook's first action is to compare them.
  */
 
+import type { Settings } from '@/lib/settings';
+
 type OutboxHealth = {
   pending: number;
   retry: number;
@@ -24,6 +26,8 @@ export function AdminHealthCard({
   total,
   waitlist,
   outbox,
+  settings,
+  gwrNote,
 }: {
   readonly reserved: number;
   readonly maxRegistrations: number;
@@ -31,6 +35,9 @@ export function AdminHealthCard({
   readonly total: number;
   readonly waitlist: number;
   readonly outbox: OutboxHealth;
+  readonly settings: Settings;
+  /** Advisory note about the record-attempt paperwork, if any. */
+  readonly gwrNote: string | null;
 }) {
   const remaining = Math.max(0, maxRegistrations - reserved);
   const fill = maxRegistrations > 0 ? Math.min(1, reserved / maxRegistrations) : 0;
@@ -100,7 +107,53 @@ export function AdminHealthCard({
           </p>
         ) : null}
       </div>
+
+      {/* ---- configuration state ------------------------------------------
+          Stated explicitly rather than inferred from what is or is not on the
+          page. The point of this card is that an operator should never have to
+          guess why something is hidden. */}
+      <div>
+        <span className="font-mono text-xs uppercase tracking-[0.14em] text-mist font-semibold">
+          Configuration
+        </span>
+        <ul className="mt-2 flex flex-col gap-1.5 text-sm">
+          <li className="flex flex-wrap items-center gap-2 text-mist">
+            <Mark ok={settings.registrationOpen} />
+            Registration is {settings.registrationOpen ? 'open' : 'closed'}
+          </li>
+          <li className="flex flex-wrap items-center gap-2 text-mist">
+            <Mark ok={settings.gwrEnabled} />
+            Record-attempt badge is {settings.gwrEnabled ? 'on' : 'off'}
+            {settings.gwrEnabled ? (
+              <span className={gwrNote ? 'text-tungsten' : 'text-mist/70'}>
+                &mdash; {gwrNote ? 'paperwork incomplete' : 'paperwork on file'}
+              </span>
+            ) : null}
+          </li>
+          <li className="flex flex-wrap items-center gap-2 text-mist">
+            <Mark ok={settings.showWorldSection} />
+            &ldquo;Sleep contests around the world&rdquo; section is{' '}
+            {settings.showWorldSection ? 'shown' : 'hidden'}
+          </li>
+        </ul>
+        {gwrNote ? (
+          <p className="pt-2 text-xs text-tungsten">
+            {gwrNote} The badge shows either way; recorded here so the position is visible rather than
+            inferred.
+          </p>
+        ) : null}
+      </div>
     </div>
+  );
+}
+
+/** A small yes/no mark. Not a checkbox: it is not clickable. */
+function Mark({ ok }: { readonly ok: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-block h-2 w-2 shrink-0 rounded-full ${ok ? 'bg-mint' : 'bg-tungsten'}`}
+    />
   );
 }
 

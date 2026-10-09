@@ -35,6 +35,8 @@ export type GwrBadgeProps = {
   /** Mirrors the `gwrEnabled` setting. */
   readonly enabled: boolean;
   readonly className?: string;
+  /** `inline` is a smaller plate, for the footer and the rules-page header. */
+  readonly variant?: 'card' | 'inline';
 };
 
 /**
@@ -50,6 +52,21 @@ function resolveAsset(): string | null {
   const publicDir = path.join(process.cwd(), 'public');
   resolved =
     CANDIDATES.find((candidate) => existsSync(path.join(publicDir, candidate.replace(/^\//, '')))) ?? null;
+
+  if (!resolved) {
+    // Loud, and exactly once per process.
+    //
+    // The setting is on but nothing renders, which otherwise presents as
+    // "the badge is broken" rather than "the file is missing". This is the
+    // single most likely reason the badge would not appear, so it is worth an
+    // error line rather than silence.
+    console.error(
+      `[gwr] The record-attempt badge is enabled but no asset was found.\n` +
+        `      Looked for: ${CANDIDATES.join(', ')}\n` +
+        '      Drop the client\'s logo at public/assets/brand/gwr-official-attempt.png and run `npm run assets:brand`.',
+    );
+  }
+
   return resolved;
 }
 
@@ -60,7 +77,7 @@ function resolveAsset(): string | null {
  * margins, so putting it on a dark or photographic background destroys both the
  * mark and its required clear space.
  */
-export function GwrBadge({ enabled, className = '' }: GwrBadgeProps) {
+export function GwrBadge({ enabled, className = '', variant = 'card' }: GwrBadgeProps) {
   if (!enabled) return null;
 
   const src = resolveAsset();
@@ -70,7 +87,15 @@ export function GwrBadge({ enabled, className = '' }: GwrBadgeProps) {
 
   return (
     <div
-      className={`inline-flex items-center justify-center rounded-lg bg-white px-6 py-4 ${className}`.trim()}
+      className={
+        [
+          'inline-flex items-center justify-center rounded-lg bg-white',
+          variant === 'inline' ? 'px-4 py-2' : 'px-6 py-4',
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')
+      }
       // The clear space around the mark, and the solid plate, are part of the
       // licence conditions, so they are set on the wrapper rather than left to
       // whatever background happens to be behind it.
@@ -82,11 +107,11 @@ export function GwrBadge({ enabled, className = '' }: GwrBadgeProps) {
       <img
         src={src}
         alt="Guinness World Records Official Attempt"
-        width={240}
-        height={180}
+        width={variant === 'inline' ? 160 : 240}
+        height={variant === 'inline' ? 120 : 180}
         loading="lazy"
         decoding="async"
-        className="h-auto w-auto max-w-[240px]"
+        className={variant === 'inline' ? 'h-auto w-auto max-w-[160px]' : 'h-auto w-auto max-w-[240px]'}
       />
     </div>
   );

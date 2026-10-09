@@ -96,6 +96,15 @@ export function Counter({ count, milestones, goal, counterMinPublic }: CounterPr
               </p>
             )}
 
+            {/* The count is always shown, including zero. A real 0 is honest;
+                hiding it was a design preference, and the client has asked for
+                the numeral to be visible from the first visit. */}
+            {progress.kind === 'progress' && progress.count === 0 ? (
+              <p className="sr-only" data-testid="counter-zero-note">
+                No sleepers registered yet.
+              </p>
+            ) : null}
+
             {SITE.demoMode ? (
               <span className="rounded-pill border border-mint/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.16em] text-mint font-semibold">
                 {COUNTER.demoTag}

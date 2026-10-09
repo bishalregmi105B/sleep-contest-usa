@@ -1,6 +1,8 @@
 import { GRAND_PRIZE, HERO, SITE, plain, usd } from '@/content/site';
 import { ButtonLink } from '@/components/ui/Button';
 import { RESERVE_CLICK } from '@/lib/analytics';
+import { Suspense } from 'react';
+import { GwrSlot } from '@/components/gwr/GwrSlot';
 
 /**
  * The hero.
@@ -122,6 +124,18 @@ export function Hero() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Record-attempt badge, beside the prize plaque. Renders nothing when
+          the setting is off, and the badge itself renders nothing without the
+          asset. */}
+      <div className="content-frame absolute inset-x-0 bottom-20 z-10 flex justify-center">
+        {/* Suspense so this stays a stream rather than forcing the surrounding
+            page to become request-time: the badge reads settings, and the rest
+            of the hero does not need to wait for it. */}
+        <Suspense fallback={null}>
+          <GwrSlot />
+        </Suspense>
       </div>
 
       {/* The honesty label. Every image on this site is illustrative */}
