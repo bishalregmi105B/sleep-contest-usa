@@ -1,3 +1,5 @@
+import { DEFAULT_SITE_URL } from '@/lib/env-public';
+
 /**
  * Single source of truth for every word and number on the site.
  *
@@ -60,7 +62,7 @@ export function resolveSiteUrl(): string {
     return value.replace(/\/$/, '');
   }
 
-  return 'http://localhost:3000';
+  return DEFAULT_SITE_URL;
 }
 
 export const SITE = {

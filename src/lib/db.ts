@@ -1,61 +1,144 @@
 import type { PrismaClient } from '@prisma/client';
-import { env } from './env';
+import { assertServerConfigured, env } from './env';
 
 /**
- * Prisma client.
+ * Prisma client, PostgreSQL only.
  *
- * Prisma 7 requires an explicit driver adapter, chosen here from DATABASE_URL so
- * the same code runs against a local SQLite file with no setup and against
- * PostgreSQL in production. The datasource provider in prisma/schema.prisma is
- * switched to match by scripts/set-db-provider.mjs, which runs on postinstall,
- * prebuild and predev.
+ * The previous version chose between SQLite and Postgres at runtime and fell
+ * back to a file the platform did not persist. Both of those are gone: a site
+ * that takes money cannot have a storage backend that depends on which host it
+ * landed on.
  *
- * **Lazy on purpose.** Constructing the client throws if the provider and the
- * URL disagree. Building it at module scope meant a single mismatch broke every
- * route that imported this module, and the whole production build. Deferring it
- * to first use means a mistake surfaces as one clear request failing instead of
- * taking the deployment down.
+ * Three things matter here and are easy to get wrong:
  *
- * Only ever import this from the server: it reaches the filesystem or the
- * network and must never end up in the client bundle.
+ *  1. **One client per process.** `pg` pools connections. Constructing a second
+ *     client per request is how a serverless deployment exhausts its database
+ *     connections under a spike.
+ *  2. **Pool sizing comes from the URL.** Serverless hosts need
+ *     `connection_limit=1` on the pooled string; a long-running container wants
+ *     more. We pass the URL through untouched so the provider's own pooled URL
+ *     governs, and only add a conservative default if the operator set none.
+ *  3. **Lazy construction.** Building the client at module scope meant one
+ *     misconfiguration took down every route that transitively imported this
+ *     file, including `next build`.
  */
 
 let client: PrismaClient | undefined;
+let creating: Promise<PrismaClient> | undefined;
 
 /** Memoised on globalThis so dev hot-reloads do not open a new pool each save. */
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+const globalForPrisma = globalThis as unknown as { __prisma?: PrismaClient };
 
-async function createClient(): Promise<PrismaClient> {
-  const { PrismaClient: Client } = await import('@prisma/client');
-  const url = env.databaseUrl;
-
-  if (url.startsWith('postgres://') || url.startsWith('postgresql://')) {
-    const { PrismaPg } = await import('@prisma/adapter-pg');
-    return new Client({ adapter: new PrismaPg({ connectionString: url }) });
-  }
-
-  const { PrismaBetterSqlite3 } = await import('@prisma/adapter-better-sqlite3');
-  return new Client({ adapter: new PrismaBetterSqlite3({ url: url.replace(/^file:/, '') }) });
+/**
+ * Adds a pool limit if the URL has none.
+ *
+ * Applied only in production. In development a single connection is fine and in
+ * tests it actively breaks parallel test setup, so `DATABASE_URL` is respected
+ * verbatim there.
+ */
+function withPoolLimit(url: string): string {
+  if (process.env.NODE_ENV !== 'production') return url;
+  if (/[?&]connection_limit=/.test(url)) return url;
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}connection_limit=1`;
 }
 
-export async function getDb(): Promise<PrismaClient> {
-  if (client) return client;
-  client = globalForPrisma.prisma ?? (await createClient());
-  if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client;
-  return client;
+async function createClient(): Promise<PrismaClient> {
+  assertServerConfigured();
+
+  if (!env.databaseUrl) {
+    throw new Error(
+      'DATABASE_URL is not set. Start the database (docker compose up -d) or copy .env.example to .env.local.',
+    );
+  }
+
+  const { PrismaClient: Client } = await import('@prisma/client');
+  const { PrismaPg } = await import('@prisma/adapter-pg');
+
+  return new Client({
+    adapter: new PrismaPg({ connectionString: withPoolLimit(env.databaseUrl) }),
+  });
 }
 
 /**
- * The client, for the common case. Throws the same clear error as before, but
- * only when a query is actually run.
+ * The client, created on first use and then reused.
+ *
+ * The `creating` promise closes a race the plain `if (client)` check leaves
+ * open: under a cold-start burst, every concurrent request would otherwise see
+ * an undefined client and each build its own pool.
+ */
+export async function getDb(): Promise<PrismaClient> {
+  if (client) return client;
+  if (creating) return creating;
+
+  creating = (async () => {
+    const existing = globalForPrisma.__prisma;
+    if (existing) {
+      client = existing;
+      return existing;
+    }
+    const created = await createClient();
+    client = created;
+    // In production the module scope is per-instance anyway; the global is for
+    // dev reloads only.
+    if (process.env.NODE_ENV !== 'production') globalForPrisma.__prisma = created;
+    return created;
+  })().finally(() => {
+    creating = undefined;
+  });
+
+  return creating;
+}
+
+/**
+ * The client, for the common case.
+ *
+ * Throws if a query is attempted before initialisation, which is a programming
+ * error rather than a runtime condition.
  */
 export const db: PrismaClient = new Proxy({} as PrismaClient, {
   get(_target, property) {
     if (!client) {
-      throw new Error(
-        'Database client used before initialisation. Call getDb() first.',
-      );
+      throw new Error('Database client used before initialisation. Await getDb() first.');
     }
     return Reflect.get(client, property);
   },
 });
+
+/**
+ * True when the database answers. Used by /api/ready.
+ *
+ * `SELECT 1` rather than a table query on purpose: readiness is about the
+ * connection, not about the schema. A missing table is a migration problem,
+ * which /api/health reports separately.
+ */
+export async function pingDatabase(timeoutMs = 2_000): Promise<boolean> {
+  try {
+    const client = await withTimeout(getDb(), timeoutMs);
+    await withTimeout(client.$queryRaw`SELECT 1`, timeoutMs);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
+}
+
+/**
+ * Prisma error code to a plain-language message.
+ *
+ * Used so a route can distinguish "this email is already registered" from "the
+ * database is unreachable" without leaking driver internals to a visitor.
+ */
+export function prismaErrorCode(error: unknown): string | null {
+  if (error && typeof error === 'object' && 'code' in error) {
+    const code = (error as { code?: unknown }).code;
+    return typeof code === 'string' ? code : null;
+  }
+  return null;
+}

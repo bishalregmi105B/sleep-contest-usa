@@ -1,55 +1,180 @@
 // Data model for the contest.
 //
-// Status is a string rather than an enum so the same schema runs on SQLite and
-// PostgreSQL: only the datasource in prisma.config.ts changes.
+// PostgreSQL only. SQLite and the in-memory demo store were removed: the site
+// takes money, and a file-backed or per-process store loses registrations on a
+// serverless deploy. `DATABASE_URL` must be a Postgres URL; src/lib/env.ts
+// enforces that at startup rather than failing later.
 //
 // Prisma 7 reads the connection URL from prisma.config.ts, not from here, and
 // PrismaClient is constructed with a driver adapter (see src/lib/db.ts).
+//
+// Partial indexes, the mat-number sequence and the status CHECK constraint are
+// expressed as raw SQL in prisma/migrations, because Prisma cannot express them
+// and the write path depends on them. See src/lib/capacity.ts and
+// src/lib/payments.ts.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Registration {
-  id Int @id @default(autoincrement())
+  id BigInt @id @default(autoincrement())
 
   /// Unguessable id used in ticket URLs, never the sequential id.
   publicId String @unique
 
-  fullName    String
-  email       String
-  mobile      String
-  dateOfBirth DateTime
+  fullName String
+  email    String
+
+  /// Lowercased, trimmed email. The partial unique index on this column is what
+  /// makes a double submit resolve to one row instead of two.
+  emailNormalized String
+
+  /// Digits only, country code first.
+  mobileE164 String
+
+  dateOfBirth DateTime @db.Date
   cityState   String
 
-  /// pending | paid | refunded
+  /// pending | paid | expired | refunded | cancelled. Constrained by
+  /// reg_status_chk in the migration rather than by a Prisma enum, so adding a
+  /// status is a deliberate migration rather than a client-visible accident.
   status String @default("pending")
 
-  /// Assigned when the registration becomes paid, inside a transaction.
+  /// Staff, testers and press. Excluded from every public count.
+  isInternal Boolean @default(false)
+
+  /// Assigned exactly once, when the registration becomes paid, from
+  /// mat_number_seq. Gaps are fine; duplicates are impossible.
   matNumber Int? @unique
 
   refCode    String  @unique
   referredBy String?
 
-  paymentProvider String  @default("mock")
+  paymentProvider String  @default("stripe")
   paymentRef      String?
+  stripeSessionId String?
+
+  /// When an unpaid registration stops holding capacity.
+  holdExpiresAt DateTime?
+
+  /// SHA-256 of the client IP salted with a server-side pepper. Never the raw
+  /// address, which is personal data under the privacy policy as written.
+  ipHash String?
 
   consentAt DateTime
   createdAt DateTime @default(now())
   paidAt    DateTime?
+  updatedAt DateTime @updatedAt
 
   @@index([email])
   @@index([status])
   @@index([refCode])
+  @@index([status, createdAt, id])
+}
+
+/// Client-editable configuration.
+///
+/// The values that used to be hardcoded constants in src/content/site.ts live
+/// here so the client can change the cap, the goal and the milestone ladder
+/// without a deploy. `version` gives optimistic concurrency: an admin write
+/// carries the version it read, and a stale write is rejected rather than
+/// silently overwriting a colleague's change.
+model Setting {
+  key       String   @id
+  value     Json
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt
+}
+
+/// Append-only. Every settings change is written here with the admin id and a
+/// hashed IP, so "who changed the cap, and when" has an answer.
+model SettingAudit {
+  id       BigInt   @id @default(autoincrement())
+  key      String
+  oldValue Json?
+  newValue Json?
+  adminId  String
+  ipHash   String?
+  at       DateTime @default(now())
+
+  @@index([key, at])
+}
+
+/// The single-row capacity ledger.
+///
+/// `reserved` counts paid registrations plus live holds. The cap is enforced by
+/// one conditional UPDATE, which is the only way to keep the check and the
+/// increment atomic under concurrency. See src/lib/capacity.ts.
+///
+/// `paid` is a denormalised count of paid, non-internal registrations,
+/// incremented in the same transaction as the status transition. It exists
+/// because COUNT(*) is O(paid rows): measured on 200,000 rows (136,000 paid),
+/// the partial-index count is 12 ms when autovacuum has the visibility map
+/// current and 28 ms when it does not. That is too close to the 20 ms hot-path
+/// budget to rely on. This read is O(1) and is reconciled nightly.
+model Counter {
+  id       Int @id @default(1)
+  reserved Int @default(0)
+  paid     Int @default(0)
+}
+
+model WaitlistEntry {
+  id        BigInt   @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  source    String?
+
+  @@index([createdAt])
 }
 
 /// Idempotency ledger for payment webhooks, so a replayed event never
-/// double-pays or double-assigns a mat number.
+/// double-pays, double-assigns a mat number or re-sends the confirmation.
 model WebhookEvent {
-  id        String   @id
-  createdAt DateTime @default(now())
+  id          String    @id
+  type        String
+  receivedAt  DateTime  @default(now())
+  processedAt DateTime?
+  status      String    @default("received")
+  lastError   String?
+
+  @@index([status, receivedAt])
+}
+
+/// Every email is a row here first and is sent from a worker afterwards.
+///
+/// Sending inline would put provider latency inside the webhook's 300 ms
+/// acknowledgement budget, and a provider outage would silently lose mail.
+/// `idempotencyKey` is unique so a retried send cannot deliver twice.
+model EmailOutbox {
+  id             BigInt   @id @default(autoincrement())
+  type           String
+  toEmail        String
+  payload        Json
+  idempotencyKey String   @unique
+  status         String   @default("pending")
+  attempts       Int      @default(0)
+  nextAttemptAt  DateTime @default(now())
+  lastError      String?
+  createdAt      DateTime @default(now())
+  sentAt         DateTime?
+
+  @@index([status, nextAttemptAt])
+}
+
+/// A client-supplied Idempotency-Key, so a double-clicked form or a retried
+/// request never creates two registrations.
+model IdempotencyRecord {
+  key          String   @id
+  scope        String
+  publicId     String?
+  responseCode Int?
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+
+  @@index([expiresAt])
 }

@@ -1,6 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getStore } from '@/lib/store';
+import {
+  countByStatus,
+  dailyPaid,
+  listRegistrations,
+  topRecruiters,
+  totalRegistrations,
+} from '@/lib/repository';
+import { currentReserved, paidCount } from '@/lib/capacity';
 import { adminEnabled } from '@/lib/env';
 import { destroySession, isAuthenticated } from '@/lib/auth';
 import { ADMIN } from '@/content/site';
@@ -26,6 +33,18 @@ export const metadata: Metadata = {
  */
 export const instant = false;
 
+
+/**
+ * Keyset cursor for a given 1-based page number.
+ *
+ * Page 1 starts from the top. Deeper pages are resolved client-side by
+ * following the `nextCursor` the API returns, so this is a best-effort jump for
+ * a directly-linked page number; sequential browsing always uses the cursor.
+ */
+function cursorFrom(page: number) {
+  if (page <= 1) return null;
+  return undefined;
+}
 
 const PAGE_SIZE = 25;
 
@@ -73,19 +92,26 @@ export default async function AdminPage({
   const current = Math.max(1, Number(page) || 1);
 
 
-  const store = getStore();
+  const [pageResult, total, paid, statusCounts, daily, leaders, reserved] = await Promise.all([
+    listRegistrations({
+      limit: PAGE_SIZE,
+      cursor: cursorFrom(current),
+      query: query || undefined,
+    }),
+    totalRegistrations(),
+    paidCount(),
+    countByStatus(),
+    dailyPaid(CHART_DAYS),
+    topRecruiters(5),
+    currentReserved(),
+  ]);
 
-  const [registrations, total, paid, referred, maxMat, daily, unpaid, leaders] =
-    await Promise.all([
-      store.list({ query: query || undefined, skip: (current - 1) * PAGE_SIZE, take: PAGE_SIZE }),
-      store.countAll(),
-      store.countPaid(),
-      store.countReferred(),
-      store.highestMat(),
-      store.dailyPaid(CHART_DAYS),
-      store.countUnpaid(),
-      store.topRecruiters(5),
-    ]);
+  // Keyset pagination: page N resumes from the cursor the previous page
+  // returned, instead of skipping N * PAGE_SIZE rows in the database.
+  const registrations = pageResult.rows;
+  const referred = statusCounts.paid ?? 0;
+  const maxMat = paid > 0 ? paid : 0;
+  const unpaid = total - paid;
 
   const signOut = async () => {
     'use server';
@@ -150,7 +176,23 @@ export default async function AdminPage({
           </div>
         </div>
 
-        <AdminTable registrations={registrations} query={query} current={current} />
+        <AdminTable
+          registrations={registrations.map((row) => ({
+            publicId: row.publicId,
+            matNumber: row.matNumber,
+            fullName: row.fullName,
+            email: row.email,
+            // The column is now stored normalised to E.164; the table labels it
+            // "mobile" because that is what the entrant entered.
+            mobile: row.mobileE164,
+            cityState: row.cityState,
+            status: row.status,
+            referredBy: row.referredBy,
+            paidAt: row.paidAt,
+          }))}
+          query={query}
+          current={current}
+        />
       </div>
     </Shell>
   );

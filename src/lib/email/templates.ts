@@ -1,5 +1,15 @@
 import { SITE, TICKET, TIMELINE, usd } from '@/content/site';
-import type { ConfirmationEmail } from './index';
+
+/** Params for the confirmation email. Declared here, not imported from the
+ * provider, so the template has no dependency on the transport. */
+export type ConfirmationParams = {
+  readonly firstName: string;
+  readonly matNumber: number;
+  readonly ticketUrl: string;
+  readonly refundNote: string;
+};
+
+export type RenderedEmail = { readonly subject: string; readonly html: string; readonly text: string };
 
 /**
  * Confirmation email, as a single HTML string plus a plain-text version.
@@ -18,7 +28,7 @@ export function renderConfirmation({
   matNumber,
   ticketUrl,
   refundNote,
-}: Omit<ConfirmationEmail, 'to'>): { readonly subject: string; readonly html: string; readonly text: string } {
+}: ConfirmationParams): RenderedEmail {
   const subject = `You're in. Your mat number is ${matNumber}.`;
 
   const goal = SITE.goal.toLocaleString('en-US');
@@ -175,3 +185,78 @@ function escapeAttr(value: string): string {
 
 /** Re-exported so the console provider shows the same wording a visitor gets. */
 export { TICKET };
+/**
+ * "Complete your payment" email.
+ *
+ * Sent when a registration is saved but payment could not be started, which
+ * happens when Stripe is unreachable at checkout time. It has to be honest
+ * about that: the entrant's details are held, no mat has been issued, and the
+ * link brings them back to finish. Sending this is materially different from the
+ * confirmation, so it has its own template and its own wording.
+ */
+export function renderCompletePayment({
+  firstName,
+  ticketUrl,
+}: {
+  readonly firstName: string;
+  readonly ticketUrl: string;
+}): RenderedEmail {
+  const subject = `Your ${SITE.name} registration is saved — complete payment here`;
+
+  const text = [
+    `Hi ${firstName},`,
+    '',
+    'Your registration details are saved and your spot is being held.',
+    '',
+    'Payment is temporarily unavailable, so we could not take your payment just now. No mat number has been issued yet, and you have not been charged.',
+    '',
+    `Finish payment here: ${ticketUrl}`,
+    '',
+    'If you would rather not pay now, reply to this email and we will release your hold — no hard feelings, and no charge.',
+  ].join('\n');
+
+  const button = `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:8px 0 24px;">
+      <tr><td align="center">
+        <a href="${escapeAttr(ticketUrl)}"
+           style="display:inline-block;background:#F5C518;color:#0B1020;text-decoration:none;
+                  padding:14px 28px;border-radius:999px;font-weight:700;font-size:16px;">
+          Complete payment
+        </a>
+      </td></tr>
+    </table>`;
+
+  const html = `<!doctype html>
+<html><body style="margin:0;padding:0;background:#0B1020;font-family:Helvetica,Arial,sans-serif;color:#F4F1EA;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0B1020;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0"
+             style="max-width:600px;background:#F4F1EA;border-radius:16px;overflow:hidden;">
+        <tr><td style="background:#0B1020;padding:24px 32px;">
+          <span style="color:#F5C518;font-size:13px;letter-spacing:0.16em;text-transform:uppercase;font-weight:700;">
+            ${escapeHtml(SITE.name)}
+          </span>
+        </td></tr>
+        <tr><td style="padding:32px;">
+          <h1 style="margin:0 0 16px;font-size:26px;line-height:1.25;color:#0B1020;">
+            Your registration is saved
+          </h1>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#2B2B2B;">
+            Hi ${escapeHtml(firstName)}, your details are safe and your spot is being held.
+          </p>
+          <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#2B2B2B;">
+            Payment is temporarily unavailable, so we could not take it just now. No mat number has been
+            issued and you have not been charged.
+          </p>
+          ${button}
+          <p style="margin:0;font-size:14px;line-height:1.6;color:#5A5A5A;">
+            Prefer not to pay now? Reply to this email and we will release your hold.
+          </p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+
+  return { subject, html, text };
+}

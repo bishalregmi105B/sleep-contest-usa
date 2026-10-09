@@ -1,22 +1,32 @@
-import { renderConfirmation } from './templates';
-import type { EmailProvider } from './index';
+import type { EmailMessage, EmailProvider } from './index';
 
 /**
  * Console email provider.
  *
- * Prints exactly what a registrant would receive, rendered by the same template
- * the Resend provider sends, so what is checked in development is what is
- * delivered in production. Addresses and names appear because this is a
- * development convenience; nothing else in the codebase logs personal data.
+ * Prints the rendered message to the terminal. Development only: it never
+ * contacts the network, so what you see in the terminal is exactly what the
+ * Resend provider would deliver, byte for byte.
+ *
+ * Addresses appear because this is a development convenience and the local data
+ * is test data. Nothing else in the codebase logs personal data, and this
+ * provider is not reachable in production — `env.validateEnv` requires a real
+ * RESEND_API_KEY there.
  */
 export const consoleProvider: EmailProvider = {
   name: 'console',
 
-  async sendConfirmation(params) {
-    const { subject, text } = renderConfirmation(params);
-
+  async send(message: EmailMessage) {
     console.info(
-      `\n[email:console] to=${params.to}\n[email:console] subject=${subject}\n${text}\n`,
+      [
+        '',
+        '[email:console]',
+        `to=${message.to}`,
+        `subject=${message.subject}`,
+        ...(message.headers ? [Object.entries(message.headers).map(([k, v]) => `${k}: ${v}`)] : []),
+        '',
+        message.text,
+        '',
+      ].join('\n'),
     );
   },
 };

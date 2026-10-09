@@ -19,6 +19,21 @@
 export const stripeLive = process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true';
 
 /**
+ * Development fallback for the site origin.
+ *
+ * Defined here, once, rather than in `content/site.ts` and again in
+ * `lib/env.ts`. It is a development default and must never reach a visitor: a
+ * production deployment without an explicit site URL would otherwise emit
+ * `localhost` into the JSON-LD, robots.txt and sitemap.xml, telling a crawler
+ * the canonical address of the site is a private machine.
+ *
+ * Living here also keeps it out of `content/`, so the build-time integrity
+ * check can treat `localhost` appearing in content as a genuine mistake rather
+ * than having to know about this one legitimate fallback.
+ */
+export const DEFAULT_SITE_URL = 'http://localhost:3000';
+
+/**
  * True when the deployment is using the mock payment provider.
  *
  * A production deployment left on the mock provider takes no money and issues

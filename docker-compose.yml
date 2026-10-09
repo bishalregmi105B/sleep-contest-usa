@@ -1,0 +1,53 @@
+# Local dependencies for development and for the integration tests.
+#
+# The site needs PostgreSQL for everything and Redis for rate limiting, the
+# stats cache and single-flight. Neither is optional any more: the in-memory
+# store that used to stand in is gone, because it loses registrations on a
+# serverless deploy.
+#
+#   docker compose up -d
+#   cp .env.example .env.local      # then point DATABASE_URL at compose
+#   npm run db:migrate
+#
+# Ports are deliberately non-default (55432, 56379) so they do not collide with
+# anything else already running on the machine.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sc
+      # Development password. Never reuse it anywhere real.
+      POSTGRES_PASSWORD: scpass
+      POSTGRES_DB: sleepcontest
+    ports:
+      - '55432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # The integration tests truncate between suites; a throwaway database is
+    # cheaper and safer than a named one.
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U sc -d sleepcontest']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: sc-redis
+    restart: unless-stopped
+    # No persistence: every key here is a cache or a rate-limit window, both of
+    # which are safe to lose, and losing them must not be able to hang a deploy.
+    command: ['redis-server', '--save', '', '--appendonly', 'no', '--maxmemory', '256mb', '--maxmemory-policy', 'allkeys-lru']
+    ports:
+      - '56379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

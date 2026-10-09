@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { connection } from 'next/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getStore } from '@/lib/store';
+import { findByPublicId } from '@/lib/repository';
 import { referralLink } from '@/lib/registrations';
 import { SITE, TICKET } from '@/content/site';
 import { Ticket } from '@/components/ui/Ticket';
@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ publicId: string }>;
 }): Promise<Metadata> {
   const { publicId } = await params;
-  const registration = await getStore().findByPublicId(publicId);
+  const registration = await findByPublicId(publicId);
 
   if (!registration || registration.status !== 'paid' || registration.matNumber === null) {
     notFound();
@@ -67,7 +67,7 @@ export default async function TicketPage({
 
   const { publicId } = await params;
 
-  const registration = await getStore().findByPublicId(publicId);
+  const registration = await findByPublicId(publicId);
 
   // A pending registration has not paid yet, so there is no ticket to show.
   if (!registration || registration.status !== 'paid' || registration.matNumber === null) {

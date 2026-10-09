@@ -74,6 +74,13 @@ export const registrationSchema = z.object({
    * Validated as "must be empty" rather than dropped, so the server enforces it.
    */
   company: z.string().max(0, 'Rejected').optional().or(z.literal('')),
+  /**
+   * Cloudflare Turnstile token, when Turnstile is configured.
+   *
+   * Optional in the schema and enforced in the route, so one schema works on a
+   * deployment with no Turnstile keys and one with them. See lib/turnstile.ts.
+   */
+  turnstileToken: z.string().trim().max(2_048).optional(),
 });
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;

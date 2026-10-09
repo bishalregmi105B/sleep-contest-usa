@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getStore } from '@/lib/store';
+import { topRecruiters } from '@/lib/repository';
 import { env } from '@/lib/env';
 import { FRIENDS, SITE } from '@/content/site';
 import { ReferralShare } from '@/components/sections/ReferralShare';
@@ -37,7 +37,7 @@ export default async function FriendsPage({
   let recruiters: { refCode: string; matNumber: number | null; count: number }[] = [];
 
   try {
-    recruiters = await getStore().topRecruiters(5);
+    recruiters = await topRecruiters(5);
   } catch (err) {
     console.error(
       '[friends] failed to read recruiters:',

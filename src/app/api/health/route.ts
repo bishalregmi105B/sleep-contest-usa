@@ -1,69 +1,56 @@
-import { NextResponse } from 'next/server';
-import { connection } from 'next/server';
-import { env, isProduction, resendEnabled, adminEnabled } from '@/lib/env';
-import { getStore } from '@/lib/store';
-import { stripeLive as publicStripeLive } from '@/lib/env-public';
+import { NextResponse, connection } from 'next/server';
+import {
+  adminEnabled,
+  env,
+  isProduction,
+  mockPaymentsAllowed,
+  paymentsEnabled,
+  redisEnabled,
+  resendEnabled,
+  stripeEnabled,
+  turnstileEnabled,
+  validateEnv,
+} from '@/lib/env';
+import { pingDatabase } from '@/lib/db';
+import { kvStatus } from '@/lib/kv';
+
 
 /**
  * GET /api/health
  *
- * Reports which providers are active so a deployment can be checked without
- * reading logs. Reports **whether** a provider is configured and nothing else:
- * no key, no host, no connection string. A health endpoint that leaks
- * configuration is a health endpoint that gets scraped.
+ * Configuration report. Reports **whether** a provider is configured and
+ * nothing else — no key, no host, no connection string. A health endpoint that
+ * leaks configuration is a health endpoint that gets scraped.
  *
- * `degraded` is the field to alert on. It means a provider the site expects to
- * use is not actually in use, which is exactly the mistake that leaves a
- * production deployment quietly taking no money.
+ * `status: degraded` is the field to alert on. It means a provider the site
+ * expects to use is not actually in use, which is exactly the mistake that
+ * leaves a production deployment quietly taking no money.
+ *
+ * This is separated from `/api/ready`, which is for load balancers: this one is
+ * for humans, and answers "is the configuration right", not "can it serve".
  */
 export async function GET() {
   await connection();
 
-  const store = getStore();
-  const providers = {
-    database: store.kind,
-    payments: publicStripeLive ? 'stripe' : 'mock',
-    email: resendEnabled ? 'resend' : 'console',
-    admin: adminEnabled ? 'enabled' : 'disabled',
-  };
+  const database = await pingDatabase();
+  const { problems, advisory } = validateEnv();
+  const kv = kvStatus();
 
-  // The in-memory store is fine for a demo and wrong for a launch: it lives in
-  // one server instance and resets whenever that instance is replaced, so a
-  // serverless deploy would show a different count on every request.
-  const durable = store.kind === 'database';
-  const mockPaymentsInProduction = isProduction && !publicStripeLive;
+  const findings: string[] = [...problems.map((p) => `${p.variable} ${p.message}`), ...advisory];
 
-  const problems: string[] = [];
-  if (isProduction && !durable) {
-    problems.push(
-      'In-memory store in production: the registration count resets on every deploy and may differ between requests. Set DATABASE_URL to a managed PostgreSQL database.',
+  if (isProduction && !database) {
+    findings.push('The database is not reachable. Check DATABASE_URL and that migrations have run.');
+  }
+  if (isProduction && !paymentsEnabled) {
+    findings.push(
+      'Payments are not configured. The site will NOT issue tickets and will serve a waitlist instead. This is deliberate: a ticket without a payment is worse than no ticket.',
     );
   }
-  if (mockPaymentsInProduction) {
-    problems.push(
-      'Payments are simulated in production: no money is taken and no ticket is issued for real. Set the Stripe keys and NEXT_PUBLIC_STRIPE_ENABLED=true.',
-    );
-  }
-  if (!resendEnabled && isProduction) {
-    problems.push(
-      'Email falls back to the console provider in production: nobody receives a confirmation or a ticket link.',
-    );
-  }
-  if (!env.siteUrl.startsWith('https://')) {
-    problems.push(
-      'NEXT_PUBLIC_SITE_URL is not https, so ticket links in confirmation emails will point somewhere unusable.',
-    );
+  if (isProduction && !resendEnabled) {
+    findings.push('Email is not configured. Confirmations will queue in the outbox and never arrive.');
   }
 
-  let storeReachable = true;
-  try {
-    await store.countAll();
-  } catch {
-    storeReachable = false;
-    problems.push('The store could not be read. Check DATABASE_URL and run `npm run db:push`.');
-  }
-
-  const ok = problems.length === 0;
+  const ok = isProduction ? findings.length === 0 : database;
 
   return NextResponse.json(
     {
@@ -71,16 +58,30 @@ export async function GET() {
       status: ok ? 'ok' : 'degraded',
       version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? null,
       environment: isProduction ? 'production' : 'development',
-      providers,
+      databaseReachable: database,
+      providers: {
+        database: 'postgresql',
+        payments: paymentsEnabled ? 'stripe' : 'none',
+        email: resendEnabled ? 'resend' : 'console',
+        admin: adminEnabled ? 'enabled' : 'disabled',
+        redis: kv.kind,
+        turnstile: turnstileEnabled ? 'enabled' : 'disabled',
+      },
+      // Presence only, never the value.
       secretsConfigured: {
-        // Presence only, never the value.
         stripe: Boolean(env.stripeSecretKey),
+        stripeWebhook: Boolean(env.stripeWebhookSecret),
         resend: Boolean(env.resendApiKey),
         sessionSecret: Boolean(env.sessionSecret),
+        adminPasswordHash: Boolean(env.adminPasswordHash),
+        cronSecret: Boolean(env.cronSecret),
+        ipPepper: Boolean(env.ipPepper),
+        turnstile: turnstileEnabled,
+        redis: redisEnabled,
+        mockPaymentsAllowed,
       },
-      durableStorage: durable,
-      storeReachable,
-      problems,
+      siteUrlIsHttps: env.siteUrl.startsWith('https://'),
+      problems: findings,
     },
     {
       // Never cached: this is the endpoint you check when something is wrong.

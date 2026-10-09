@@ -1,56 +1,69 @@
 import Stripe from 'stripe';
-import { env } from '@/lib/env';
-import type { CheckoutRequest, PaymentProvider } from './index';
+import { env, stripeEnabled } from '@/lib/env';
 
 /**
- * Stripe Checkout provider.
+ * Stripe client and error classification.
  *
- * Only constructed when STRIPE_SECRET_KEY is present. The webhook
- * (/api/webhooks/stripe) is what actually marks a registration paid; the
- * success URL is only a redirect.
+ * Constructed lazily and memoised. A Stripe client holds an HTTP agent, so
+ * building one at module scope would do network-adjacent work during
+ * `next build`, which imports route modules to analyse them.
  */
-export const stripeProvider: PaymentProvider = {
-  name: 'stripe',
 
-  async createCheckout({ publicId, amountCents, email, origin }: CheckoutRequest) {
-    const stripe = new Stripe(env.stripeSecretKey);
+let client: Stripe | null = null;
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      customer_email: email,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: 'usd',
-            unit_amount: amountCents,
-            product_data: {
-              name: 'Sleep Contest reservation',
-              description: '$10 reserves your mat. $29.99 is due once the date is announced.',
-            },
-          },
-        },
-      ],
-      // Metadata is how the webhook finds the registration again.
-      metadata: { publicId },
-      success_url: `${origin}/ticket/${publicId}?paid=1`,
-      cancel_url: `${origin}/?canceled=1#reserve`,
-    });
+export function getStripe(): Stripe {
+  if (!stripeEnabled) {
+    throw new Error('Stripe is not configured: STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET are required.');
+  }
+  client ??= new Stripe(env.stripeSecretKey, {
+    // Explicit rather than relying on the SDK default. Retries here multiply
+    // against the client's own and can double-charge; the one retry loop lives
+    // in the checkout route, where the idempotency key is attached.
+    maxNetworkRetries: 0,
+    timeout: 20_000,
+  });
+  return client;
+}
 
-    if (!session.url) {
-      throw new Error('Stripe did not return a checkout URL');
-    }
+/**
+ * Whether a Stripe failure is worth retrying.
+ *
+ * Split from permanent failures deliberately: retrying a card decline wastes the
+ * entrant's time and, on the expiry path, can cancel a session they might have
+ * completed.
+ *
+ * Stripe's own error types are used rather than message matching, so a wording
+ * change upstream cannot silently turn a permanent failure into a retry loop.
+ */
+export function isRetryableStripeError(error: unknown): boolean {
+  // A network-level failure (DNS, TLS, timeout) is not a StripeError.
+  if (!(error instanceof Stripe.errors.StripeError)) {
+    return error instanceof Error && /fetch failed|ECONNRESET|ETIMEDOUT|ENOTFOUND|EAI_AGAIN/i.test(error.message);
+  }
 
-    return {
-      redirectTo: session.url,
-      provider: 'stripe',
-      paymentRef: session.id,
-    };
-  },
-};
+  switch (error.type) {
+    case 'StripeConnectionError':
+    case 'StripeAPIError':
+    case 'StripeRateLimitError':
+      return true;
+    case 'StripeCardError':
+    case 'StripeInvalidRequestError':
+    case 'StripeAuthenticationError':
+    case 'StripePermissionError':
+    case 'StripeSignatureVerificationError':
+      return false;
+    default:
+      return false;
+  }
+}
 
-/** Verifies a webhook signature against the raw request body. */
+/**
+ * Verifies a webhook signature against the raw request body.
+ *
+ * The raw bytes are required: Stripe computes the signature over the exact body
+ * it sent, and re-serialising the parsed JSON would change the bytes and fail
+ * verification.
+ */
 export function constructStripeEvent(rawBody: string, signature: string): Stripe.Event {
-  const stripe = new Stripe(env.stripeSecretKey);
-  return stripe.webhooks.constructEvent(rawBody, signature, env.stripeWebhookSecret);
+  return getStripe().webhooks.constructEvent(rawBody, signature, env.stripeWebhookSecret);
 }
