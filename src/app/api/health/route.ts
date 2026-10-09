@@ -14,6 +14,10 @@ import { pingDatabase } from '@/lib/db';
 import { kvStatus } from '@/lib/kv';
 import { previewEnabled } from '@/lib/preview';
 
+/** True only when DATABASE_URL is actually a PostgreSQL URL. */
+const hasPostgresUrl =
+  env.databaseUrl.startsWith('postgres://') || env.databaseUrl.startsWith('postgresql://');
+
 
 /**
  * GET /api/health
@@ -78,7 +82,10 @@ export async function GET() {
       databaseReachable: database,
       previewMode: previewEnabled,
       providers: {
-        database: previewEnabled ? 'sqlite-preview' : 'postgresql',
+        // The actual state, not the intended one. Reporting "postgresql" when
+        // DATABASE_URL is a placeholder would be the kind of small untruth this
+        // endpoint exists to avoid.
+        database: previewEnabled ? 'sqlite-preview' : hasPostgresUrl ? 'postgresql' : 'none',
         payments: paymentsEnabled ? 'stripe' : 'none',
         email: resendEnabled ? 'resend' : 'console',
         admin: adminEnabled ? 'enabled' : 'disabled',
