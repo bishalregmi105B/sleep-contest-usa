@@ -79,7 +79,7 @@ export function AdminLogin() {
       <button
         type="submit"
         disabled={busy}
-        className="sticker-btn mt-6 w-full disabled:opacity-70"
+        className="mt-6 w-full disabled:opacity-60"
         data-testid="admin-submit"
       >
         {busy ? 'Checking…' : ADMIN.signIn}

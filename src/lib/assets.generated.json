@@ -1,12 +1,102 @@
 {
+  "cine/k1": {
+    "src": "/assets/images/cine/k1.webp",
+    "bytes": 200986,
+    "exists": true
+  },
+  "cine/k2": {
+    "src": "/assets/images/cine/k2.webp",
+    "bytes": 231050,
+    "exists": true
+  },
+  "cine/k3": {
+    "src": "/assets/images/cine/k3.webp",
+    "bytes": 173562,
+    "exists": true
+  },
+  "cine/k4": {
+    "src": "/assets/images/cine/k4.webp",
+    "bytes": 103794,
+    "exists": true
+  },
+  "cine/k5": {
+    "src": "/assets/images/cine/k5.webp",
+    "bytes": 117236,
+    "exists": true
+  },
+  "cine/k6": {
+    "src": "/assets/images/cine/k6.webp",
+    "bytes": 159542,
+    "exists": true
+  },
+  "gallery-1": {
+    "src": "/assets/images/gallery-1.webp",
+    "bytes": 183472,
+    "exists": true
+  },
+  "gallery-2": {
+    "src": "/assets/images/gallery-2.webp",
+    "bytes": 96814,
+    "exists": true
+  },
+  "gallery-3": {
+    "src": "/assets/images/gallery-3.webp",
+    "bytes": 69984,
+    "exists": true
+  },
+  "gallery-4": {
+    "src": "/assets/images/gallery-4.webp",
+    "bytes": 65000,
+    "exists": true
+  },
+  "gallery-5": {
+    "src": "/assets/images/gallery-5.webp",
+    "bytes": 126478,
+    "exists": true
+  },
+  "gallery-6": {
+    "src": "/assets/images/gallery-6.webp",
+    "bytes": 124834,
+    "exists": true
+  },
   "how-1-register": {
     "src": "/assets/images/how-1-register.webp",
     "bytes": 53110,
     "exists": true
   },
+  "how-2-pajamas": {
+    "src": "/assets/images/how-2-pajamas.webp",
+    "bytes": 122460,
+    "exists": true
+  },
   "how-3-leaderboard": {
     "src": "/assets/images/how-3-leaderboard.webp",
     "bytes": 29818,
+    "exists": true
+  },
+  "how-4-feather": {
+    "src": "/assets/images/how-4-feather.webp",
+    "bytes": 106570,
+    "exists": true
+  },
+  "moon-color": {
+    "src": "/assets/images/moon-color.webp",
+    "bytes": 364868,
+    "exists": true
+  },
+  "squad-noise": {
+    "src": "/assets/images/squad-noise.webp",
+    "bytes": 55512,
+    "exists": true
+  },
+  "squad-smell": {
+    "src": "/assets/images/squad-smell.webp",
+    "bytes": 105278,
+    "exists": true
+  },
+  "squad-tickle": {
+    "src": "/assets/images/squad-tickle.webp",
+    "bytes": 63476,
     "exists": true
   }
 }

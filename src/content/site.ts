@@ -33,10 +33,40 @@ const raw = {
   },
 };
 
+/**
+ * The canonical origin.
+ *
+ * Falls through NEXT_PUBLIC_SITE_URL, the Vercel-provided production URL and
+ * the public domain, and only then to localhost. The localhost branch is
+ * unreachable in production: a deployment without an explicit site URL would
+ * otherwise emit `localhost` into the JSON-LD, robots.txt and sitemap.xml,
+ * which is a real bug rather than a cosmetic one — it tells a crawler the
+ * canonical address of the site is a private machine.
+ */
+export function resolveSiteUrl(): string {
+  const candidates = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : undefined,
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+    `https://sleepcontestusa.com`,
+  ];
+
+  for (const candidate of candidates) {
+    const value = candidate?.trim();
+    if (!value) continue;
+    if (value.includes('localhost') && process.env.NODE_ENV === 'production') continue;
+    return value.replace(/\/$/, '');
+  }
+
+  return 'http://localhost:3000';
+}
+
 export const SITE = {
   name: "The Great America's Sleep Contest",
   domain: 'sleepcontestusa.com',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  url: resolveSiteUrl(),
   organizer: 'Sparsha LLC',
   tagline: 'Sleep deeper as you scroll.',
   deadline: raw.deadline,

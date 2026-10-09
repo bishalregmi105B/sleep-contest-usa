@@ -39,6 +39,7 @@ export type AssetKey =
   | 'video/hero-loop'
   /* A public-domain NASA colour map for the moon, if one is dropped in. */
   | 'images/moon-color'
+  | 'moon-color'
   | (string & {});
 
 export type Asset = {
@@ -55,13 +56,16 @@ const table = manifest as Record<string, { src: string; bytes: number }>;
  * signal for the caller to draw the cinematic fallback instead.
  */
 export function asset(key: AssetKey): Asset {
-  const hit = table[key];
+  const hit =
+    table[key] ??
+    (key === 'images/moon-color' ? table['moon-color'] : undefined) ??
+    (key === 'moon-color' ? table['images/moon-color'] : undefined);
   return hit ? { src: hit.src, exists: true } : { src: '', exists: false };
 }
 
 /** True when the asset is present on disk. */
 export function hasAsset(key: AssetKey): boolean {
-  return Boolean(table[key]);
+  return asset(key).exists;
 }
 
 /** How many of the given keys are actually present. Drives the stage's mode. */

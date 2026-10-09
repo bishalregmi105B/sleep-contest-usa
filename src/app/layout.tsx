@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { SkipLink } from '@/components/layout/SkipLink';
 import { AnalyticsProvider } from '@/components/layout/AnalyticsProvider';
-import { SITE } from '@/content/site';
+import { SITE, resolveSiteUrl } from '@/content/site';
 import './globals.css';
 
 // Self-hosted instead of next/font/google: the Google loader fetches from
@@ -36,37 +36,7 @@ const mono = localFont({
   variable: '--font-jetbrains-mono',
 });
 
-/**
- * Canonical origin.
- *
- * Falls back through Vercel's own production URL before the public domain, so
- * the canonical link, og:url and og:image can never resolve to localhost on a
- * real deployment. Order: explicit NEXT_PUBLIC_SITE_URL, the Vercel-provided
- * production URL, the known public domain, and only then localhost for local
- * development.
- */
-export function siteUrl(): string {
-  const candidates = [
-    process.env.NEXT_PUBLIC_SITE_URL,
-    process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : undefined,
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
-    `https://${SITE.domain}`,
-  ];
-
-  for (const candidate of candidates) {
-    const value = candidate?.trim();
-    if (!value) continue;
-    // A localhost URL is only ever valid in development; keep looking.
-    if (value.includes('localhost') && process.env.NODE_ENV === 'production') continue;
-    return value.replace(/\/$/, '');
-  }
-
-  return 'http://localhost:3000';
-}
-
-const URL_BASE = siteUrl();
+const URL_BASE = resolveSiteUrl();
 
 /**
  * Runs before first paint, so a visitor returning in the same session never

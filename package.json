@@ -22,7 +22,8 @@
     "predev": "npm run assets:scan",
     "postinstall": "prisma generate",
     "images:generate": "node scripts/generate-images.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

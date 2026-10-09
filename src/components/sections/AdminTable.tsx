@@ -56,7 +56,7 @@ export function AdminTable({
         />
         <button
           type="submit"
-          className="sticker-btn sticker-btn-yellow !min-h-11 !px-6 !py-2 text-sm"
+          className="min-h-11 rounded-pill bg-signal px-6 py-2 text-sm font-bold uppercase tracking-wide text-signal-ink transition-colors hover:bg-[#f05389]"
         >
           Search
         </button>

@@ -6,12 +6,16 @@ import {
   AdditiveBlending,
   BufferAttribute,
   BufferGeometry,
+  CanvasTexture,
   Color,
   DoubleSide,
   Mesh,
   Points,
+  RepeatWrapping,
+  SRGBColorSpace,
   ShaderMaterial,
   type Group,
+  type Texture,
 } from 'three';
 import { SETTINGS, type Tier } from '@/lib/quality';
 import { presence, scrollState } from '@/lib/scroll-state';
@@ -32,11 +36,29 @@ export function Atmosphere({ tier }: { readonly tier: Tier }) {
     <>
       {/* No sky dome: the CSS cinematic stage paints the sky, and a sphere
           fighting it would double-expose every horizon. */}
+      <Moonlight />
       <Stars count={settings.stars} />
       <Moon />
       {settings.dust > 0 ? <DustMotes count={settings.dust} /> : null}
       <LightShafts tier={tier} />
     </>
+  );
+}
+
+/* Light ------------------------------------------------------------------ */
+
+/**
+ * The only light in the scene: a weak, cool key from the upper left, which is
+ * the direction a northern-hemisphere moon is lit from. Everything else in the
+ * atmosphere is either unlit (stars, dust) or additive (shafts), so a single
+ * directional light is the whole lighting rig.
+ *
+ * Without it the moon rendered black: a Lambert material with no light source
+ * has nothing to shade with.
+ */
+function Moonlight() {
+  return (
+    <directionalLight position={[-7, 2, 5]} intensity={2.4} color="#BFD0F0" />
   );
 }
 
@@ -158,76 +180,137 @@ function Moon() {
   });
 
   return (
-    <group ref={ref} position={[5.2, 5.6, -12]}>
+    <group ref={ref} position={[5.6, 5.6, -12]}>
       <mesh>
         <sphereGeometry args={[1.1, 48, 32]} />
-        <shaderMaterial
-          transparent
-          uniforms={{ uOpacity: { value: 1 } }}
-          vertexShader={/* glsl */ `
-            varying vec3 vNormal;
-            varying vec3 vPos;
-            void main() {
-              vNormal = normalize(normalMatrix * normal);
-              vPos = position;
-              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-          `}
-          fragmentShader={/* glsl */ `
-            uniform float uOpacity;
-            varying vec3 vNormal;
-            varying vec3 vPos;
-
-            // Cheap value noise, enough for a crater field at this size.
-            float hash(vec3 p) {
-              p = fract(p * 0.3183099 + vec3(0.71, 0.113, 0.419));
-              p *= 17.0;
-              return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
-            }
-
-            float noise(vec3 x) {
-              vec3 i = floor(x);
-              vec3 f = fract(x);
-              f = f * f * (3.0 - 2.0 * f);
-              return mix(
-                mix(mix(hash(i + vec3(0,0,0)), hash(i + vec3(1,0,0)), f.x),
-                    mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
-                mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
-                    mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
-            }
-
-            void main() {
-              // Lit from the left, the way a northern-hemisphere crescent is.
-              vec3 lightDir = normalize(vec3(-0.75, 0.2, 0.6));
-              float lambert = max(0.0, dot(normalize(vNormal), lightDir));
-
-              // Three octaves is enough for maria and craters at this scale.
-              float n = noise(vPos * 3.5) * 0.6
-                      + noise(vPos * 9.0) * 0.3
-                      + noise(vPos * 22.0) * 0.1;
-
-              vec3 dark = vec3(0.36, 0.37, 0.44);
-              vec3 light = vec3(0.88, 0.88, 0.86);
-              vec3 albedo = mix(dark, light, n);
-
-              // A cool moon in a warm scene: never pure white, which would
-              // blow out against the sky.
-              vec3 color = albedo * (0.38 + lambert * 1.25);
-              color += vec3(0.12, 0.14, 0.24) * pow(1.0 - lambert, 2.0) * 0.6;
-
-              float alpha = smoothstep(0.02, 0.16, lambert) * uOpacity;
-              gl_FragColor = vec4(color, alpha);
-            }
-          `}
+        <meshLambertMaterial
+          map={moonTexture()}
+          color="#C9CCDA"
+          emissive="#2A2F45"
+          emissiveIntensity={0.35}
         />
       </mesh>
 
       {/* A soft halo. Additive and low, not a bloom pass. */}
       <mesh position={[-0.35, 0.1, -0.2]}>
         <sphereGeometry args={[2.1, 16, 12]} />
-        <meshBasicMaterial color="#8FA6D8" transparent opacity={0.05} blending={AdditiveBlending} depthWrite={false} />
+        <meshBasicMaterial
+          color="#8FA6D8"
+          transparent
+          opacity={0.05}
+          blending={AdditiveBlending}
+          depthWrite={false}
+        />
       </mesh>
     </group>
+  );
+}
+
+/**
+ * The moon's surface, generated once and cached for the process.
+ *
+ * This was a three-octave 3D value-noise fragment shader, evaluated per pixel
+ * per frame over a sphere. The surface of the moon does not change, so
+ * recomputing it sixty times a second was waste by construction: baking it to a
+ * texture once turns a heavy shader into a texture fetch and removes the single
+ * most expensive shader on the page.
+ *
+ * Equirectangular, so the maria read correctly from any viewing angle.
+ */
+let moon: Texture | null = null;
+function moonTexture(): Texture {
+  if (moon) return moon;
+
+  const size = 512;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size / 2;
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    const image = ctx.createImageData(canvas.width, canvas.height);
+
+    for (let y = 0; y < canvas.height; y += 1) {
+      // Latitude, so noise does not stretch towards the poles.
+      const lat = (y / canvas.height - 0.5) * Math.PI;
+      const ring = Math.cos(lat);
+      for (let x = 0; x < canvas.width; x += 1) {
+        const lon = (x / canvas.width) * Math.PI * 2;
+        const n =
+          fbm(Math.sin(lat) * 3.2 + 4, Math.cos(lat) * 3.2, Math.cos(lon) * 3.2 * ring + 7) * 0.65 +
+          fbm(Math.sin(lat) * 9 + 11, Math.cos(lat) * 9, Math.cos(lon) * 9 * ring + 13) * 0.35;
+
+        // Maria are the dark, smooth patches; the highlands are brighter.
+        const v = 96 + n * 132;
+        const i = (y * canvas.width + x) * 4;
+        image.data[i] = v * 1.02;
+        image.data[i + 1] = v * 1.0;
+        image.data[i + 2] = v * 0.95;
+        image.data[i + 3] = 255;
+      }
+    }
+
+    ctx.putImageData(image, 0, 0);
+
+    // A handful of craters with a lit rim and a shadowed floor.
+    ctx.globalCompositeOperation = 'source-over';
+    for (let i = 0; i < 90; i += 1) {
+      const cx = ((i * 97) % canvas.width) + (i % 5);
+      const cy = ((i * 53) % canvas.height) + (i % 3);
+      const r = 2 + ((i * 7) % 9);
+      const g = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, 1, cx, cy, r);
+      g.addColorStop(0, 'rgba(255,255,255,0.30)');
+      g.addColorStop(0.55, 'rgba(0,0,0,0.10)');
+      g.addColorStop(1, 'rgba(0,0,0,0.55)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  texture.wrapS = RepeatWrapping;
+  moon = texture;
+  return texture;
+}
+
+/** Cheap deterministic 3D value noise, used only while baking the moon. */
+function hash3(x: number, y: number, z: number): number {
+  const s = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+function noise3(x: number, y: number, z: number): number {
+  const ix = Math.floor(x);
+  const iy = Math.floor(y);
+  const iz = Math.floor(z);
+  let fx = x - ix;
+  let fy = y - iy;
+  let fz = z - iz;
+  fx = fx * fx * (3 - 2 * fx);
+  fy = fy * fy * (3 - 2 * fy);
+  fz = fz * fz * (3 - 2 * fz);
+
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+  return lerp(
+    lerp(
+      lerp(hash3(ix, iy, iz), hash3(ix + 1, iy, iz), fx),
+      lerp(hash3(ix, iy + 1, iz), hash3(ix + 1, iy + 1, iz), fx),
+      fy,
+    ),
+    lerp(
+      lerp(hash3(ix, iy, iz + 1), hash3(ix + 1, iy, iz + 1), fx),
+      lerp(hash3(ix, iy + 1, iz + 1), hash3(ix + 1, iy + 1, iz + 1), fx),
+      fy,
+    ),
+    fz,
+  );
+}
+
+function fbm(x: number, y: number, z: number): number {
+  return (
+    noise3(x, y, z) * 0.6 + noise3(x * 2.1, y * 2.1, z * 2.1) * 0.3 + noise3(x * 4.3, y * 4.3, z * 4.3) * 0.1
   );
 }
 

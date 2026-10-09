@@ -165,3 +165,40 @@ deleted rather than restyled, because restyling them would still read as toys.
 is at or above `NEXT_PUBLIC_COUNTER_MIN_PUBLIC` (default 500). Below that it shows
 the target and the story, never "0 / 200,000", which is the exact failure the
 brief describes. The admin view always shows the true count.
+
+**The gallery stopped claiming photographs it does not have.** With no images
+shipped, the section rendered six identical unlit rectangles under a heading
+that said "Concept visuals generated to show what the night could look like".
+That is the specific dishonesty the brief warns about, so the gallery now
+branches on whether the files exist: with photographs it shows the bento grid,
+without them it shows the night's schedule and says photography follows the
+first event.
+
+**The squad cards became typographic rather than three empty boxes.** Three
+unlit 3:2 rectangles side by side read as three broken cards. When an image is
+missing, the slot collapses to a mono numeral and the card carries its own copy.
+
+**Client answers are rendered as a labelled note, never as bracketed prose.** The
+rules and privacy pages carry four decisions only the client can make. They are
+surfaced rather than silently omitted, because a paid-entry contest that is
+quiet about safety questions is worse than one that admits the answer is not
+settled — but a literal "[CLIENT: confirm...]" in production copy is not a note,
+it is a bug. `ClientNote` renders them as a labelled panel instead.
+
+**The moon's surface is baked to a texture.** It was a three-octave 3D noise
+fragment shader evaluated per pixel per frame. The surface of the moon does not
+change, so that was waste by construction. Baking it once removed the single most
+expensive shader on the page.
+
+**The WebGL layer is the remaining performance cost, and that trade is the
+client's.** Script evaluation is about three seconds of main-thread time on a
+4x throttle, all of it three.js, in a lazily-loaded chunk that mounts on idle.
+LCP (1.2s), CLS (0.026) and transfer (712 KB) are all within budget and the LCP
+element is the headline rather than the canvas. Dropping WebGL for a pure CSS
+atmosphere would remove the remaining jank on slow phones at the cost of the
+moon and the dust. That is a real trade with a real cost, so it is logged rather
+than taken quietly.
+
+**WebKit is unverified here.** `libmanette-0.2-0` is missing on this machine and
+there is no sudo, so Safari and iOS are untested. `scripts/smoke.mjs` reports it
+as SKIP rather than as a pass, because a silent skip would be worse than a gap.
