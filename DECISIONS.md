@@ -136,3 +136,32 @@ icosahedra merged into one geometry with recomputed vertex normals.
 environment either, so there was nothing to reflect or bounce off. Ambient,
 key and fill lights are all tinted from the current sky colour, so the lighting
 shifts with the time of night rather than staying fixed.
+
+---
+
+# Realism upgrade (`realism-upgrade` branch)
+
+**No photoreal assets ship with this build.** The brief offers one fallback and we
+took it: no image-generation tool and no `GEMINI_API_KEY` were available, so every
+Stitch-derived cartoon raster is archived to `design/archive/` and the site runs
+the dark cinematic gradient with FilmGrain and Vignette as its base state. That is
+the brief's own rule (Section 0.5, and Definition of Done: "looks intentional with
+zero generated assets"), and it is strictly safer than the alternative: with no
+cartoon in `public/` the site cannot regress into one. Dropping the Section 5 files
+into `public/assets/` upgrades it with no code change, because `assets:scan` runs
+on predev and prebuild.
+
+**Fonts stay self-hosted.** `next/font/google` fetches from fonts.googleapis.com
+during the build, and an unparseable response from that host killed a real Vercel
+deploy. Big Shoulders Display and JetBrains Mono are therefore downloaded once by
+`scripts/fetch-fonts.mjs` and committed, exactly like the three they replace.
+
+**The 3D scene lost almost everything.** Section 6.2 says to keep only stars, a
+faceless moon, dust and light shafts. That is what remains. The capsule sleeper,
+the moon's face and nightcap, the Zzz letters, the clouds and the squad props are
+deleted rather than restyled, because restyling them would still read as toys.
+
+**The counter hides a zero.** The public counter shows a real number only once it
+is at or above `NEXT_PUBLIC_COUNTER_MIN_PUBLIC` (default 500). Below that it shows
+the target and the story, never "0 / 200,000", which is the exact failure the
+brief describes. The admin view always shows the true count.
