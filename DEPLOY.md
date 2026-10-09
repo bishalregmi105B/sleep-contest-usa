@@ -18,19 +18,54 @@ while anything is wrong, so it can be wired straight into an uptime monitor.
 
 ---
 
-## 1. Which plan you need
+## 1. Which plan you need — and the two things Hobby blocks
+
+**The project is currently on Hobby. Two things break there, both discovered by
+actually running `vercel deploy`:**
+
+### 1a. A per-minute cron is rejected outright
+
+```
+Error: Hobby accounts are limited to daily cron jobs.
+This cron expression (* * * * *) would run more than once per day.
+```
+
+`vercel.json` therefore ships **without** a `crons` block, so the build succeeds.
+On Pro, add it back:
+
+```json
+"crons": [{ "path": "/api/cron/sweep", "schedule": "* * * * *" }]
+```
+
+### 1b. Without the cron, the work still has to happen
+
+The sweeper is not optional. Without it, confirmation emails queue in the outbox
+and never send, and holds that are never expired permanently consume capacity
+until the cap drifts down and registration refuses everyone.
+
+So the work is **also triggered by ordinary traffic** — see `src/lib/tick.ts`.
+Every registration and every webhook fires a background tick, rate limited to
+once a minute by a Redis lock, and it is safe to do that because every job it
+runs was already idempotent: outbox rows are claimed with `FOR UPDATE SKIP
+LOCKED`, hold expiry only matches rows still `pending`, and reconciliation
+recomputes from the source table rather than adjusting a delta.
+
+**What that is not:** a real scheduler. A cron ticks when traffic is zero; this
+cannot. On a quiet site, outbox work waits for the next visitor. Fine for a
+contest with traffic, not fine for launch.
+
+### 1c. The licence point, which outranks all of the above
 
 | | Vercel Hobby | Vercel Pro | Self-hosted |
 |---|---|---|---|
-| Commercial use (this site takes money) | **No** | Yes | Yes |
-| Cron frequency | Once per day, imprecise | Every minute | Yours to schedule |
-| Verdict | **Not permitted for this site** | Recommended | Supported |
+| Commercial use — this site takes money | **No** | Yes | Yes |
+| Per-minute cron | No (daily only) | Yes | Yours |
+| Verdict | **Not permitted for this site** | **Required before launch** | Supported |
 
-Hobby is licensed for non-commercial personal use. This site processes payments,
-so Hobby is the wrong tier regardless of its other limits. The sweeper also runs
-every minute, which Hobby cannot do — though nothing in the system depends on a
-per-minute schedule, because every sweep job is idempotent and a missed tick
-delays a hold expiry rather than losing it.
+Hobby is licensed for **non-commercial personal use**. This site processes
+payments, so the licence does not cover it regardless of the technical limits.
+Pro is the minimum for a commercial launch, and a self-hosted droplet is the
+alternative.
 
 ---
 
@@ -69,6 +104,16 @@ time. `package.json` has `"db:migrate": "prisma migrate deploy"` for this.
 curl -s https://your-domain/api/health | jq     # expect status: "ok"
 curl -s https://your-domain/api/ready  | jq     # expect ready: true
 curl -sI https://your-domain/api/stats           # expect s-maxage=15
+```
+
+### The sweeper on a plan without cron
+
+If you are on Hobby, the traffic-triggered tick keeps things moving while there
+is traffic. To get a guaranteed tick when there is none, point any external
+scheduler at the endpoint — GitHub Actions, cron-job.org, or a container cron:
+
+```bash
+* * * * * curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://your-domain/api/cron/sweep
 ```
 
 ### Regions

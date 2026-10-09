@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // `vercel build` writes a full copy of the compiled output here, including
+    // bundled dependencies. Linting it produced 5,000+ problems in files that
+    // are generated, not authored.
+    ".vercel/**",
+    "loadtest/**",
+    ".preview/**",
   ]),
 ]);
 

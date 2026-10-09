@@ -1,29 +1,59 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "regions": ["iad1"],
+  "regions": [
+    "iad1"
+  ],
   "functions": {
-    "src/app/api/register/route.ts": { "maxDuration": 15 },
-    "src/app/api/checkout/route.ts": { "maxDuration": 30 },
-    "src/app/api/webhooks/stripe/route.ts": { "maxDuration": 15 },
-    "src/app/api/stats/route.ts": { "maxDuration": 10 },
-    "src/app/api/settings/public/route.ts": { "maxDuration": 10 },
-    "src/app/api/cron/sweep/route.ts": { "maxDuration": 60 },
-    "src/app/api/admin/export/route.ts": { "maxDuration": 300 }
+    "src/app/api/register/route.ts": {
+      "maxDuration": 15
+    },
+    "src/app/api/checkout/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/webhooks/stripe/route.ts": {
+      "maxDuration": 15
+    },
+    "src/app/api/stats/route.ts": {
+      "maxDuration": 10
+    },
+    "src/app/api/settings/public/route.ts": {
+      "maxDuration": 10
+    },
+    "src/app/api/cron/sweep/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/admin/export/route.ts": {
+      "maxDuration": 300
+    }
   },
-  "crons": [{ "path": "/api/cron/sweep", "schedule": "* * * * *" }],
   "headers": [
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/_next/image(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/fonts/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

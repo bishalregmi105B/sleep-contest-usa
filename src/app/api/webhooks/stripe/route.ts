@@ -6,6 +6,7 @@ import { constructStripeEvent } from '@/lib/payments/stripe';
 import { processEvent } from '@/lib/webhooks';
 import { assertServerConfigured, stripeEnabled } from '@/lib/env';
 import { previewEnabled } from '@/lib/preview';
+import { tickSoon } from '@/lib/tick';
 
 
 /**
@@ -82,6 +83,8 @@ export async function POST(request: Request) {
 
     // Mail goes out after the response, never inside it.
     drainSoon();
+    // And the opportunistic tick, for deployments where the cron cannot run.
+    tickSoon('webhook');
 
     return Response.json({ received: true, result: outcome });
   } catch (err) {

@@ -16,6 +16,7 @@ import { getSettings } from '@/lib/settings';
 import { turnstileEnabled, verifyTurnstile } from '@/lib/turnstile';
 import { paymentsEnabled } from '@/lib/env';
 import { previewEnabled } from '@/lib/preview';
+import { tickSoon } from '@/lib/tick';
 import { assertServerConfigured } from '@/lib/env';
 
 
@@ -191,6 +192,8 @@ export async function POST(request: Request) {
       { fullName, email, mobile, dateOfBirth, cityState, ref, ipHash: hashIp(ip) },
       settings.maxRegistrations,
     );
+
+    tickSoon('register');
 
     if (result.ok) {
       if (idempotencyKey) await recordIdempotency('register', idempotencyKey, result.publicId, 200);
