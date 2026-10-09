@@ -1,8 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-
-  "//functions": "Region matters far more than instance count here. Every DB route is Node.js runtime, not Edge, because it holds a PostgreSQL connection. Placing the functions near the database turns a ~40 ms network round trip into ~1 ms; placing them near the visitor instead is the single largest latency win available. Override with the DATABASE_URL region.",
+  "regions": ["iad1"],
   "functions": {
     "src/app/api/register/route.ts": { "maxDuration": 15 },
     "src/app/api/checkout/route.ts": { "maxDuration": 30 },
@@ -12,11 +11,7 @@
     "src/app/api/cron/sweep/route.ts": { "maxDuration": 60 },
     "src/app/api/admin/export/route.ts": { "maxDuration": 300 }
   },
-
-  "//crons": "Every minute, which requires a Pro plan. Vercel's Hobby tier runs cron at most once daily and with imprecise timing, and the site takes money so Hobby is not licensed for commercial use anyway. Nothing in the system assumes a per-minute schedule: every sweep job is idempotent and the sweeper also self-schedules on first write, so a missed tick delays a hold expiry by a minute rather than losing it.",
   "crons": [{ "path": "/api/cron/sweep", "schedule": "* * * * *" }],
-
-  "//headers": "Immutable caching for static assets is the other half of surviving a spike: without it a viral moment re-requests and re-transforms every image. next/image output lives under /_next/image and is content-addressed, so it is safe to cache forever.",
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -30,8 +25,5 @@
       "source": "/fonts/(.*)",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     }
-  ],
-
-  "//regions": "Set to your database's region, e.g. iad1, sfo1, fra1, sin1.",
-  "regions": ["iad1"]
+  ]
 }
