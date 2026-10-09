@@ -41,7 +41,7 @@ export function HeartStrip({
         />
       </svg>
       {label ? (
-        <p className="mt-1.5 text-center font-mono text-[11px] uppercase tracking-wide text-mist/70">
+        <p className="mt-1.5 text-center font-mono text-xs uppercase tracking-[0.14em] text-mist font-medium">
           {label}
         </p>
       ) : null}

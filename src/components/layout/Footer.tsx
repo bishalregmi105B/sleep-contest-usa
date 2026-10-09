@@ -44,7 +44,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-mist/75">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-tungsten">
               {FOOTER.contact}
             </h2>
             <ul className="mt-4 flex flex-col gap-2">
@@ -92,7 +92,7 @@ export function Footer() {
 
           {/* Legal */}
           <nav aria-label="Legal">
-            <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-mist/75">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-tungsten">
               {FOOTER.legal}
             </h2>
             <ul className="mt-4 flex flex-col gap-2">
@@ -111,10 +111,10 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-xs text-mist/75">
+          <p className="font-mono text-xs text-mist font-medium">
             © {COPYRIGHT_YEAR} {SITE.organizer}. All rights reserved.
           </p>
-          <p className="max-w-md text-xs leading-relaxed text-mist/75">{FOOTER.conceptNote}</p>
+          <p className="max-w-md text-xs leading-relaxed text-mist font-medium">{FOOTER.conceptNote}</p>
         </div>
       </div>
     </footer>

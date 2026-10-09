@@ -420,7 +420,7 @@ export const TIMELINE = {
   heading: 'From reserve to wake-up call',
   steps: [
     { title: `Reserve ${usd(Number(MONEY.reserve))}`, detail: 'Your mat is held and your number is issued.' },
-    { title: `We reach ${plain(SITE.goal)}`, detail: 'Registrarants are emailed before anyone else.' },
+    { title: `We reach ${plain(SITE.goal)}`, detail: 'Registrants are emailed before anyone else.' },
     {
       title: `Date and venue announced, you pay ${usd(Number(MONEY.balance))}`,
       detail: 'Nothing else is due before this point.',

@@ -13,16 +13,16 @@ export function Ticker() {
   return (
     <div
       aria-hidden="true"
-      className="relative flex h-7 items-center overflow-hidden border-y border-white/10 bg-ink/60 backdrop-blur-sm"
+      className="relative flex h-9 sm:h-10 items-center overflow-hidden border-y border-white/15 bg-ink/80 backdrop-blur-md"
     >
       <div className="ticker-track gap-8">
         {[0, 1].map((copy) => (
           <span
             key={copy}
-            className="shrink-0 pr-8 font-mono text-[11px] uppercase tracking-[0.18em] text-mist/70"
+            className="shrink-0 pr-8 font-mono text-xs sm:text-[13px] font-medium uppercase tracking-[0.16em] text-paper/95"
             {...(copy === 1 ? { 'aria-hidden': true } : {})}
           >
-            {TICKER} <span className="text-tungsten/60">/</span> {TICKER}
+            {TICKER} <span className="mx-2 text-tungsten font-bold">/</span> {TICKER}
           </span>
         ))}
       </div>

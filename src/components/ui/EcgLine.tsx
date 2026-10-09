@@ -84,7 +84,7 @@ export function EcgLine({
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity="0.5"
+            opacity="0.7"
             vectorEffect="non-scaling-stroke"
             className="text-mist"
           />

@@ -30,10 +30,10 @@ export function FactsBar() {
             <dl className="flex flex-1 items-center divide-x divide-white/10">
               {FACTS.cells.map((cell) => (
                 <div key={cell.label} className="flex-1 px-5 first:pl-0">
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/75">
+                  <dt className="font-mono text-xs uppercase tracking-[0.18em] text-tungsten font-semibold">
                     {cell.label}
                   </dt>
-                  <dd className="mt-0.5 truncate text-sm text-paper">{cell.value}</dd>
+                  <dd className="mt-0.5 truncate text-sm font-medium text-paper">{cell.value}</dd>
                 </div>
               ))}
             </dl>
@@ -54,10 +54,10 @@ export function FactsBar() {
           <dl className="grid grid-cols-2 gap-x-4 gap-y-5">
             {FACTS.cells.map((cell) => (
               <div key={cell.label}>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/75">
+                <dt className="font-mono text-xs uppercase tracking-[0.18em] text-tungsten font-semibold">
                   {cell.label}
                 </dt>
-                <dd className="mt-1 text-sm leading-snug text-paper">{cell.value}</dd>
+                <dd className="mt-1 text-sm font-medium leading-snug text-paper">{cell.value}</dd>
               </div>
             ))}
           </dl>
@@ -69,13 +69,13 @@ export function FactsBar() {
             <div className="flex justify-center gap-5">
               <Link
                 href={FACTS.rulesLink.href}
-                className="text-xs text-mist/70 underline decoration-white/20 underline-offset-4"
+                className="text-xs font-medium text-mist underline decoration-white/25 underline-offset-4 hover:text-paper"
               >
                 {FACTS.rulesLink.label}
               </Link>
               <Link
                 href={FACTS.refundLink.href}
-                className="text-xs text-mist/70 underline decoration-white/20 underline-offset-4"
+                className="text-xs font-medium text-mist underline decoration-white/25 underline-offset-4 hover:text-paper"
               >
                 {FACTS.refundLink.label}
               </Link>

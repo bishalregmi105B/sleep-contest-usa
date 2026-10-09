@@ -79,7 +79,7 @@ export function SceneRoot({ tier: initialTier }: { readonly tier: Tier }) {
           gl.outputColorSpace = SRGBColorSpace;
         }}
         onError={() => setContextLost(true)}
-        style={{ position: 'fixed', inset: 0 }}
+        style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }}
       >
         <PerformanceMonitor onDecline={onDecline} flipflops={2} bounds={() => [45, 60]}>
           <Suspense fallback={null}>

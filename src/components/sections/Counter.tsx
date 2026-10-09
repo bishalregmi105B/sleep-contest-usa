@@ -45,7 +45,7 @@ export function Counter({ count }: CounterProps) {
                 >
                   {display.count.toLocaleString('en-US')}
                 </span>
-                <span className="font-mono text-2xl text-mist/70 sm:text-3xl">
+                <span className="font-mono text-2xl text-mist sm:text-3xl font-medium">
                   / {plain(SITE.goal)}
                 </span>
               </p>
@@ -59,7 +59,7 @@ export function Counter({ count }: CounterProps) {
             )}
 
             {SITE.demoMode ? (
-              <span className="rounded-pill border border-mint/40 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-mint">
+              <span className="rounded-pill border border-mint/40 px-3 py-1 font-mono text-xs uppercase tracking-[0.16em] text-mint font-semibold">
                 {COUNTER.demoTag}
               </span>
             ) : null}
@@ -78,11 +78,16 @@ export function Counter({ count }: CounterProps) {
             </p>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <ButtonLink href="#reserve" event={RESERVE_CLICK} data-testid="counter-cta">
-              Reserve my spot · $10
-            </ButtonLink>
-            <ShareButton />
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <ButtonLink href="#reserve" event={RESERVE_CLICK} data-testid="counter-cta">
+                Reserve my spot · $10
+              </ButtonLink>
+              <ShareButton />
+            </div>
+            <p className="font-mono text-xs text-mist font-medium">
+              $10 now · 100% money-back guarantee
+            </p>
           </div>
         </div>
       </div>

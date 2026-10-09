@@ -18,14 +18,14 @@ export function RulesSummary() {
       <h3 id="rules-summary-heading" className="font-display text-lg font-bold uppercase tracking-wide text-paper">
         {RULES_SUMMARY.heading}
       </h3>
-      <p className="mt-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/75">
+      <p className="mt-1.5 font-mono text-xs uppercase tracking-[0.14em] text-mist font-medium">
         {RULES_SUMMARY.disclaimer}
       </p>
 
       <dl className="mt-5 space-y-4">
         {RULES_SUMMARY.items.map((item) => (
           <div key={item.label}>
-            <dt className="font-mono text-[11px] uppercase tracking-[0.14em] text-tungsten/80">
+            <dt className="font-mono text-xs uppercase tracking-[0.14em] text-tungsten font-semibold">
               {item.label}
             </dt>
             <dd className="mt-1 text-sm leading-relaxed text-mist">{item.value}</dd>

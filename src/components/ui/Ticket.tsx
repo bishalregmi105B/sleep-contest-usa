@@ -98,14 +98,14 @@ export function Ticket({
         />
 
         <div className="relative p-8 pb-7">
-          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-ink/55">
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-ink/65">
             {TICKET.title}
           </p>
           <h1 className="mt-2 font-display text-5xl font-extrabold uppercase leading-none tracking-[-0.01em]">
             {firstName}
           </h1>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink/70">{TICKET.sub}</p>
-          <p className="mt-4 inline-block border border-ink/25 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-ink/70">
+          <p className="mt-4 inline-block border border-ink/25 px-3 py-1 font-mono text-xs uppercase tracking-[0.16em] text-ink/80 font-medium">
             {TICKET.admitOne}
           </p>
         </div>
@@ -118,7 +118,7 @@ export function Ticket({
 
         <div className="relative grid grid-cols-2 gap-6 bg-ink/[0.05] px-8 py-6">
           <div>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-ink/50">
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-ink/65">
               {TICKET.matLabel}
             </p>
             <p
@@ -130,7 +130,7 @@ export function Ticket({
             </p>
           </div>
           <div>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-ink/50">
+            <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-ink/65">
               Your code
             </p>
             <p className="mt-1 font-mono text-3xl font-bold tracking-[0.14em]">{refCode}</p>
@@ -160,7 +160,7 @@ export function Ticket({
 
         <div className="panel mt-4 flex flex-col gap-4 p-5">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-mist/75">
+            <p className="font-mono text-xs uppercase tracking-[0.16em] text-tungsten font-semibold">
               {TICKET.yourLink}
             </p>
             <p className="mt-1 break-all font-mono text-sm text-paper">{referralUrl}</p>

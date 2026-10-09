@@ -62,7 +62,7 @@ function PhotoGrid() {
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/85 via-transparent to-transparent"
           />
 
-          <span className="absolute right-3 top-3 rounded-sm bg-ink/70 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-mist/75 backdrop-blur-sm">
+          <span className="absolute right-3 top-3 rounded-sm bg-ink/80 px-2.5 py-1 font-mono text-xs uppercase tracking-[0.14em] text-mist font-medium backdrop-blur-md border border-white/10">
             {GALLERY.conceptCaption}
           </span>
 
@@ -97,7 +97,7 @@ function TheNightSchedule() {
             <li key={step.title} className="flex gap-5 py-4 first:pt-0 last:pb-0">
               <span
                 aria-hidden="true"
-                className="grid size-7 shrink-0 place-items-center rounded-full border border-white/15 font-mono text-[11px] text-tungsten"
+                className="grid size-7 shrink-0 place-items-center rounded-full border border-white/20 font-mono text-xs font-semibold text-tungsten"
               >
                 {index + 1}
               </span>

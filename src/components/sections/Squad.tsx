@@ -142,10 +142,10 @@ function Telemetry() {
                 />
                 <text
                   x={x}
-                  y={158}
+                  y={156}
                   textAnchor="middle"
                   fill="currentColor"
-                  className="text-[9px] text-mist/75"
+                  className="text-xs font-mono fill-mist font-medium"
                 >
                   {`+${(i + 1) * 20}m`}
                 </text>
@@ -153,13 +153,13 @@ function Telemetry() {
             ))}
           </svg>
 
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/75">
+          <p className="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-mist font-medium">
             {SQUAD.telemetryCaption}
           </p>
         </figure>
 
         <div>
-          <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-tungsten/80">
+          <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-tungsten font-semibold">
             How it is judged
           </h3>
           <p className="mt-3 text-lg leading-relaxed text-paper">{SQUAD.scoring}</p>

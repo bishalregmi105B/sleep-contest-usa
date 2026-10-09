@@ -45,7 +45,7 @@ export function Timeline({
                 meets the number regardless of the title's length. */}
             <span
               aria-hidden="true"
-              className="absolute left-0 top-0.5 grid size-6 place-items-center rounded-full border border-white/20 bg-ink font-mono text-[11px] text-tungsten"
+              className="absolute left-0 top-0.5 grid size-6 place-items-center rounded-full border border-white/20 bg-ink font-mono text-xs font-semibold text-tungsten"
             >
               {index + 1}
             </span>
@@ -66,7 +66,7 @@ export function Timeline({
         ))}
       </ol>
 
-      <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-mist/75">
+      <p className="mt-6 font-mono text-xs uppercase tracking-[0.14em] text-tungsten font-semibold">
         {TIMELINE.dateAnnouncedAt}
       </p>
     </div>

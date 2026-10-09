@@ -49,10 +49,17 @@ export function FinalCta({ count }: { readonly count: number }) {
 
           <p className="mx-auto mt-6 text-lg leading-relaxed text-mist">{note}</p>
 
-          <div className="mt-9 flex justify-center">
+          <div className="mt-9 flex flex-col items-center gap-3.5">
             <ButtonLink href="#reserve" event={RESERVE_CLICK} size="lg" data-testid="cta-cta">
               {HERO.cta}
             </ButtonLink>
+            <p className="font-mono text-sm font-semibold text-paper">
+              {HERO.priceLine}
+            </p>
+            <p className="flex items-center gap-1.5 text-xs font-medium text-mint">
+              <span className="size-1.5 rounded-full bg-mint" aria-hidden="true" />
+              100% money-back guarantee if the date doesn&apos;t suit or contest doesn&apos;t go ahead
+            </p>
           </div>
         </div>
       </div>

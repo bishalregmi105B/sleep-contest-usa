@@ -59,8 +59,11 @@ function classes({
   size = 'md',
   className = '',
 }: Pick<BaseProps, 'variant' | 'size' | 'className'>): string {
+  const hasDisplayOverride = /\b(hidden|block|inline-block|flex|grid)\b/.test(className);
+
   return [
-    'inline-flex items-center justify-center gap-2 rounded-pill font-display font-bold',
+    hasDisplayOverride ? '' : 'inline-flex',
+    'items-center justify-center gap-2 rounded-pill font-display font-bold',
     'uppercase tracking-wide no-underline transition-[transform,box-shadow,background-color,color]',
     'duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] -webkit-tap-highlight-color:transparent',
     SIZES[size],

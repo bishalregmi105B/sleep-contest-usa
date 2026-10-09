@@ -284,7 +284,7 @@ export function Reserve() {
                 {busy ? RESERVE.submitting : RESERVE.cta}
               </Button>
 
-              <p className="mt-4 text-center text-sm leading-relaxed text-mist/70">
+              <p className="mt-4 text-center text-sm font-medium leading-relaxed text-paper/90">
                 {hasDeadline ? RESERVE.note : RESERVE.neutralRefund}
               </p>
 
