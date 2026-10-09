@@ -5,6 +5,7 @@ import { drainSoon } from '@/lib/outbox';
 import { constructStripeEvent } from '@/lib/payments/stripe';
 import { processEvent } from '@/lib/webhooks';
 import { assertServerConfigured, stripeEnabled } from '@/lib/env';
+import { previewEnabled } from '@/lib/preview';
 
 
 /**
@@ -36,6 +37,10 @@ import { assertServerConfigured, stripeEnabled } from '@/lib/env';
  *     what keeps the acknowledgement inside 300 ms.
  */
 export async function POST(request: Request) {
+  if (previewEnabled) {
+    return Response.json({ message: 'Preview deployment: webhooks are not processed.' }, { status: 503 });
+  }
+
   // A payment webhook must never be processed by a half-configured deployment.
   assertServerConfigured();
 

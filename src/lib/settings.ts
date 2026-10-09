@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { getDb } from './db';
 import { fallbackKV, withKV } from './kv';
 import { log } from './logger';
+import { previewEnabled } from './preview';
 
 /**
  * Client-editable settings.
@@ -239,6 +240,10 @@ const CACHE_TTL_SECONDS = 15;
  * public page load.
  */
 export async function getSettings(): Promise<Settings> {
+  // A preview is read-only: there is no settings table to write, and an admin
+  // form that silently does nothing is worse than no form.
+  if (previewEnabled) return DEFAULT_SETTINGS;
+
   return withKV(
     async (kv) => {
       const cached = await kv.get(CACHE_KEY);

@@ -65,6 +65,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@tailwindcss/turbopack": "^4",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
     "@types/pg": "^8.23.1",
     "@types/react": "^19",

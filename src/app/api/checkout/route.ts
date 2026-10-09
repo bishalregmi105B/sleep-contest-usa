@@ -9,6 +9,7 @@ import { getSettings } from '@/lib/settings';
 import { getStripe, isRetryableStripeError } from '@/lib/payments/stripe';
 import { mockPaymentsAllowed, paymentsEnabled, siteUrl } from '@/lib/env';
 import { assertServerConfigured } from '@/lib/env';
+import { previewEnabled } from '@/lib/preview';
 import { getDb } from '@/lib/db';
 import { enqueueStandalone } from '@/lib/outbox';
 import { checkoutSchema } from '@/lib/validators';
@@ -37,6 +38,17 @@ const CHECKOUT_EXPIRY_SECONDS = 30 * 60;
  */
 export async function POST(request: Request) {
   return withRouteLogging(request, 'POST /api/checkout', async (ctx) => {
+    // First thing, before the production configuration check: a preview has no
+    // database and no payment provider *by design*, so the configuration check
+    // would throw and a visitor would get a generic error instead of being told
+    // plainly that this is a preview.
+    if (previewEnabled) {
+      return NextResponse.json(
+        { code: 'preview', message: 'This is a preview deployment. Payments are not enabled here.' },
+        { status: 503, headers: { 'Retry-After': '3600' } },
+      );
+    }
+
     // Taking money requires a correctly configured environment. Refusing here
     // is the whole point: a misconfigured deploy must not collect a
     // registration it cannot turn into a ticket.

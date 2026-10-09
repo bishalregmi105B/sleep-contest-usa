@@ -12,6 +12,7 @@ import {
 } from '@/lib/env';
 import { pingDatabase } from '@/lib/db';
 import { kvStatus } from '@/lib/kv';
+import { previewEnabled } from '@/lib/preview';
 
 
 /**
@@ -35,9 +36,26 @@ export async function GET() {
   const { problems, advisory } = validateEnv();
   const kv = kvStatus();
 
-  const findings: string[] = [...problems.map((p) => `${p.variable} ${p.message}`), ...advisory];
+  // In preview mode the absent database is the expected configuration, not a
+  // fault. Reporting it as one would bury the one thing that matters: that this
+  // is not the live site.
+  const findings: string[] = [
+    ...problems
+      .filter((p) => !(previewEnabled && (p.variable === 'DATABASE_URL' || p.variable === 'DIRECT_URL')))
+      .map((p) => `${p.variable} ${p.message}`),
+    ...advisory.filter((note) => !(previewEnabled && note.includes('No Redis configured'))),
+  ];
 
-  if (isProduction && !database) {
+  if (previewEnabled) {
+    // Always a problem, in any environment. A preview must never be mistaken
+    // for the live site by a monitor, a person, or a deploy script.
+    findings.push(
+      'PREVIEW MODE: serving a seeded SQLite database. Registration and payments are disabled. ' +
+        'This is not the live site and must not be deployed to the production domain.',
+    );
+  }
+
+  if (isProduction && !database && !previewEnabled) {
     findings.push('The database is not reachable. Check DATABASE_URL and that migrations have run.');
   }
   if (isProduction && !paymentsEnabled) {
@@ -58,8 +76,9 @@ export async function GET() {
       version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? null,
       environment: isProduction ? 'production' : 'development',
       databaseReachable: database,
+      previewMode: previewEnabled,
       providers: {
-        database: 'postgresql',
+        database: previewEnabled ? 'sqlite-preview' : 'postgresql',
         payments: paymentsEnabled ? 'stripe' : 'none',
         email: resendEnabled ? 'resend' : 'console',
         admin: adminEnabled ? 'enabled' : 'disabled',

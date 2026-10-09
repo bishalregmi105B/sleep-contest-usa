@@ -54,6 +54,10 @@ public/assets/generated/
 test-results/
 playwright-report/
 
+# preview mode: a seeded SQLite database, regenerated on demand
+/.preview/
+*preview.db
+
 # local dev server logs
 *.log
 dev.log

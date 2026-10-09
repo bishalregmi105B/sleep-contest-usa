@@ -117,6 +117,51 @@ Put Caddy or nginx in front for TLS, and schedule the sweeper:
 
 ---
 
+## 4a. Preview deployments (no database)
+
+If you want a deployment that renders and can be clicked through **before**
+anyone provisions PostgreSQL, set:
+
+```
+PREVIEW_MODE=true
+```
+
+That seeds a sample dataset into a SQLite file under `/tmp` and serves the site
+from it. Everything renders: the counter, the world section, the record-attempt
+badge, the admin views.
+
+**What it will not do**, deliberately:
+
+| Path | Behaviour |
+| --- | --- |
+| `POST /api/register` | 503, "This is a preview deployment" |
+| `POST /api/checkout` | 503, "This is a preview deployment" |
+| `POST /api/webhooks/stripe` | 503, not processed |
+| `GET /api/health` | `previewMode: true`, and listed under `problems` |
+
+That is the whole point. A preview must never be mistaken for the live site, and
+it must never be able to take a payment or hand out a ticket. The rule "a
+production deployment must never issue a ticket without payment" is not
+something this mode is allowed to weaken.
+
+**Engagement is conjunctive:** `PREVIEW_MODE=true` **and** no PostgreSQL
+`DATABASE_URL`. If both are set, PostgreSQL wins and a warning is logged, so a
+stale flag can never override a real database.
+
+Verified end to end against a production build with no database: the home page
+renders with 719 seeded registrations, 3 world cards and 2 badges; register
+returns 503 with the preview message; health reports `previewMode: true`.
+
+```bash
+PREVIEW_MODE=true DATABASE_URL= DIRECT_URL= REDIS_URL= NODE_ENV=production \
+  npx next start
+```
+
+**Not suitable for the live site.** The SQLite file lives in `/tmp`, is wiped on
+every cold start, and is not shared between instances. It is for review, for a
+pull request preview, and for showing the client what the site looks like with
+data in it. Everything else on this page still applies.
+
 ## 5. Stripe
 
 1. Create a **Product** and a **Price**. Set `STRIPE_PRICE_CENTS` to match the

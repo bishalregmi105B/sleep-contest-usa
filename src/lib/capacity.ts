@@ -1,5 +1,6 @@
 import { getDb } from './db';
 import { log } from './logger';
+import { previewCountPaid, previewEnabled, previewReserved } from './preview';
 
 /**
  * Capacity enforcement.
@@ -45,6 +46,9 @@ export type HoldResult =
   | { readonly granted: false; readonly reserved: number };
 
 export async function takeHold(maxRegistrations: number): Promise<HoldResult> {
+  // A preview has no real capacity to protect, and refusing holds here would
+  // make the preview read as a full contest.
+  if (previewEnabled) return { granted: true, reserved: previewReserved() };
   const db = await getDb();
 
   const rows = await db.$queryRaw<Array<{ reserved: number }>>`
@@ -69,6 +73,7 @@ export async function releaseHold(): Promise<void> {
 }
 
 export async function currentReserved(): Promise<number> {
+  if (previewEnabled) return previewReserved();
   const db = await getDb();
   const rows = await db.$queryRaw<Array<{ reserved: number }>>`SELECT reserved FROM "Counter" WHERE id = 1`;
   return rows[0]?.reserved ?? 0;
@@ -83,6 +88,7 @@ export async function currentReserved(): Promise<number> {
  * hot-path budget to serve 2,000 requests per second against.
  */
 export async function paidCount(): Promise<number> {
+  if (previewEnabled) return previewCountPaid();
   const db = await getDb();
   const rows = await db.$queryRaw<Array<{ paid: number }>>`SELECT paid FROM "Counter" WHERE id = 1`;
   return rows[0]?.paid ?? 0;

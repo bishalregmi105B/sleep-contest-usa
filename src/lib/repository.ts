@@ -1,4 +1,15 @@
 import { getDb, prismaErrorCode } from './db';
+import {
+  previewCountByStatus,
+  previewCountReferred,
+  previewDailyPaid,
+  previewEnabled,
+  previewFindByPublicId,
+  previewHighestMat,
+  previewList,
+  previewTopRecruiters,
+  previewTotal,
+} from './preview';
 
 /**
  * Data access for pages, admin views and exports.
@@ -30,6 +41,11 @@ export type PublicRegistration = {
 };
 
 export async function findByPublicId(publicId: string): Promise<PublicRegistration | null> {
+  if (previewEnabled) {
+    // Dates are already converted inside the preview layer, so this is a
+    // straight pass-through.
+    return previewFindByPublicId(publicId);
+  }
   const db = await getDb();
   return db.registration.findUnique({
     where: { publicId },
@@ -98,6 +114,7 @@ export async function updatePendingFields(
  * JavaScript, which is what the store did.
  */
 export async function dailyPaid(days: number): Promise<{ date: string; count: number }[]> {
+  if (previewEnabled) return previewDailyPaid(days);
   const db = await getDb();
   const since = new Date(Date.now() - (days - 1) * 86_400_000);
   since.setUTCHours(0, 0, 0, 0);
@@ -130,6 +147,7 @@ export async function dailyPaid(days: number): Promise<{ date: string; count: nu
 export async function topRecruiters(
   limit: number,
 ): Promise<{ refCode: string; matNumber: number | null; count: number }[]> {
+  if (previewEnabled) return previewTopRecruiters(limit);
   const db = await getDb();
 
   const grouped = await db.$queryRaw<Array<{ referredBy: string; count: bigint }>>`
@@ -159,6 +177,7 @@ export async function topRecruiters(
 
 /** Total rows, for the admin health card and funnel. */
 export async function totalRegistrations(): Promise<number> {
+  if (previewEnabled) return previewTotal();
   const db = await getDb();
   const rows = await db.$queryRaw<Array<{ count: bigint }>>`SELECT count(*)::bigint AS count FROM "Registration"`;
   return Number(rows[0]?.count ?? 0);
@@ -172,6 +191,7 @@ export async function totalRegistrations(): Promise<number> {
  * in one snapshot does not make them the same number.
  */
 export async function countReferred(): Promise<number> {
+  if (previewEnabled) return previewCountReferred();
   const db = await getDb();
   const rows = await db.$queryRaw<Array<{ count: bigint }>>`
     SELECT count(*)::bigint AS count FROM "Registration" WHERE "referredBy" IS NOT NULL
@@ -187,6 +207,7 @@ export async function countReferred(): Promise<number> {
  * registration, because that is what "mats assigned" means operationally.
  */
 export async function highestMat(): Promise<number> {
+  if (previewEnabled) return previewHighestMat();
   const db = await getDb();
   const rows = await db.$queryRaw<Array<{ max: number | null }>>`
     SELECT MAX("matNumber") AS max FROM "Registration" WHERE "matNumber" IS NOT NULL
@@ -195,6 +216,7 @@ export async function highestMat(): Promise<number> {
 }
 
 export async function countByStatus(): Promise<Record<string, number>> {
+  if (previewEnabled) return previewCountByStatus();
   const db = await getDb();
   const rows = await db.$queryRaw<Array<{ status: string; count: bigint }>>`
     SELECT status, count(*)::bigint AS count FROM "Registration" GROUP BY status
@@ -218,8 +240,19 @@ export type ListCursor = { createdAt: Date; id: bigint } | null;
 export async function listRegistrations(
   options: { limit: number; cursor?: ListCursor; query?: string; status?: string },
 ): Promise<{ rows: AdminRow[]; nextCursor: ListCursor }> {
-  const db = await getDb();
   const limit = options.limit;
+
+  if (previewEnabled) {
+    const rows = previewList({ limit: limit + 1, status: options.status, query: options.query });
+    const page = rows.slice(0, limit);
+    const last = page[page.length - 1];
+    return {
+      rows: page as unknown as AdminRow[],
+      nextCursor: rows.length > limit && last ? { createdAt: new Date(last.createdAt), id: BigInt(page.length) } : null,
+    };
+  }
+
+  const db = await getDb();
 
   const where: Record<string, unknown> = {};
   if (options.status) where.status = options.status;
