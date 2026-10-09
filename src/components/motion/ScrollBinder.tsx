@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { registerGsap, ScrollTrigger } from '@/lib/gsap';
-import { scrollState, SECTION_ORDER } from '@/lib/scroll-state';
+import { scrollState, SECTION_ORDER, sequenceFor } from '@/lib/scroll-state';
 
 /**
  * Feeds scroll state to the 3D scene.
@@ -56,6 +56,7 @@ export function ScrollBinder() {
       const id = resolveSection();
       scrollState.section.id = id;
       scrollState.section.t = resolveProgress(id);
+      scrollState.sequenceProgress = sequenceFor(scrollState.progress, id);
       // Mirrored onto <html> so tests can assert the active scene state, and so
       // it is inspectable in the browser without a debugger.
       document.documentElement.dataset.section = id;

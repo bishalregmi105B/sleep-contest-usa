@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
-import { SITE } from '@/content/site';
+import { GRAND_PRIZE, HERO, SITE, plain, usd } from '@/content/site';
 
-export const alt = `${SITE.name} — Win $100,000`;
+export const alt = `${SITE.name} — a sleep contest where the deepest sleeper wins $100,000. Concept visuals.`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -11,7 +11,10 @@ export const contentType = 'image/png';
  * Rendered in code rather than shipped as a file, so the copy can never drift
  * from site.ts and there is nothing to hotlink. Fonts are not embedded here
  * because Satori needs a fetchable font file; the card uses system sans and
- * relies on weight and colour for the brand voice.
+ * relies on weight, case and colour for the brand voice.
+ *
+ * The card carries no emoji and no cartoon: a plain crescent, a real dusk sky
+ * gradient, and the money set in the foil colour.
  */
 export default async function OpengraphImage() {
   return new ImageResponse(
@@ -26,32 +29,22 @@ export default async function OpengraphImage() {
           padding: 72,
           // Dusk at the bottom, midnight at the top, matching the page.
           background:
-            'linear-gradient(160deg, #0B0620 0%, #1B1450 45%, #3A2C78 75%, #FF4F8B 100%)',
+            'linear-gradient(165deg, #07060F 0%, #0B0620 40%, #1B1450 72%, #4A2E52 90%, #C9743A 100%)',
         }}
       >
         {/* Brand row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <svg width="58" height="58" viewBox="0 0 100 100" fill="none">
+            <path d="M62 8a44 44 0 1 0 30 74 38 38 0 0 1-30-74Z" fill="#FFB867" />
+          </svg>
           <div
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: 999,
-              background: '#FFE14A',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 40,
-            }}
-          >
-            🌙
-          </div>
-          <div
-            style={{
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: 700,
-              color: '#FFF8E7',
+              color: '#F3EBDD',
               textTransform: 'uppercase',
-              letterSpacing: 1,
+              letterSpacing: 3,
             }}
           >
             {SITE.name}
@@ -62,39 +55,57 @@ export default async function OpengraphImage() {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
-              fontSize: 84,
-              fontWeight: 900,
-              color: '#FFF8E7',
+              display: 'flex',
+              fontSize: 86,
+              fontWeight: 800,
+              color: '#F3EBDD',
               lineHeight: 1.02,
               letterSpacing: -2,
               textTransform: 'uppercase',
-              maxWidth: 900,
+              maxWidth: 880,
             }}
           >
-            Can you sleep through anything?
+            {HERO.h1}
           </div>
-          <div style={{ fontSize: 32, color: '#D9D2FF', marginTop: 28 }}>
-            Air horns. Feathers. Bacon. 90 minutes.
+          <div
+            style={{
+              display: 'flex',
+              fontSize: 30,
+              color: '#B9B4D6',
+              marginTop: 26,
+              maxWidth: 760,
+            }}
+          >
+            {HERO.sub}
           </div>
         </div>
 
-        {/* Prize */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+        {/* Prize row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
           <div
             style={{
-              background: '#FFE14A',
-              color: '#1A0B12',
-              fontSize: 44,
-              fontWeight: 900,
-              padding: '18px 40px',
-              borderRadius: 999,
+              color: '#F5D77A',
+              fontSize: 52,
+              fontWeight: 800,
               display: 'flex',
             }}
           >
-            Win $100,000
+            {usd(GRAND_PRIZE)}
           </div>
-          <div style={{ fontSize: 26, color: '#D9D2FF' }}>
-            200,000 sleepers wanted
+          <div style={{ display: 'flex', fontSize: 26, color: '#B9B4D6' }}>
+            {plain(SITE.goal)} sleepers wanted
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              marginLeft: 'auto',
+              fontSize: 16,
+              color: '#B9B4D6',
+              letterSpacing: 2,
+              textTransform: 'uppercase',
+            }}
+          >
+            Concept visuals
           </div>
         </div>
       </div>

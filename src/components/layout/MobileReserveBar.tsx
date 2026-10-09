@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { HERO } from '@/content/site';
-import { StickerButton } from '@/components/ui/StickerButton';
+import { ButtonLink } from '@/components/ui/Button';
 
 /**
  * Sticky bottom bar carrying the primary CTA on small screens.
@@ -28,14 +28,14 @@ export function MobileReserveBar() {
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 z-30 border-t-2 border-dusk bg-midnight/95 px-4 pt-3 backdrop-blur-md transition-transform duration-300 ease-out motion-reduce:transition-none lg:hidden ${
+      className={`no-print fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-ink/90 px-4 pt-3 backdrop-blur-md transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none lg:hidden ${
         hidden ? 'translate-y-full' : 'translate-y-0'
       }`}
       style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
     >
-      <StickerButton href="#reserve" className="w-full">
+      <ButtonLink href="#reserve" className="w-full">
         {HERO.cta}
-      </StickerButton>
+      </ButtonLink>
     </div>
   );
 }

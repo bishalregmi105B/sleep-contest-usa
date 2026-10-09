@@ -3,8 +3,15 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * Slot-machine roll from 0 to the grand prize, once, when the section is 50%
- * in view (A9). Reduced motion shows the final value immediately.
+ * The grand prize numeral.
+ *
+ * Rolls once from zero when the section is half in view, then sits still. The
+ * easing is a quartic ease-out over 1.4s: it decelerates like a physical reel
+ * rather than bouncing or overshooting, which is what the old slot animation
+ * did.
+ *
+ * The foil gradient is applied to the text, so the value stays selectable and
+ * readable by a screen reader rather than being baked into an image.
  */
 export function SlotRoll({
   amount,
@@ -35,7 +42,6 @@ export function SlotRoll({
 
       const tick = (now: number) => {
         const t = Math.min(1, (now - start) / duration);
-        // Ease out so it races then settles, like a real reel.
         const eased = 1 - Math.pow(1 - t, 4);
         setValue(Math.round(eased * amount));
         if (t < 1) requestAnimationFrame(tick);
@@ -60,9 +66,10 @@ export function SlotRoll({
   return (
     <span
       ref={ref}
-      className="font-mono text-5xl font-bold text-zzz tabular-nums sm:text-6xl"
+      className="text-foil block font-display text-[clamp(3.5rem,13vw,11rem)] font-extrabold leading-[0.85] tracking-[-0.02em]"
       aria-label={`${label}: $${amount.toLocaleString('en-US')}`}
       data-testid="grand-prize"
+      data-numeric
     >
       <span aria-hidden="true">${value.toLocaleString('en-US')}</span>
     </span>

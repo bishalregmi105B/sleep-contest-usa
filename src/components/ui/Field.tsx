@@ -3,8 +3,11 @@
 import { forwardRef, useId } from 'react';
 
 /**
- * Form field with a label, an inline error tied by `aria-describedby`, and a
- * polite live region so the error is announced when it appears.
+ * Form field with a label above it, an inline error tied by `aria-describedby`,
+ * and a polite live region so the error is announced when it appears.
+ *
+ * The error sits in a fixed-height slot so validating one field never shifts
+ * the ones below it; that is what keeps CLS at zero while a form is in use.
  */
 export const Field = forwardRef<
   HTMLInputElement,
@@ -27,14 +30,10 @@ export const Field = forwardRef<
   const errorId = `${id}-error`;
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-body-sm font-bold text-ink">
+    <div className="flex flex-col gap-2">
+      <label htmlFor={id} className="text-sm font-medium text-paper">
         {label}
-        {required ? (
-          <span aria-hidden="true" className="ml-0.5 text-pillow">
-            *
-          </span>
-        ) : null}
+        {required ? <span className="ml-0.5 text-signal">*</span> : null}
       </label>
 
       <input
@@ -49,16 +48,16 @@ export const Field = forwardRef<
         maxLength={maxLength}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? errorId : undefined}
-        className={`min-h-12 rounded-md border-[3px] bg-white px-4 py-3 text-base text-ink transition-colors placeholder:text-ink/40 ${
-          error ? 'border-pillow' : 'border-ink'
+        className={`min-h-11 w-full rounded-[10px] border bg-white/[0.04] px-4 py-3 text-base text-paper transition-colors duration-200 placeholder:text-mist/35 ${
+          error ? 'border-alert' : 'border-white/15 hover:border-white/25'
         }`}
       />
 
-      {error ? (
-        <p id={errorId} className="text-body-sm font-bold text-pillow">
-          {error}
-        </p>
-      ) : null}
+      {/* Reserved space: an empty paragraph rather than nothing, so showing an
+          error does not move the rest of the form. */}
+      <p id={errorId} className="min-h-5 text-sm text-alert" role={error ? 'alert' : undefined}>
+        {error ?? ''}
+      </p>
     </div>
   );
 });

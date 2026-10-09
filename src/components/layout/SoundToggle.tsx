@@ -54,7 +54,7 @@ export function SoundToggle() {
       type="button"
       onClick={toggle}
       aria-pressed={enabled}
-      className="grid size-11 place-items-center rounded-full border-2 border-dusk text-cream transition-colors hover:bg-dusk/40"
+      className="grid size-11 place-items-center rounded-full border-2 border-white/10 text-paper transition-colors hover:bg-dusk/40"
       data-testid="sound-toggle"
     >
       <span className="sr-only">{enabled ? 'Turn sound off' : 'Turn sound on'}</span>

@@ -1,12 +1,12 @@
 {
-  "rubik": {
-    "family": "Rubik",
+  "big-shoulders": {
+    "family": "Big Shoulders Display",
     "files": [
       {
-        "src": "./fonts/rubik.woff2",
-        "weight": "300 900",
+        "src": "./fonts/big-shoulders.woff2",
+        "weight": "700 900",
         "style": "normal",
-        "bytes": 35324
+        "bytes": 35520
       }
     ]
   },
@@ -21,20 +21,14 @@
       }
     ]
   },
-  "space-mono": {
-    "family": "Space Mono",
+  "jetbrains-mono": {
+    "family": "JetBrains Mono",
     "files": [
       {
-        "src": "./fonts/space-mono-400.woff2",
-        "weight": "400",
+        "src": "./fonts/jetbrains-mono.woff2",
+        "weight": "400 700",
         "style": "normal",
-        "bytes": 9464
-      },
-      {
-        "src": "./fonts/space-mono-700.woff2",
-        "weight": "700",
-        "style": "normal",
-        "bytes": 9552
+        "bytes": 31340
       }
     ]
   }

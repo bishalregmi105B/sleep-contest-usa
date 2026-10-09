@@ -26,7 +26,7 @@ export function FullBleedImage({
   const scrim = {
     bottom:
       'bg-gradient-to-t from-midnight via-midnight/70 to-midnight/10',
-    center: 'bg-midnight/55',
+    center: 'bg-ink/55',
     none: '',
   }[overlay];
 

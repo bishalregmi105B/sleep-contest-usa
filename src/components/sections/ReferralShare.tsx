@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FRIENDS } from '@/content/site';
-import { StickerButton } from '@/components/ui/StickerButton';
+import { Button } from '@/components/ui/Button';
 
 /**
  * Referral link with copy and share controls.
@@ -55,25 +55,25 @@ export function ReferralShare({ link }: { readonly link: string }) {
   }, [link, copy]);
 
   return (
-    <div className="rounded-lg border-2 border-dusk bg-indigo/70 p-6">
-      <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-mint">
+    <div className="panel p-6">
+      <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-mist/60">
         {FRIENDS.yourLink}
       </h2>
 
-      <p className="mt-3 break-all rounded-md bg-midnight/70 px-4 py-3 font-mono text-sm text-cream">
+      <p className="mt-3 break-all rounded-[10px] border border-white/10 bg-ink/50 px-4 py-3 font-mono text-sm text-paper">
         {link}
       </p>
 
       <div className="mt-4 flex flex-wrap gap-3">
-        <StickerButton onClick={copy} data-testid="copy-link">
+        <Button onClick={copy} data-testid="copy-link">
           {FRIENDS.copy}
-        </StickerButton>
-        <StickerButton variant="ghost" onClick={share}>
+        </Button>
+        <Button variant="secondary" onClick={share}>
           Share
-        </StickerButton>
+        </Button>
       </div>
 
-      <p role="status" aria-live="polite" className="mt-3 min-h-5 font-mono text-sm text-mint">
+      <p role="status" aria-live="polite" className="mt-3 min-h-5 font-mono text-sm text-mint/80">
         {status}
       </p>
     </div>

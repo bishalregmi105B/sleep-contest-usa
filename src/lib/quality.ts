@@ -13,17 +13,18 @@ export const SETTINGS: Record<
   {
     readonly dprMax: number;
     readonly stars: number;
-    readonly clouds: number;
-    readonly coins: number;
+    /** Suspended dust motes. */
+    readonly dust: number;
+    /** Always false: the CSS film grain does the grain, so no post pass. */
     readonly postprocessing: boolean;
     /** Hard frame cap; 0 means uncapped. */
     readonly fpsCap: number;
     readonly backdropBlur: boolean;
   }
 > = {
-  high: { dprMax: 1.75, stars: 1500, clouds: 6, coins: 60, postprocessing: true, fpsCap: 0, backdropBlur: true },
-  med: { dprMax: 1.5, stars: 700, clouds: 3, coins: 30, postprocessing: false, fpsCap: 0, backdropBlur: false },
-  low: { dprMax: 1.0, stars: 250, clouds: 0, coins: 0, postprocessing: false, fpsCap: 30, backdropBlur: false },
+  high: { dprMax: 1.75, stars: 900, dust: 120, postprocessing: false, fpsCap: 0, backdropBlur: true },
+  med: { dprMax: 1.5, stars: 450, dust: 60, postprocessing: false, fpsCap: 0, backdropBlur: false },
+  low: { dprMax: 1.0, stars: 200, dust: 0, postprocessing: false, fpsCap: 30, backdropBlur: false },
 };
 
 /** WebGL2 support check. Returns false when there is no context at all. */

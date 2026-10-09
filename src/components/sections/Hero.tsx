@@ -1,13 +1,16 @@
-import { HERO } from '@/content/site';
-import { FullBleedImage } from '@/components/media/FullBleedImage';
-import { StickerButton } from '@/components/ui/StickerButton';
+import { GRAND_PRIZE, HERO, SITE, plain, usd } from '@/content/site';
+import { ButtonLink } from '@/components/ui/Button';
 
 /**
- * S1 Hero.
+ * The hero.
  *
- * The poster is the LCP element and doubles as the no-WebGL fallback, so it is
- * priority-loaded and sits underneath the fixed 3D scene rather than replacing
- * it.
+ * Title-card layout in the lower-left third, over the cinematic sky. The
+ * headline enters once at load like a title card — fade, a slight blur-in, and
+ * the letter-spacing settling — and nothing on the page auto-plays after it.
+ *
+ * The prize plaque is a hairline card rather than a tilted sticker, and the
+ * prize numeral uses the foil gradient, which is reserved for money and nothing
+ * else on the site.
  */
 export function Hero() {
   return (
@@ -16,54 +19,77 @@ export function Hero() {
       aria-labelledby="hero-heading"
       className="section-shell overflow-hidden"
     >
-      <FullBleedImage
-        assetKey="hero-poster"
-        alt="A sleeper in striped pajamas on a cloud mattress under a starry sky, with a smiling crescent moon in a nightcap and glowing Zzz balloons."
-        priority
-        overlay="none"
-        data-hero-poster
-      />
-
-      {/* Darken the lower-left so the headline always clears the art. */}
+      {/* A directional scrim so the type always clears whatever is behind it,
+          including the sunrise the stage shows at this scroll position. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-midnight/90 via-midnight/55 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/45 to-transparent"
       />
 
       <div className="content-frame relative z-10">
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
+          <p className="reveal font-mono text-xs uppercase tracking-[0.2em] text-tungsten/80">
+            {SITE.name}
+          </p>
+
           <h1
             id="hero-heading"
-            className="font-display text-display-hero-mobile font-black tracking-tight text-cream uppercase sm:text-display-hero sm:leading-[76px]"
+            className="reveal mt-5 font-display text-[clamp(3rem,8.5vw,7.5rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.01em] text-paper [animation-delay:120ms]"
+            style={{ animationDelay: '120ms' }}
           >
             {HERO.h1}
           </h1>
 
-          <p className="mt-6 max-w-xl text-body-lg text-lavender sm:text-xl">
+          <p
+            className="reveal mt-6 max-w-xl text-lg leading-relaxed text-mist"
+            style={{ animationDelay: '260ms' }}
+          >
             {HERO.sub}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <StickerButton href="#reserve" size="lg" data-testid="hero-cta">
+          <div
+            className="reveal mt-9 flex flex-wrap items-center gap-4"
+            style={{ animationDelay: '400ms' }}
+          >
+            <ButtonLink href="#reserve" size="lg" data-testid="hero-cta">
               {HERO.cta}
-            </StickerButton>
-            <StickerButton href="#how" variant="ghost">
-              See how it works
-            </StickerButton>
+            </ButtonLink>
+            <ButtonLink href="#how" variant="secondary" size="lg">
+              {HERO.secondaryCta}
+            </ButtonLink>
           </div>
 
-          <p className="mt-6 font-mono text-sm text-lavender/90">{HERO.priceLine}</p>
+          <p
+            className="reveal mt-6 font-mono text-sm text-mist/70"
+            style={{ animationDelay: '520ms' }}
+          >
+            {HERO.priceLine}
+          </p>
         </div>
       </div>
 
-      {/* Tilted prize badge. Positioned rather than centred so it never
-          competes with the headline. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute right-6 top-28 z-10 hidden -rotate-6 rounded-md bg-zzz px-6 py-3 font-display text-xl font-black text-ink [box-shadow:8px_8px_0_var(--color-pillow)] lg:block"
-      >
-        {HERO.badge}
+      {/* The prize plaque. A hairline card, square to the page. */}
+      <div className="content-frame pointer-events-none absolute inset-x-0 top-28 z-10 hidden lg:block">
+        <div className="flex justify-end">
+          <div className="panel px-7 py-5 text-right">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/60">
+              {HERO.badgeCaption}
+            </p>
+            <p className="text-foil mt-1 font-display text-5xl font-extrabold leading-none tabular-nums">
+              {usd(GRAND_PRIZE)}
+            </p>
+            <p className="mt-2 font-mono text-[11px] text-mist/50">
+              {plain(SITE.goal)} sleepers needed
+            </p>
+          </div>
+        </div>
       </div>
+
+      {/* The honesty label. Every image on this site is illustrative, and the
+          hero is where someone is most likely to assume otherwise. */}
+      <p className="content-frame absolute inset-x-0 bottom-6 z-10 font-mono text-[10px] uppercase tracking-[0.18em] text-mist/35">
+        Concept visuals
+      </p>
     </section>
   );
 }

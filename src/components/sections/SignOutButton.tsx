@@ -13,7 +13,7 @@ export function SignOutButton() {
   return (
     <button
       type="submit"
-      className="inline-flex min-h-11 items-center rounded-pill border-2 border-dusk px-5 text-body-sm font-bold text-cream hover:bg-dusk/40"
+      className="inline-flex min-h-11 items-center rounded-pill border-2 border-white/10 px-5 text-sm font-bold text-paper hover:bg-dusk/40"
       onClick={() => {
         // The server action clears the cookie; refresh re-renders the gate.
         setTimeout(() => router.refresh(), 0);

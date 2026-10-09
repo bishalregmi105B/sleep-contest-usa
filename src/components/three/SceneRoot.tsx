@@ -2,25 +2,22 @@
 
 import { Canvas } from '@react-three/fiber';
 import { PerformanceMonitor } from '@react-three/drei';
-import { NoToneMapping, PCFSoftShadowMap, SRGBColorSpace } from 'three';
+import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
 import { Suspense, useCallback, useState } from 'react';
 import { SETTINGS, downgrade, type Tier } from '@/lib/quality';
 import { scrollState } from '@/lib/scroll-state';
-import { CameraRig } from './rig/CameraRig';
-import { SceneLights } from './rig/SceneLights';
-import { Clouds } from './objects/Clouds';
-import { SkyDome } from './rig/SkyDome';
-import { Stars } from './objects/Stars';
-import { Moon } from './objects/Moon';
-import { ZzzLetters } from './objects/ZzzLetters';
-import { SceneObjects } from './objects/SceneObjects';
+import { Atmosphere } from './Atmosphere';
 
 /**
  * The one and only WebGL context on the page.
  *
  * Fixed and full-screen behind the DOM, with `pointer-events: none` so it never
- * intercepts a click. Every section reads from this scene through
- * `scrollState`; no section creates a context of its own.
+ * intercepts a click. Every section reads from `scrollState`; no section
+ * creates a context of its own.
+ *
+ * The scene now draws **only atmosphere**: stars, a faceless moon, dust motes
+ * and light shafts. The toy objects are gone rather than restyled, because
+ * restyling them would still read as toys.
  *
  * On a sustained frame-rate decline the tier steps down one level, once. The
  * downgrade is one-way so quality cannot oscillate.
@@ -36,6 +33,7 @@ export function SceneRoot({ tier: initialTier }: { readonly tier: Tier }) {
       if (current === 'low' || current === 'none') return current;
       const next = downgrade(current);
       scrollState.tier = next;
+      document.documentElement.dataset.tier = next;
       return next;
     });
   }, []);
@@ -64,41 +62,28 @@ export function SceneRoot({ tier: initialTier }: { readonly tier: Tier }) {
       <Canvas
         dpr={[1, settings.dprMax]}
         frameloop={scrollState.active ? 'always' : 'never'}
-        camera={{ fov: 40, near: 0.1, far: 100, position: [0.8, 0.5, 7.5] }}
+        camera={{ fov: 40, near: 0.1, far: 100, position: [0, 0, 6] }}
         gl={{
-          antialias: tier !== 'low',
+          antialias: false,
           powerPreference: 'high-performance',
           alpha: true,
           stencil: false,
-          depth: true,
+          depth: false,
         }}
         onCreated={({ gl }) => {
-          // The palette is the design. ACES desaturates the dusk pink and the
-          // Zzz yellow towards brown, which stops the 3D matching the Stitch
-          // PNGs, so output is left untransformed.
-          gl.toneMapping = NoToneMapping;
+          // One tone-mapping stage, set once on the renderer. No
+          // EffectComposer and no extra Noise pass: the CSS film grain does the
+          // grain, and a second grade would desaturate the palette.
+          gl.toneMapping = ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.05;
           gl.outputColorSpace = SRGBColorSpace;
-          // Soft shadows: hard edges make rounded clay geometry look faceted.
-          gl.shadowMap.enabled = true;
-          gl.shadowMap.type = PCFSoftShadowMap;
         }}
         onError={() => setContextLost(true)}
         style={{ position: 'fixed', inset: 0 }}
       >
-        <PerformanceMonitor
-          onDecline={onDecline}
-          flipflops={2}
-          bounds={() => [45, 60]}
-        >
+        <PerformanceMonitor onDecline={onDecline} flipflops={2} bounds={() => [45, 60]}>
           <Suspense fallback={null}>
-            <SceneLights />
-            <SkyDome />
-            <Clouds tier={tier} />
-            <Stars count={settings.stars} />
-            <CameraRig />
-            <Moon />
-            <ZzzLetters />
-            <SceneObjects tier={tier} />
+            <Atmosphere tier={tier} />
           </Suspense>
         </PerformanceMonitor>
       </Canvas>

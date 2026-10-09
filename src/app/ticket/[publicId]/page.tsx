@@ -79,7 +79,7 @@ export default async function TicketPage({
   return (
     <main
       id="main"
-      className="relative flex min-h-svh flex-col items-center justify-center gap-10 bg-midnight px-4 py-16"
+      className="relative flex min-h-svh flex-col items-center justify-center gap-10 bg-ink px-4 py-16"
     >
       {/* Sky gradient, matching the site's dusk palette without the 3D scene:
           the ticket is a shareable page, not a scroll journey. */}
@@ -99,8 +99,8 @@ export default async function TicketPage({
         referralUrl={referralLink(registration.refCode)}
       />
 
-      <p className="text-center text-body-sm text-lavender">
-        <Link href="/" className="underline decoration-dusk underline-offset-4 hover:text-zzz">
+      <p className="text-center text-sm text-mist">
+        <Link href="/" className="underline decoration-dusk underline-offset-4 hover:text-tungsten">
           Back to {SITE.name}
         </Link>
       </p>

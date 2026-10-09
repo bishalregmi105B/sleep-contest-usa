@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { NOT_FOUND, SITE } from '@/content/site';
+import { ButtonLink } from '@/components/ui/Button';
 
 /**
  * 404. Written as a server component with no client JS: an error page should
@@ -9,43 +10,39 @@ export default function NotFound() {
   return (
     <main
       id="main"
-      className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-midnight px-4 text-center"
+      className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-ink px-4 text-center"
     >
       <div
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-0"
         style={{
-          background:
-            'radial-gradient(120% 80% at 50% 0%, #3A2C78 0%, #1B1450 45%, #0B0620 100%)',
+          backgroundImage:
+            'radial-gradient(70% 50% at 50% 100%, rgba(255,184,103,0.10) 0%, transparent 70%), linear-gradient(to top, #1B1450 0%, #0B0620 45%, #07060F 100%)',
         }}
       />
 
-      <span aria-hidden="true" className="text-6xl">
-        🌙
-      </span>
+      <p className="font-mono text-xs uppercase tracking-[0.2em] text-mist/50">404</p>
 
-      <h1 className="font-display text-headline-lg-mobile font-black uppercase text-cream sm:text-headline-lg">
+      <h1 className="font-display text-[clamp(2rem,5vw,3rem)] font-extrabold uppercase leading-none text-paper">
         {NOT_FOUND.title}
       </h1>
-      <p className="max-w-md text-body-lg text-lavender">{NOT_FOUND.body}</p>
+      <p className="max-w-md text-lg leading-relaxed text-mist">{NOT_FOUND.body}</p>
 
-      <Link href="/" className="sticker-btn">
+      <ButtonLink href="/" className="mt-2">
         {NOT_FOUND.cta}
-      </Link>
+      </ButtonLink>
 
-      <p className="mt-6 text-body-sm text-lavender/70">
-        <Link href="/rules" className="underline underline-offset-4 hover:text-zzz">
+      <nav aria-label="Contest terms" className="mt-4 flex flex-wrap justify-center gap-5">
+        <Link href="/rules" className="text-sm text-mist/70 underline decoration-white/20 underline-offset-4 hover:text-tungsten">
           Contest rules
         </Link>
-        {' · '}
-        <Link href="/privacy" className="underline underline-offset-4 hover:text-zzz">
+        <Link href="/privacy" className="text-sm text-mist/70 underline decoration-white/20 underline-offset-4 hover:text-tungsten">
           Privacy
         </Link>
-        {' · '}
-        <Link href="/refund" className="underline underline-offset-4 hover:text-zzz">
+        <Link href="/refund" className="text-sm text-mist/70 underline decoration-white/20 underline-offset-4 hover:text-tungsten">
           Refunds
         </Link>
-      </p>
+      </nav>
 
       <span className="sr-only">{SITE.name}</span>
     </main>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NAV } from '@/content/site';
-import { StickerButton } from '@/components/ui/StickerButton';
+import { ButtonLink } from '@/components/ui/Button';
 
 /**
  * Full-screen mobile menu.
@@ -79,7 +79,7 @@ export function MobileMenu() {
         onClick={() => setOpen(true)}
         aria-expanded={open}
         aria-haspopup="dialog"
-        className="grid size-11 place-items-center rounded-full border-2 border-dusk text-cream lg:hidden"
+        className="grid size-11 place-items-center rounded-full border border-white/15 text-paper transition-colors duration-200 hover:bg-white/5 lg:hidden"
       >
         <span className="sr-only">Open menu</span>
         <span aria-hidden="true" className="flex flex-col gap-1">
@@ -95,14 +95,14 @@ export function MobileMenu() {
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
-          className="fixed inset-0 z-50 flex flex-col bg-midnight/98 px-6 py-6 backdrop-blur-lg lg:hidden"
+          className="fixed inset-0 z-50 flex flex-col bg-ink/98 px-6 py-6 backdrop-blur-lg lg:hidden"
         >
           <div className="flex items-center justify-between">
-            <span className="font-display text-sm font-black uppercase text-cream">Menu</span>
+            <span className="font-display text-sm font-bold uppercase tracking-[0.2em] text-paper">Menu</span>
             <button
               type="button"
               onClick={close}
-              className="grid size-11 place-items-center rounded-full border-2 border-dusk text-2xl text-cream"
+              className="grid size-11 place-items-center rounded-full border border-white/15 text-2xl font-light text-paper"
             >
               <span className="sr-only">Close menu</span>
               <span aria-hidden="true">×</span>
@@ -115,7 +115,7 @@ export function MobileMenu() {
                 key={item.href}
                 href={item.href}
                 onClick={close}
-                className="flex min-h-14 items-center border-b border-dusk font-display text-2xl font-black uppercase text-cream"
+                className="flex min-h-14 items-center border-b border-white/10 font-display text-2xl font-bold uppercase tracking-wide text-paper"
               >
                 {item.label}
               </a>
@@ -123,9 +123,9 @@ export function MobileMenu() {
           </nav>
 
           <div className="mt-auto">
-            <StickerButton href="#reserve" size="lg" className="w-full" onClick={close}>
+            <ButtonLink href="#reserve" size="lg" className="w-full" onClick={close}>
               Reserve for $10
-            </StickerButton>
+            </ButtonLink>
           </div>
         </div>
       ) : null}
